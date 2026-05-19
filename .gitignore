@@ -26,3 +26,7 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# skills
+.github/skills/
+.github/.10x-cli-manifest.json
