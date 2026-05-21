@@ -1,15 +1,23 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "10x-astro-starter",
-  "main": "@astrojs/cloudflare/entrypoints/server",
-  "compatibility_date": "2026-05-08",
-  "compatibility_flags": ["nodejs_compat"],
-  "assets": {
-    "binding": "ASSETS",
-    "directory": "./dist",
-    "not_found_handling": "404-page",
-  },
-  "observability": {
-    "enabled": true,
-  },
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "dnd-5enemy",
+	"main": "@astrojs/cloudflare/entrypoints/server",
+	"compatibility_date": "2026-05-08",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"assets": {
+		"binding": "ASSETS",
+		"directory": "./dist",
+		"not_found_handling": "404-page",
+	},
+	"observability": {
+		"enabled": true,
+	},
+	"kv_namespaces": [
+		{
+			"binding": "SESSION",
+			"id": "0f4b429495c64125987568ae8a5e742d"
+		}
+	],
 }
