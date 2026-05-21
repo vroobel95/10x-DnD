@@ -30,3 +30,5 @@ pnpm-debug.log*
 # skills
 .github/skills/
 .github/.10x-cli-manifest.json
+
+.dev.vars
