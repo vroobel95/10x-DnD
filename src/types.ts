@@ -1,4 +1,4 @@
-// Shared entity types for DnD 5enemy.
+// Shared entity types for DnD 5e entities.
 // These types mirror the Supabase database schema defined in supabase/migrations/.
 // All UUID and timestamp fields are typed as string (Supabase JS client serialisation).
 

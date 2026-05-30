@@ -1,8 +1,8 @@
 ---
 change_id: data-schema
-status: implemented
+status: impl_reviewed
 created: 2026-05-27
-updated: 2026-05-29
+updated: 2026-05-30
 roadmap_id: F-01
 prd_refs: FR-002, FR-005, FR-007, FR-009
 ---

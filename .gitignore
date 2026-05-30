@@ -28,7 +28,7 @@ pnpm-debug.log*
 .idea/
 
 # skills
-.github/skills/
-.github/.10x-cli-manifest.json
+.github
+.claude
 
 .dev.vars
