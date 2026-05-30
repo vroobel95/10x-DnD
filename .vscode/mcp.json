@@ -1,13 +1,21 @@
 {
-	"servers": {
-		"Linear": {
-			"type": "stdio",
-			"command": "npx",
-			"args": [
-				"mcp-remote",
-				"https://mcp.linear.app/mcp"
-			]
-		}
-	},
-	"inputs": []
+  "servers": {
+    "Linear": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["mcp-remote", "https://mcp.linear.app/mcp"]
+    },
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "CONTEXT7_API_KEY": "ctx7sk-53966c0d-65db-47a6-beb0-ab27553e77bb"
+      }
+    },
+    "exa": {
+      "type": "http",
+      "url": "https://mcp.exa.ai/mcp?tools=web_search_exa,web_fetch_exa,web_search_advanced_exa"
+    }
+  },
+  "inputs": []
 }

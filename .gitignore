@@ -32,3 +32,4 @@ pnpm-debug.log*
 .claude
 
 .dev.vars
+.vscode/mcp.json
