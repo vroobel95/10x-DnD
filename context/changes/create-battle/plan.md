@@ -299,12 +299,12 @@ Add a skeleton `/battles/[id].astro` page as the post-creation landing destinati
 
 #### Automated
 
-- [x] 4.1 npx tsc --noEmit reports no TypeScript errors
-- [x] 4.2 npx eslint src/pages/battles/[id].astro src/middleware.ts passes
+- [x] 4.1 npx tsc --noEmit reports no TypeScript errors — 0ce8fea
+- [x] 4.2 npx eslint src/pages/battles/[id].astro src/middleware.ts passes — 0ce8fea
 
 #### Manual
 
-- [x] 4.3 /battles/new while signed out → redirect to /auth/signin
-- [x] 4.4 /battles/[valid-id] shows battle metadata and S-02 placeholder
-- [x] 4.5 /battles/[other-user-id] → redirect to /dashboard
-- [x] 4.6 Full end-to-end flow confirmed: create → detail page → back to list
+- [x] 4.3 /battles/new while signed out → redirect to /auth/signin — 0ce8fea
+- [x] 4.4 /battles/[valid-id] shows battle metadata and S-02 placeholder — 0ce8fea
+- [x] 4.5 /battles/[other-user-id] → redirect to /dashboard — 0ce8fea
+- [x] 4.6 Full end-to-end flow confirmed: create → detail page → back to list — 0ce8fea
