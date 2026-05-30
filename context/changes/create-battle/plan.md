@@ -256,55 +256,55 @@ Add a skeleton `/battles/[id].astro` page as the post-creation landing destinati
 
 #### Automated
 
-- [ ] 1.1 POST /api/battles with valid FormData creates a row and returns 302 to /battles/[id]
-- [ ] 1.2 POST /api/battles with empty name returns 302 to /battles/new?error=...
-- [ ] 1.3 GET /api/battles returns `{ battles: [...] }` for authenticated user
-- [ ] 1.4 npx tsc --noEmit reports no TypeScript errors
-- [ ] 1.5 npx eslint src/pages/api/battles.ts passes
+- [x] 1.1 POST /api/battles with valid FormData creates a row and returns 302 to /battles/[id]
+- [x] 1.2 POST /api/battles with empty name returns 302 to /battles/new?error=...
+- [x] 1.3 GET /api/battles returns `{ battles: [...] }` for authenticated user
+- [x] 1.4 npx tsc --noEmit reports no TypeScript errors
+- [x] 1.5 npx eslint src/pages/api/battles.ts passes
 
 #### Manual
 
-- [ ] 1.6 Valid form submission creates a battles row in Supabase with correct campaign_id
-- [ ] 1.7 Empty name submission shows error message on form page
-- [ ] 1.8 Non-integer party level shows error message on form page
+- [x] 1.6 Valid form submission creates a battles row in Supabase with correct campaign_id
+- [x] 1.7 Empty name submission shows error message on form page
+- [x] 1.8 Non-integer party level shows error message on form page
 
 ### Phase 2: Dashboard Overhaul
 
 #### Automated
 
-- [ ] 2.1 npx tsc --noEmit reports no TypeScript errors
-- [ ] 2.2 npx eslint src/pages/dashboard.astro src/components/battles/BattleCard.astro passes
+- [x] 2.1 npx tsc --noEmit reports no TypeScript errors
+- [x] 2.2 npx eslint src/pages/dashboard.astro src/components/battles/BattleCard.astro passes
 
 #### Manual
 
-- [ ] 2.3 Sign in → dashboard shows "My Battles" heading and "New Battle" button
-- [ ] 2.4 After creating a battle, card appears with correct name, party level, and date
-- [ ] 2.5 Empty state shows helpful prompt
-- [ ] 2.6 Clicking a battle card navigates to /battles/[id]
+- [x] 2.3 Sign in → dashboard shows "My Battles" heading and "New Battle" button
+- [x] 2.4 After creating a battle, card appears with correct name, party level, and date
+- [x] 2.5 Empty state shows helpful prompt
+- [x] 2.6 Clicking a battle card navigates to /battles/[id]
 
 ### Phase 3: Create Battle Page & Form
 
 #### Automated
 
-- [ ] 3.1 npx tsc --noEmit reports no TypeScript errors
-- [ ] 3.2 npx eslint src/pages/battles/new.astro src/components/battles/CreateBattleForm.tsx passes
+- [x] 3.1 npx tsc --noEmit reports no TypeScript errors
+- [x] 3.2 npx eslint src/pages/battles/new.astro src/components/battles/CreateBattleForm.tsx passes
 
 #### Manual
 
-- [ ] 3.3 /battles/new renders form with all three fields
-- [ ] 3.4 Submit without name → error message visible above form
-- [ ] 3.5 Submit with valid data → redirect to /battles/[id]
+- [x] 3.3 /battles/new renders form with all three fields
+- [x] 3.4 Submit without name → error message visible above form
+- [x] 3.5 Submit with valid data → redirect to /battles/[id]
 
 ### Phase 4: Battle Detail Skeleton & Route Guard
 
 #### Automated
 
-- [ ] 4.1 npx tsc --noEmit reports no TypeScript errors
-- [ ] 4.2 npx eslint src/pages/battles/[id].astro src/middleware.ts passes
+- [x] 4.1 npx tsc --noEmit reports no TypeScript errors
+- [x] 4.2 npx eslint src/pages/battles/[id].astro src/middleware.ts passes
 
 #### Manual
 
-- [ ] 4.3 /battles/new while signed out → redirect to /auth/signin
-- [ ] 4.4 /battles/[valid-id] shows battle metadata and S-02 placeholder
-- [ ] 4.5 /battles/[other-user-id] → redirect to /dashboard
-- [ ] 4.6 Full end-to-end flow confirmed: create → detail page → back to list
+- [x] 4.3 /battles/new while signed out → redirect to /auth/signin
+- [x] 4.4 /battles/[valid-id] shows battle metadata and S-02 placeholder
+- [x] 4.5 /battles/[other-user-id] → redirect to /dashboard
+- [x] 4.6 Full end-to-end flow confirmed: create → detail page → back to list

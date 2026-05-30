@@ -1,6 +1,6 @@
 ---
 change_id: create-battle
-status: planned
+status: implementing
 created: 2026-05-30
 updated: 2026-05-30
 roadmap_id: S-01
