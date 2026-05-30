@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { createClient } from "@/lib/supabase";
+import { getUserCampaign } from "@/lib/campaigns";
 
 export const POST: APIRoute = async (context) => {
   const supabase = createClient(context.request.headers, context.cookies);
@@ -12,7 +13,7 @@ export const POST: APIRoute = async (context) => {
     return context.redirect("/auth/signin");
   }
 
-  const { data: campaign } = await supabase.from("campaigns").select("id").eq("user_id", user.id).limit(1).single();
+  const campaign = await getUserCampaign(supabase, user.id);
 
   if (!campaign) {
     return context.redirect(
@@ -29,12 +30,18 @@ export const POST: APIRoute = async (context) => {
   if (!name) {
     return context.redirect(`/battles/new?error=${encodeURIComponent("Battle name is required")}`);
   }
+  if (name.length > 200) {
+    return context.redirect(`/battles/new?error=${encodeURIComponent("Battle name must be 200 characters or fewer")}`);
+  }
+  if (location && location.length > 200) {
+    return context.redirect(`/battles/new?error=${encodeURIComponent("Location must be 200 characters or fewer")}`);
+  }
 
   let partyLevel: number | null = null;
   if (partyLevelRaw.trim() !== "") {
     const parsed = parseInt(partyLevelRaw, 10);
-    if (isNaN(parsed) || parsed <= 0) {
-      return context.redirect(`/battles/new?error=${encodeURIComponent("Party level must be a positive integer")}`);
+    if (isNaN(parsed) || parsed <= 0 || parsed > 30) {
+      return context.redirect(`/battles/new?error=${encodeURIComponent("Party level must be between 1 and 30")}`);
     }
     partyLevel = parsed;
   }
@@ -52,7 +59,7 @@ export const POST: APIRoute = async (context) => {
     .single();
 
   if (error) {
-    return context.redirect(`/battles/new?error=${encodeURIComponent(error.message)}`);
+    return context.redirect(`/battles/new?error=${encodeURIComponent("Could not create battle. Please try again.")}`);
   }
 
   return context.redirect(`/battles/${battle.id}`);
@@ -69,7 +76,7 @@ export const GET: APIRoute = async (context) => {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { data: campaign } = await supabase.from("campaigns").select("id").eq("user_id", user.id).limit(1).single();
+  const campaign = await getUserCampaign(supabase, user.id);
 
   if (!campaign) {
     return Response.json({ battles: [] });

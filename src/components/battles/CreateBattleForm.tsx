@@ -12,18 +12,42 @@ export default function CreateBattleForm({ serverError }: Props) {
   const [name, setName] = useState("");
   const [partyLevel, setPartyLevel] = useState("");
   const [location, setLocation] = useState("");
+  const [errors, setErrors] = useState<{ name?: string }>({});
+
+  function validate() {
+    const next: typeof errors = {};
+    if (!name.trim()) {
+      next.name = "Battle name is required";
+    }
+    setErrors(next);
+    return Object.keys(next).length === 0;
+  }
+
+  function clearError(field: keyof typeof errors) {
+    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: undefined }));
+  }
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    if (!validate()) {
+      e.preventDefault();
+    }
+  }
 
   return (
-    <form method="POST" action="/api/battles" className="space-y-4">
+    <form method="POST" action="/api/battles" className="space-y-4" onSubmit={handleSubmit} noValidate>
       <ServerError message={serverError} />
 
       <FormField
         id="name"
         label="Battle Name"
         value={name}
-        onChange={setName}
+        onChange={(v) => {
+          setName(v);
+          clearError("name");
+        }}
         placeholder="e.g. Frozen Cave Ambush"
         icon={<Swords className="size-4" />}
+        error={errors.name}
       />
 
       <FormField

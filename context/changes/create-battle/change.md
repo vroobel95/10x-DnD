@@ -1,8 +1,9 @@
 ---
 change_id: create-battle
-status: implemented
+status: impl_reviewed
 created: 2026-05-30
 updated: 2026-05-30
+reviewed: 2026-05-30
 roadmap_id: S-01
 prd_refs: FR-002
 ---
