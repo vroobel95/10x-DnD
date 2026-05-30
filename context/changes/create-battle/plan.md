@@ -256,17 +256,17 @@ Add a skeleton `/battles/[id].astro` page as the post-creation landing destinati
 
 #### Automated
 
-- [x] 1.1 POST /api/battles with valid FormData creates a row and returns 302 to /battles/[id]
-- [x] 1.2 POST /api/battles with empty name returns 302 to /battles/new?error=...
-- [x] 1.3 GET /api/battles returns `{ battles: [...] }` for authenticated user
-- [x] 1.4 npx tsc --noEmit reports no TypeScript errors
-- [x] 1.5 npx eslint src/pages/api/battles.ts passes
+- [x] 1.1 POST /api/battles with valid FormData creates a row and returns 302 to /battles/[id] — f4dcabd
+- [x] 1.2 POST /api/battles with empty name returns 302 to /battles/new?error=... — f4dcabd
+- [x] 1.3 GET /api/battles returns `{ battles: [...] }` for authenticated user — f4dcabd
+- [x] 1.4 npx tsc --noEmit reports no TypeScript errors — f4dcabd
+- [x] 1.5 npx eslint src/pages/api/battles.ts passes — f4dcabd
 
 #### Manual
 
-- [x] 1.6 Valid form submission creates a battles row in Supabase with correct campaign_id
-- [x] 1.7 Empty name submission shows error message on form page
-- [x] 1.8 Non-integer party level shows error message on form page
+- [x] 1.6 Valid form submission creates a battles row in Supabase with correct campaign_id — f4dcabd
+- [x] 1.7 Empty name submission shows error message on form page — f4dcabd
+- [x] 1.8 Non-integer party level shows error message on form page — f4dcabd
 
 ### Phase 2: Dashboard Overhaul
 
