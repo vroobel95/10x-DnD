@@ -272,15 +272,15 @@ Add a skeleton `/battles/[id].astro` page as the post-creation landing destinati
 
 #### Automated
 
-- [x] 2.1 npx tsc --noEmit reports no TypeScript errors
-- [x] 2.2 npx eslint src/pages/dashboard.astro src/components/battles/BattleCard.astro passes
+- [x] 2.1 npx tsc --noEmit reports no TypeScript errors — 5d05448
+- [x] 2.2 npx eslint src/pages/dashboard.astro src/components/battles/BattleCard.astro passes — 5d05448
 
 #### Manual
 
-- [x] 2.3 Sign in → dashboard shows "My Battles" heading and "New Battle" button
-- [x] 2.4 After creating a battle, card appears with correct name, party level, and date
-- [x] 2.5 Empty state shows helpful prompt
-- [x] 2.6 Clicking a battle card navigates to /battles/[id]
+- [x] 2.3 Sign in → dashboard shows "My Battles" heading and "New Battle" button — 5d05448
+- [x] 2.4 After creating a battle, card appears with correct name, party level, and date — 5d05448
+- [x] 2.5 Empty state shows helpful prompt — 5d05448
+- [x] 2.6 Clicking a battle card navigates to /battles/[id] — 5d05448
 
 ### Phase 3: Create Battle Page & Form
 
