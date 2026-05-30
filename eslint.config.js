@@ -65,6 +65,9 @@ const astroConfig = tseslint.config({
     "astro/no-set-html-directive": "error",
     "astro/no-unused-css-selector": "warn",
     "astro/prefer-class-list-directive": "warn",
+    // astro-eslint-parser doesn't set parent node references for all frontmatter
+    // AST nodes, causing this rule to crash with a null assertion error.
+    "@typescript-eslint/no-misused-promises": "off",
   },
 });
 

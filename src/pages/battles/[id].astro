@@ -1,0 +1,62 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { createClient } from "@/lib/supabase";
+import type { Battle } from "@/types";
+
+const { id } = Astro.params;
+
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+const { data: battle } = (
+  supabase ? await supabase.from("battles").select("*").eq("id", id).single() : { data: null }
+) as { data: Battle | null; error: unknown };
+
+if (!battle) {
+  return Astro.redirect("/battles");
+}
+
+const b = battle;
+
+const createdDate = new Date(b.created_at).toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+---
+
+<Layout title={b.name}>
+  <div class="bg-cosmic min-h-screen p-4 sm:p-8">
+    <div class="mx-auto max-w-3xl">
+      <a href="/battles" class="mb-6 inline-flex items-center gap-2 text-sm text-blue-100/60 hover:text-white">
+        ← Back to battles
+      </a>
+
+      <h1 class="mb-6 bg-linear-to-r from-blue-200 to-purple-200 bg-clip-text text-3xl font-bold text-transparent">
+        {b.name}
+      </h1>
+
+      <div class="mb-8 flex flex-wrap gap-3">
+        {
+          b.party_level != null && (
+            <span class="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-sm text-blue-100/80">
+              Party Level {b.party_level}
+            </span>
+          )
+        }
+        {
+          b.location && (
+            <span class="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-sm text-blue-100/80">
+              {b.location}
+            </span>
+          )
+        }
+        <span class="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-sm text-blue-100/80">
+          Created {createdDate}
+        </span>
+      </div>
+
+      <div class="rounded-xl border border-white/10 bg-white/5 p-8 text-center backdrop-blur-xl">
+        <p class="text-sm text-blue-100/40">Enemy generation — coming in S-02</p>
+      </div>
+    </div>
+  </div>
+</Layout>

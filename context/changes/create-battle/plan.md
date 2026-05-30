@@ -286,14 +286,14 @@ Add a skeleton `/battles/[id].astro` page as the post-creation landing destinati
 
 #### Automated
 
-- [x] 3.1 npx tsc --noEmit reports no TypeScript errors
-- [x] 3.2 npx eslint src/pages/battles/new.astro src/components/battles/CreateBattleForm.tsx passes
+- [x] 3.1 npx tsc --noEmit reports no TypeScript errors — e7c02d6
+- [x] 3.2 npx eslint src/pages/battles/new.astro src/components/battles/CreateBattleForm.tsx passes — e7c02d6
 
 #### Manual
 
-- [x] 3.3 /battles/new renders form with all three fields
-- [x] 3.4 Submit without name → error message visible above form
-- [x] 3.5 Submit with valid data → redirect to /battles/[id]
+- [x] 3.3 /battles/new renders form with all three fields — e7c02d6
+- [x] 3.4 Submit without name → error message visible above form — e7c02d6
+- [x] 3.5 Submit with valid data → redirect to /battles/[id] — e7c02d6
 
 ### Phase 4: Battle Detail Skeleton & Route Guard
 
