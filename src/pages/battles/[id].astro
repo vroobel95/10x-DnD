@@ -19,12 +19,12 @@ if (!campaign) {
   return Astro.redirect("/battles");
 }
 
-const { data: battle } = await supabase
+const { data: battle } = (await supabase
   .from("battles")
   .select("*")
   .eq("id", id)
   .eq("campaign_id", campaign.id)
-  .single() as { data: Battle | null; error: unknown };
+  .single()) as { data: Battle | null; error: unknown };
 
 if (!battle) {
   return Astro.redirect("/battles");
@@ -80,12 +80,7 @@ const createdDate = new Date(b.created_at).toLocaleDateString("en-US", {
         </span>
       </div>
 
-      <EnemiesSection
-        battleId={b.id}
-        initialPending={initialPending}
-        initialConfirmed={initialConfirmed}
-        client:load
-      />
+      <EnemiesSection battleId={b.id} initialPending={initialPending} initialConfirmed={initialConfirmed} client:load />
     </div>
   </div>
 </Layout>

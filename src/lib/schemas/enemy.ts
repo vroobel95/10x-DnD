@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 const AbilitySchema = z.object({
   name: z.string().min(1),

@@ -16,7 +16,7 @@ function modifier(score: number): string {
 function StatBox({ label, value }: { label: string; value: number }) {
   return (
     <div className="flex flex-col items-center rounded-lg border border-white/10 bg-white/5 px-2 py-2">
-      <span className="text-xs font-semibold uppercase tracking-wide text-blue-100/50">{label}</span>
+      <span className="text-xs font-semibold tracking-wide text-blue-100/50 uppercase">{label}</span>
       <span className="text-base font-bold text-white">{value}</span>
       <span className="text-xs text-blue-100/60">{modifier(value)}</span>
     </div>
@@ -47,14 +47,20 @@ export function EnemyCard({ enemy, onConfirm, onDeny, isLoading }: Props) {
       </div>
 
       <div className="mb-4 flex flex-wrap gap-3 text-sm text-blue-100/70">
-        <span>HP <strong className="text-white">{stats.hp}</strong></span>
-        <span>AC <strong className="text-white">{stats.ac}</strong></span>
-        <span>Speed <strong className="text-white">{stats.speed}</strong></span>
+        <span>
+          HP <strong className="text-white">{stats.hp}</strong>
+        </span>
+        <span>
+          AC <strong className="text-white">{stats.ac}</strong>
+        </span>
+        <span>
+          Speed <strong className="text-white">{stats.speed}</strong>
+        </span>
       </div>
 
       <div className="mb-4 grid grid-cols-6 gap-1">
         {(["str", "dex", "con", "int", "wis", "cha"] as const).map((attr) => (
-          <StatBox key={attr} label={attr.toUpperCase()} value={stats![attr]} />
+          <StatBox key={attr} label={attr.toUpperCase()} value={stats[attr]} />
         ))}
       </div>
 

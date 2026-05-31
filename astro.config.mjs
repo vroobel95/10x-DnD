@@ -1,4 +1,5 @@
 // @ts-check
+/* global process */
 import { defineConfig, envField } from "astro/config";
 
 import react from "@astrojs/react";

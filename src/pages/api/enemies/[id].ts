@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { createClient } from "@/lib/supabase";
+import type { Enemy } from "@/types";
 
 export const PATCH: APIRoute = async (context) => {
   const supabase = createClient(context.request.headers, context.cookies);
@@ -12,18 +13,18 @@ export const PATCH: APIRoute = async (context) => {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { data: enemy, error } = await supabase
+  const result = await supabase
     .from("enemies")
     .update({ status: "confirmed", updated_at: new Date().toISOString() })
     .eq("id", context.params.id)
     .select()
     .single();
 
-  if (error || !enemy) {
+  if (result.error || !result.data) {
     return Response.json({ error: "Enemy not found" }, { status: 404 });
   }
 
-  return Response.json({ enemy });
+  return Response.json({ enemy: result.data as Enemy });
 };
 
 export const DELETE: APIRoute = async (context) => {
@@ -37,12 +38,9 @@ export const DELETE: APIRoute = async (context) => {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { error } = await supabase
-    .from("enemies")
-    .delete()
-    .eq("id", context.params.id);
+  const deleteResult = await supabase.from("enemies").delete().eq("id", context.params.id);
 
-  if (error) {
+  if (deleteResult.error) {
     return Response.json({ error: "Could not delete enemy. Please try again." }, { status: 500 });
   }
 

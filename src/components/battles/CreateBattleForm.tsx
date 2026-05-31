@@ -27,7 +27,7 @@ export default function CreateBattleForm({ serverError }: Props) {
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: undefined }));
   }
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     if (!validate()) {
       e.preventDefault();
     }

@@ -18,8 +18,8 @@ export const POST: APIRoute = async (context) => {
 
   let prompt: string;
   try {
-    const body = await context.request.json();
-    prompt = (body?.prompt as string | undefined)?.trim() ?? "";
+    const body = (await context.request.json()) as { prompt?: string };
+    prompt = body.prompt?.trim() ?? "";
   } catch {
     return Response.json({ error: "Invalid request body" }, { status: 400 });
   }
@@ -37,18 +37,20 @@ export const POST: APIRoute = async (context) => {
     return Response.json({ error: "No campaign found" }, { status: 403 });
   }
 
-  const { data: battle } = await supabase
+  const battleResult = await supabase
     .from("battles")
     .select("id, party_level, location")
     .eq("id", battleId)
     .eq("campaign_id", campaign.id)
     .single();
 
+  const battle = battleResult.data;
+
   if (!battle) {
     return Response.json({ error: "Battle not found" }, { status: 404 });
   }
 
-  let enemyGroup;
+  let enemyGroup: Awaited<ReturnType<typeof generateEnemies>>;
   try {
     enemyGroup = await generateEnemies(battle, prompt);
   } catch {
@@ -56,20 +58,18 @@ export const POST: APIRoute = async (context) => {
   }
 
   const rows = enemyGroup.enemies.map((e) => ({
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     battle_id: battle.id,
     name: e.name,
     status: "pending" as const,
     stats: e,
   }));
 
-  const { data: enemies, error: insertError } = await supabase
-    .from("enemies")
-    .insert(rows)
-    .select();
+  const insertResult = await supabase.from("enemies").insert(rows).select();
 
-  if (insertError) {
+  if (insertResult.error) {
     return Response.json({ error: "Could not save enemies. Please try again." }, { status: 500 });
   }
 
-  return Response.json({ enemies });
+  return Response.json({ enemies: insertResult.data as unknown[] });
 };
