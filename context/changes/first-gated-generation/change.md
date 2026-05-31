@@ -1,9 +1,9 @@
 ---
 change_id: first-gated-generation
 title: First gated generation
-status: planned
+status: implementing
 created: 2026-05-30
-updated: 2026-05-30
+updated: 2026-05-31
 archived_at: null
 ---
 

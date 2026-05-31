@@ -1,155 +1,86 @@
-# Anthropic TypeScript SDK — Reference Docs
+# Vercel AI SDK v6 — Reference Docs (Anthropic Provider)
 
-> Fetched via context7 on 2026-05-30. Source: `/anthropics/anthropic-sdk-typescript`
-> Scoped to what's relevant for the `first-gated-generation` change (stat block generation in Cloudflare Workers).
+> Updated 2026-05-31 for `first-gated-generation`. Uses `@ai-sdk/anthropic` + `generateText` + `Output.object()`.
+> The previous version of this file documented `@anthropic-ai/sdk` (native SDK) — that pattern is NOT used here.
 
 ---
 
 ## Install
 
 ```bash
-npm install @anthropic-ai/sdk zod
+npm install ai @ai-sdk/anthropic zod
 ```
 
-For Cloudflare Workers, add `nodejs_compat` to your `wrangler.jsonc` compatibility flags.
+For Cloudflare Workers, ensure `nodejs_compat` is in your `wrangler.jsonc` compatibility flags (already present).
 
 ---
 
 ## Client Instantiation
 
 ```ts
-import Anthropic from '@anthropic-ai/sdk';
+import { createAnthropic } from '@ai-sdk/anthropic';
+import { ANTHROPIC_API_KEY } from 'astro:env/server'; // NOT process.env — Workers don't surface it
 
-const client = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY, // set via: wrangler secret put ANTHROPIC_API_KEY
-});
+const anthropic = createAnthropic({ apiKey: ANTHROPIC_API_KEY ?? '' });
 ```
 
 ---
 
-## Basic Message
+## Structured Output with Zod (`Output.object`)
 
 ```ts
-const message = await client.messages.create({
-  model: 'claude-sonnet-4-6',
-  max_tokens: 1024,
-  messages: [{ role: 'user', content: 'Hello, Claude!' }],
-});
-
-console.log(message.content);
-```
-
----
-
-## Structured Output — with Zod (recommended)
-
-```ts
-import { zodOutputFormat } from '@anthropic-ai/sdk/helpers/zod';
-import Anthropic from '@anthropic-ai/sdk';
+import { generateText, Output } from 'ai';
+import { createAnthropic } from '@ai-sdk/anthropic';
 import { z } from 'zod';
 
-const client = new Anthropic();
+const anthropic = createAnthropic({ apiKey: ANTHROPIC_API_KEY ?? '' });
 
-const NumbersResponse = z.object({
-  primes: z.array(z.number()),
+const MySchema = z.object({
+  items: z.array(z.string()),
 });
 
-const message = await client.messages.parse({
-  model: 'claude-sonnet-4-6',
-  max_tokens: 1024,
-  messages: [{ role: 'user', content: 'What are the first 3 prime numbers?' }],
-  output_config: {
-    format: zodOutputFormat(NumbersResponse),
-  },
+const { output } = await generateText({
+  model: anthropic('claude-sonnet-4-6'),
+  output: Output.object({ schema: MySchema }),
+  system: 'You are a helpful assistant.',
+  prompt: 'List 3 items.',
 });
 
-console.log(message.parsed_output?.primes); // [2, 3, 5]
+console.log(output); // { items: ['...', '...', '...'] }
 ```
 
-## Structured Output — with raw JSON Schema
-
-```ts
-import { jsonSchemaOutputFormat } from '@anthropic-ai/sdk/helpers/json-schema';
-import Anthropic from '@anthropic-ai/sdk';
-
-const client = new Anthropic();
-
-const NumbersResponse = {
-  type: 'object',
-  properties: {
-    primes: { type: 'array', items: { type: 'number' } },
-  },
-  required: ['primes'],
-} as const;
-
-const message = await client.messages.parse({
-  model: 'claude-sonnet-4-6',
-  max_tokens: 1024,
-  messages: [{ role: 'user', content: 'What are the first 3 prime numbers?' }],
-  output_config: {
-    format: jsonSchemaOutputFormat(NumbersResponse),
-  },
-});
-
-console.log(message.parsed_output?.primes);
-```
+`output` is typed as `z.infer<typeof MySchema>` — no manual cast needed.
 
 ---
 
-## messages.create — Full Parameter Reference
+## Non-Streaming Constraint
+
+> Streaming (`streamText`) has a known deadlock bug in workerd (Cloudflare Workers runtime).
+> Always use `generateText` (non-streaming) for this project.
+> The S-02 flow is: generate → wait → show cards. No streaming needed.
+
+---
+
+## `generateText` — Key Parameters
 
 ```ts
-interface MessageCreateParamsBase {
-  max_tokens: number;           // required
-  messages: Array<MessageParam>; // required
-  model: Model;                 // required
-  cache_control?: CacheControlEphemeral | null;
-  container?: string | null;
-  inference_geo?: string | null;
-  metadata?: Metadata;
-  output_config?: OutputConfig; // used for structured output
-  service_tier?: 'auto' | 'standard_only';
-  stop_sequences?: Array<string>;
-  stream?: boolean;
-  system?: string | Array<TextBlockParam>;
+interface GenerateTextOptions {
+  model: LanguageModel;       // anthropic('claude-sonnet-4-6')
+  output?: OutputStrategy;    // Output.object({ schema }) for structured output
+  system?: string;            // system prompt
+  prompt?: string;            // user prompt
+  messages?: CoreMessage[];   // alternative to prompt for multi-turn
   temperature?: number;
-  thinking?: ThinkingConfigParam;
-  tool_choice?: ToolChoice;
-  tools?: Array<ToolUnion>;
-  top_k?: number;
-  top_p?: number;
+  maxTokens?: number;
 }
 ```
 
 ---
 
-## Tool Use
-
-```ts
-const message = await client.messages.create({
-  model: 'claude-sonnet-4-6',
-  max_tokens: 1024,
-  messages: [userMessage],
-  tools,
-});
-```
-
----
-
-## Streaming (NOT used in this project)
-
-> Per `ai-provider-research.md`: the `streamText` / streaming path has a known deadlock bug in workerd.
-> The S-02 flow is generate → wait → show cards, so streaming is intentionally skipped.
-> Use `messages.create` (non-streaming) or `messages.parse` for structured output.
-
-Streaming API exists via `toolRunner` and `BetaMessageStream` but is not applicable here.
-
----
-
 ## Key Notes for Cloudflare Workers
 
-- Requires `nodejs_compat` compatibility flag in `wrangler.jsonc`
-- Store API key via `wrangler secret put ANTHROPIC_API_KEY`
-- Use `messages.parse` + `zodOutputFormat` for Zod-validated stat block output
-- Do **not** use `stream: true` — deadlock bug in workerd (vercel/ai #10725)
-- Model recommendations: `claude-sonnet-4-6` (quality), `claude-haiku-4-5-20251001` (speed/cost)
+- Use `astro:env/server` for secrets — `process.env` does NOT work in Workers
+- Store the API key via `wrangler secret put ANTHROPIC_API_KEY`
+- Use `generateText` (non-streaming) — `streamText` has a deadlock bug in workerd
+- Model: `claude-sonnet-4-6` (quality over cost for stat block generation)
+- `Output.object({ schema })` validates the response against your Zod schema; throws on mismatch

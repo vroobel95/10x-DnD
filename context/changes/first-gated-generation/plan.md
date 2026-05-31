@@ -405,15 +405,15 @@ No schema migrations are required for S-02. All tables (`campaigns`, `battles`, 
 
 #### Automated
 
-- [ ] 1.1 `npm install` completes without errors
-- [ ] 1.2 `npm run typecheck` passes — EnemySchema, EnemyGroup, generateEnemies correctly typed
-- [ ] 1.3 `anthropic-docs.md` documents Vercel AI SDK pattern (no references to `@anthropic-ai/sdk` or `messages.parse`)
+- [x] 1.1 `npm install` completes without errors
+- [x] 1.2 `npm run typecheck` passes — EnemySchema, EnemyGroup, generateEnemies correctly typed
+- [x] 1.3 `anthropic-docs.md` documents Vercel AI SDK pattern (no references to `@anthropic-ai/sdk` or `messages.parse`)
 
 #### Manual
 
-- [ ] 1.4 `.dev.vars` contains `ANTHROPIC_API_KEY` set to a valid key
-- [ ] 1.5 `wrangler secret put ANTHROPIC_API_KEY` succeeds in a shell
-- [ ] 1.6 Calling `generateEnemies` in isolation returns a valid `EnemyGroup` with at least one enemy
+- [x] 1.4 `.dev.vars` contains `ANTHROPIC_API_KEY` set to a valid key
+- [x] 1.5 `wrangler secret put ANTHROPIC_API_KEY` succeeds in a shell
+- [x] 1.6 Calling `generateEnemies` in isolation returns a valid `EnemyGroup` with at least one enemy
 
 ### Phase 2: Generate API Route
 
