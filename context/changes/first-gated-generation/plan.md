@@ -450,16 +450,16 @@ No schema migrations are required for S-02. All tables (`campaigns`, `battles`, 
 
 #### Automated
 
-- [x] 4.1 `npm run typecheck` passes on all new component files and updated `[id].astro`
-- [x] 4.2 `npm run build` succeeds (catches import errors)
+- [x] 4.1 `npm run typecheck` passes on all new component files and updated `[id].astro` — 370a3be
+- [x] 4.2 `npm run build` succeeds (catches import errors) — 370a3be
 
 #### Manual
 
-- [x] 4.3 Battle page shows generate textarea; S-02 placeholder is gone
-- [x] 4.4 Typing a prompt and generating shows enemy cards with full stat blocks
-- [x] 4.5 Confirm moves card to Confirmed section; Deny removes card from page and DB
-- [x] 4.6 Pending enemies reappear after page reload; confirmed enemies are in the Confirmed section
-- [x] 4.7 Second generation run adds new pending cards without disturbing confirmed ones
-- [x] 4.8 AI error shows sanitized message and re-enables form
-- [x] 4.9 Stat blocks are level-appropriate for the battle's party_level and location
-- [x] 4.10 Full end-to-end flow (create battle → generate → confirm → navigate away → return → confirmed enemies persist)
+- [x] 4.3 Battle page shows generate textarea; S-02 placeholder is gone — 370a3be
+- [x] 4.4 Typing a prompt and generating shows enemy cards with full stat blocks — 370a3be
+- [x] 4.5 Confirm moves card to Confirmed section; Deny removes card from page and DB — 370a3be
+- [x] 4.6 Pending enemies reappear after page reload; confirmed enemies are in the Confirmed section — 370a3be
+- [x] 4.7 Second generation run adds new pending cards without disturbing confirmed ones — 370a3be
+- [x] 4.8 AI error shows sanitized message and re-enables form — 370a3be
+- [x] 4.9 Stat blocks are level-appropriate for the battle's party_level and location — 370a3be
+- [x] 4.10 Full end-to-end flow (create battle → generate → confirm → navigate away → return → confirmed enemies persist) — 370a3be
