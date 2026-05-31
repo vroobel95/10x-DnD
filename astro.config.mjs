@@ -12,6 +12,15 @@ export default defineConfig({
   integrations: [react(), sitemap()],
   vite: {
     plugins: [tailwindcss()],
+    ssr: {
+      optimizeDeps: {
+        esbuildOptions: {
+          define: {
+            "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV ?? "development"),
+          },
+        },
+      },
+    },
   },
   adapter: cloudflare(),
   env: {

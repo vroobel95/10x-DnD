@@ -405,31 +405,31 @@ No schema migrations are required for S-02. All tables (`campaigns`, `battles`, 
 
 #### Automated
 
-- [x] 1.1 `npm install` completes without errors
-- [x] 1.2 `npm run typecheck` passes — EnemySchema, EnemyGroup, generateEnemies correctly typed
-- [x] 1.3 `anthropic-docs.md` documents Vercel AI SDK pattern (no references to `@anthropic-ai/sdk` or `messages.parse`)
+- [x] 1.1 `npm install` completes without errors — 92163ed
+- [x] 1.2 `npm run typecheck` passes — EnemySchema, EnemyGroup, generateEnemies correctly typed — 92163ed
+- [x] 1.3 `anthropic-docs.md` documents Vercel AI SDK pattern (no references to `@anthropic-ai/sdk` or `messages.parse`) — 92163ed
 
 #### Manual
 
-- [x] 1.4 `.dev.vars` contains `ANTHROPIC_API_KEY` set to a valid key
-- [x] 1.5 `wrangler secret put ANTHROPIC_API_KEY` succeeds in a shell
-- [x] 1.6 Calling `generateEnemies` in isolation returns a valid `EnemyGroup` with at least one enemy
+- [x] 1.4 `.dev.vars` contains `ANTHROPIC_API_KEY` set to a valid key — 92163ed
+- [x] 1.5 `wrangler secret put ANTHROPIC_API_KEY` succeeds in a shell — 92163ed
+- [x] 1.6 Calling `generateEnemies` in isolation returns a valid `EnemyGroup` with at least one enemy — 92163ed
 
 ### Phase 2: Generate API Route
 
 #### Automated
 
-- [ ] 2.1 `npm run typecheck` passes on `src/pages/api/battles/[id]/generate.ts`
-- [ ] 2.2 Route file exists at `src/pages/api/battles/[id]/generate.ts`
+- [x] 2.1 `npm run typecheck` passes on `src/pages/api/battles/[id]/generate.ts`
+- [x] 2.2 Route file exists at `src/pages/api/battles/[id]/generate.ts`
 
 #### Manual
 
-- [ ] 2.3 POST with valid session + prompt returns 200 with enemy array, each with DB `id` and `status: 'pending'`
-- [ ] 2.4 Endpoint returns 401 for unauthenticated requests
-- [ ] 2.5 Endpoint returns 404 for battleId belonging to a different user
-- [ ] 2.6 Blank/missing prompt returns 400
-- [ ] 2.7 AI failure returns 500 with sanitized human-readable error (not raw Anthropic error)
-- [ ] 2.8 Generated enemies appear in Supabase with `status = 'pending'`
+- [x] 2.3 POST with valid session + prompt returns 200 with enemy array, each with DB `id` and `status: 'pending'`
+- [x] 2.4 Endpoint returns 401 for unauthenticated requests
+- [x] 2.5 Endpoint returns 404 for battleId belonging to a different user
+- [x] 2.6 Blank/missing prompt returns 400
+- [x] 2.7 AI failure returns 500 with sanitized human-readable error (not raw Anthropic error)
+- [x] 2.8 Generated enemies appear in Supabase with `status = 'pending'`
 
 ### Phase 3: Enemy Actions API Route
 
