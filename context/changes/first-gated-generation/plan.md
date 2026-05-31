@@ -419,32 +419,32 @@ No schema migrations are required for S-02. All tables (`campaigns`, `battles`, 
 
 #### Automated
 
-- [x] 2.1 `npm run typecheck` passes on `src/pages/api/battles/[id]/generate.ts`
-- [x] 2.2 Route file exists at `src/pages/api/battles/[id]/generate.ts`
+- [x] 2.1 `npm run typecheck` passes on `src/pages/api/battles/[id]/generate.ts` — 3a85bc7
+- [x] 2.2 Route file exists at `src/pages/api/battles/[id]/generate.ts` — 3a85bc7
 
 #### Manual
 
-- [x] 2.3 POST with valid session + prompt returns 200 with enemy array, each with DB `id` and `status: 'pending'`
-- [x] 2.4 Endpoint returns 401 for unauthenticated requests
-- [x] 2.5 Endpoint returns 404 for battleId belonging to a different user
-- [x] 2.6 Blank/missing prompt returns 400
-- [x] 2.7 AI failure returns 500 with sanitized human-readable error (not raw Anthropic error)
-- [x] 2.8 Generated enemies appear in Supabase with `status = 'pending'`
+- [x] 2.3 POST with valid session + prompt returns 200 with enemy array, each with DB `id` and `status: 'pending'` — 3a85bc7
+- [x] 2.4 Endpoint returns 401 for unauthenticated requests — 3a85bc7
+- [x] 2.5 Endpoint returns 404 for battleId belonging to a different user — 3a85bc7
+- [x] 2.6 Blank/missing prompt returns 400 — 3a85bc7
+- [x] 2.7 AI failure returns 500 with sanitized human-readable error (not raw Anthropic error) — 3a85bc7
+- [x] 2.8 Generated enemies appear in Supabase with `status = 'pending'` — 3a85bc7
 
 ### Phase 3: Enemy Actions API Route
 
 #### Automated
 
-- [ ] 3.1 `npm run typecheck` passes on `src/pages/api/enemies/[id].ts`
-- [ ] 3.2 Route file exists at `src/pages/api/enemies/[id].ts`
+- [x] 3.1 `npm run typecheck` passes on `src/pages/api/enemies/[id].ts`
+- [x] 3.2 Route file exists at `src/pages/api/enemies/[id].ts`
 
 #### Manual
 
-- [ ] 3.3 PATCH updates enemy to `status = 'confirmed'` and returns updated record
-- [ ] 3.4 DELETE removes enemy from Supabase
-- [ ] 3.5 Both endpoints return 401 for unauthenticated requests
-- [ ] 3.6 PATCH on another user's enemy returns 404
-- [ ] 3.7 DELETE on another user's enemy returns `{ success: true }` (idempotent)
+- [x] 3.3 PATCH updates enemy to `status = 'confirmed'` and returns updated record
+- [x] 3.4 DELETE removes enemy from Supabase
+- [x] 3.5 Both endpoints return 401 for unauthenticated requests
+- [x] 3.6 PATCH on another user's enemy returns 404
+- [x] 3.7 DELETE on another user's enemy returns `{ success: true }` (idempotent)
 
 ### Phase 4: Battle Detail UI
 
