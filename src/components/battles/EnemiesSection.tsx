@@ -16,6 +16,7 @@ export default function EnemiesSection({ battleId, initialPending, initialConfir
   const [isGenerating, setIsGenerating] = useState(false);
   const [generateError, setGenerateError] = useState<string | null>(null);
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   async function handleGenerate(e: React.FormEvent) {
     e.preventDefault();
@@ -44,13 +45,18 @@ export default function EnemiesSection({ battleId, initialPending, initialConfir
 
   async function handleConfirm(enemy: Enemy) {
     setLoadingId(enemy.id);
+    setActionError(null);
     try {
       const res = await fetch(`/api/enemies/${enemy.id}`, { method: "PATCH" });
       if (res.ok) {
         const data = await res.json();
         setPending((prev) => prev.filter((e) => e.id !== enemy.id));
         setConfirmed((prev) => [...prev, data.enemy as Enemy]);
+      } else {
+        setActionError("Could not confirm enemy. Please try again.");
       }
+    } catch {
+      setActionError("Could not confirm enemy. Please try again.");
     } finally {
       setLoadingId(null);
     }
@@ -58,11 +64,16 @@ export default function EnemiesSection({ battleId, initialPending, initialConfir
 
   async function handleDeny(enemy: Enemy) {
     setLoadingId(enemy.id);
+    setActionError(null);
     try {
       const res = await fetch(`/api/enemies/${enemy.id}`, { method: "DELETE" });
       if (res.ok) {
         setPending((prev) => prev.filter((e) => e.id !== enemy.id));
+      } else {
+        setActionError("Could not remove enemy. Please try again.");
       }
+    } catch {
+      setActionError("Could not remove enemy. Please try again.");
     } finally {
       setLoadingId(null);
     }
@@ -113,6 +124,11 @@ export default function EnemiesSection({ battleId, initialPending, initialConfir
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-blue-100/50">
             Pending Review
           </h2>
+          {actionError && (
+            <p className="mb-3 flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-900/30 px-3 py-2 text-sm text-red-300">
+              {actionError}
+            </p>
+          )}
           <div className="space-y-4">
             {pending.map((enemy) => (
               <EnemyCard

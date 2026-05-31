@@ -16,7 +16,10 @@ export async function generateEnemies(
   battle: Pick<Battle, 'party_level' | 'location'>,
   prompt: string,
 ): Promise<EnemyGroup> {
-  const anthropic = createAnthropic({ apiKey: ANTHROPIC_API_KEY ?? '' });
+  if (!ANTHROPIC_API_KEY) {
+    throw new Error('ANTHROPIC_API_KEY is not configured');
+  }
+  const anthropic = createAnthropic({ apiKey: ANTHROPIC_API_KEY });
   const contextParts = [
     battle.party_level != null ? `Party level: ${battle.party_level}` : null,
     battle.location ? `Location: ${battle.location}` : null,

@@ -1,15 +1,30 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import { createClient } from "@/lib/supabase";
+import { getUserCampaign } from "@/lib/campaigns";
 import EnemiesSection from "@/components/battles/EnemiesSection";
 import type { Battle, Enemy } from "@/types";
 
 const { id } = Astro.params;
 
 const supabase = createClient(Astro.request.headers, Astro.cookies);
-const { data: battle } = (
-  supabase ? await supabase.from("battles").select("*").eq("id", id).single() : { data: null }
-) as { data: Battle | null; error: unknown };
+const user = Astro.locals.user;
+
+if (!supabase || !user) {
+  return Astro.redirect("/battles");
+}
+
+const campaign = await getUserCampaign(supabase, user.id);
+if (!campaign) {
+  return Astro.redirect("/battles");
+}
+
+const { data: battle } = await supabase
+  .from("battles")
+  .select("*")
+  .eq("id", id)
+  .eq("campaign_id", campaign.id)
+  .single() as { data: Battle | null; error: unknown };
 
 if (!battle) {
   return Astro.redirect("/battles");
@@ -17,13 +32,11 @@ if (!battle) {
 
 const b = battle;
 
-const { data: allEnemies } = supabase
-  ? await supabase
-      .from("enemies")
-      .select("*")
-      .eq("battle_id", b.id)
-      .order("created_at", { ascending: true })
-  : { data: null };
+const { data: allEnemies } = await supabase
+  .from("enemies")
+  .select("*")
+  .eq("battle_id", b.id)
+  .order("created_at", { ascending: true });
 
 const enemies = (allEnemies ?? []) as Enemy[];
 const initialPending = enemies.filter((e) => e.status === "pending");
@@ -71,7 +84,7 @@ const createdDate = new Date(b.created_at).toLocaleDateString("en-US", {
         battleId={b.id}
         initialPending={initialPending}
         initialConfirmed={initialConfirmed}
-        client:only="react"
+        client:load
       />
     </div>
   </div>

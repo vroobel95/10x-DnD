@@ -28,6 +28,10 @@ export const POST: APIRoute = async (context) => {
     return Response.json({ error: "Prompt is required" }, { status: 400 });
   }
 
+  if (prompt.length > 2000) {
+    return Response.json({ error: "Prompt is too long (max 2000 characters)" }, { status: 400 });
+  }
+
   const campaign = await getUserCampaign(supabase, user.id);
   if (!campaign) {
     return Response.json({ error: "No campaign found" }, { status: 403 });

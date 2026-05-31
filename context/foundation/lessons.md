@@ -15,3 +15,17 @@
 - **Problem**: The campaign lookup query (.from("campaigns").select("id").eq("user_id", user.id).limit(1).single()) is duplicated in 3 locations. If lookup semantics change (e.g., multi-campaign support, different error handling), all 3 must be updated in lockstep.
 - **Rule**: When the same Supabase query appears in 2+ locations, extract a shared helper
 - **Applies to**: All data-access patterns across API routes and Astro pages
+
+## Never silently swallow fetch errors in UI action handlers
+
+- **Context**: src/components/battles/EnemiesSection.tsx:45-68
+- **Problem**: When the PATCH (confirm) or DELETE (deny) fetch returns a non-ok response, the error is silently swallowed — the loading state clears and the UI reverts with no feedback to the user. The generate handler in the same component correctly checks `!res.ok` and displays an error. Inconsistent error handling means users can't tell whether an action failed or just didn't take effect.
+- **Rule**: Every fetch-based action handler must check the response status and surface failures to the user
+- **Applies to**: All React components with fetch-based mutation handlers
+
+## Fail fast on missing required secrets instead of passing empty defaults
+
+- **Context**: src/lib/ai.ts:19
+- **Problem**: When ANTHROPIC_API_KEY is undefined, the code passes an empty string to createAnthropic({ apiKey: '' }). This causes an opaque Anthropic auth error at request time instead of a clear message at function entry. The env field is marked optional: true in astro.config.mjs, so undefined is a valid runtime state.
+- **Rule**: When a function requires a secret/env var, guard at the top with a clear error instead of falling back to empty strings
+- **Applies to**: All functions that consume secrets or env vars
