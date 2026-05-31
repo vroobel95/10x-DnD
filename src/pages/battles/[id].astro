@@ -1,7 +1,8 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import { createClient } from "@/lib/supabase";
-import type { Battle } from "@/types";
+import EnemiesSection from "@/components/battles/EnemiesSection";
+import type { Battle, Enemy } from "@/types";
 
 const { id } = Astro.params;
 
@@ -15,6 +16,18 @@ if (!battle) {
 }
 
 const b = battle;
+
+const { data: allEnemies } = supabase
+  ? await supabase
+      .from("enemies")
+      .select("*")
+      .eq("battle_id", b.id)
+      .order("created_at", { ascending: true })
+  : { data: null };
+
+const enemies = (allEnemies ?? []) as Enemy[];
+const initialPending = enemies.filter((e) => e.status === "pending");
+const initialConfirmed = enemies.filter((e) => e.status === "confirmed");
 
 const createdDate = new Date(b.created_at).toLocaleDateString("en-US", {
   year: "numeric",
@@ -54,9 +67,12 @@ const createdDate = new Date(b.created_at).toLocaleDateString("en-US", {
         </span>
       </div>
 
-      <div class="rounded-xl border border-white/10 bg-white/5 p-8 text-center backdrop-blur-xl">
-        <p class="text-sm text-blue-100/40">Enemy generation — coming in S-02</p>
-      </div>
+      <EnemiesSection
+        battleId={b.id}
+        initialPending={initialPending}
+        initialConfirmed={initialConfirmed}
+        client:only="react"
+      />
     </div>
   </div>
 </Layout>

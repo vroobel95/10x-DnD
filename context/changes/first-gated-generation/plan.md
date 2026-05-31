@@ -435,31 +435,31 @@ No schema migrations are required for S-02. All tables (`campaigns`, `battles`, 
 
 #### Automated
 
-- [x] 3.1 `npm run typecheck` passes on `src/pages/api/enemies/[id].ts`
-- [x] 3.2 Route file exists at `src/pages/api/enemies/[id].ts`
+- [x] 3.1 `npm run typecheck` passes on `src/pages/api/enemies/[id].ts` — 29564e1
+- [x] 3.2 Route file exists at `src/pages/api/enemies/[id].ts` — 29564e1
 
 #### Manual
 
-- [x] 3.3 PATCH updates enemy to `status = 'confirmed'` and returns updated record
-- [x] 3.4 DELETE removes enemy from Supabase
-- [x] 3.5 Both endpoints return 401 for unauthenticated requests
-- [x] 3.6 PATCH on another user's enemy returns 404
-- [x] 3.7 DELETE on another user's enemy returns `{ success: true }` (idempotent)
+- [x] 3.3 PATCH updates enemy to `status = 'confirmed'` and returns updated record — 29564e1
+- [x] 3.4 DELETE removes enemy from Supabase — 29564e1
+- [x] 3.5 Both endpoints return 401 for unauthenticated requests — 29564e1
+- [x] 3.6 PATCH on another user's enemy returns 404 — 29564e1
+- [x] 3.7 DELETE on another user's enemy returns `{ success: true }` (idempotent) — 29564e1
 
 ### Phase 4: Battle Detail UI
 
 #### Automated
 
-- [ ] 4.1 `npm run typecheck` passes on all new component files and updated `[id].astro`
-- [ ] 4.2 `npm run build` succeeds (catches import errors)
+- [x] 4.1 `npm run typecheck` passes on all new component files and updated `[id].astro`
+- [x] 4.2 `npm run build` succeeds (catches import errors)
 
 #### Manual
 
-- [ ] 4.3 Battle page shows generate textarea; S-02 placeholder is gone
-- [ ] 4.4 Typing a prompt and generating shows enemy cards with full stat blocks
-- [ ] 4.5 Confirm moves card to Confirmed section; Deny removes card from page and DB
-- [ ] 4.6 Pending enemies reappear after page reload; confirmed enemies are in the Confirmed section
-- [ ] 4.7 Second generation run adds new pending cards without disturbing confirmed ones
-- [ ] 4.8 AI error shows sanitized message and re-enables form
-- [ ] 4.9 Stat blocks are level-appropriate for the battle's party_level and location
-- [ ] 4.10 Full end-to-end flow (create battle → generate → confirm → navigate away → return → confirmed enemies persist)
+- [x] 4.3 Battle page shows generate textarea; S-02 placeholder is gone
+- [x] 4.4 Typing a prompt and generating shows enemy cards with full stat blocks
+- [x] 4.5 Confirm moves card to Confirmed section; Deny removes card from page and DB
+- [x] 4.6 Pending enemies reappear after page reload; confirmed enemies are in the Confirmed section
+- [x] 4.7 Second generation run adds new pending cards without disturbing confirmed ones
+- [x] 4.8 AI error shows sanitized message and re-enables form
+- [x] 4.9 Stat blocks are level-appropriate for the battle's party_level and location
+- [x] 4.10 Full end-to-end flow (create battle → generate → confirm → navigate away → return → confirmed enemies persist)
