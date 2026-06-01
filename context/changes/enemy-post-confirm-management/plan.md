@@ -262,8 +262,8 @@ Import `EnemyStats` from `@/lib/schemas/enemy` (already imported for `EnemySchem
 
 #### Automated
 
-- [ ] 1.1 TypeScript compilation passes: `npm run check`
-- [ ] 1.2 Linting passes: `npm run lint`
+- [x] 1.1 TypeScript compilation passes: `npm run check` — 83e2d09
+- [x] 1.2 Linting passes: `npm run lint` — 83e2d09
 
 #### Manual
 
@@ -276,8 +276,8 @@ Import `EnemyStats` from `@/lib/schemas/enemy` (already imported for `EnemySchem
 
 #### Automated
 
-- [ ] 2.1 TypeScript compilation passes: `npm run check`
-- [ ] 2.2 Linting passes: `npm run lint`
+- [x] 2.1 TypeScript compilation passes: `npm run check` — 8ad02a9
+- [x] 2.2 Linting passes: `npm run lint` — 8ad02a9
 
 #### Manual
 
@@ -289,8 +289,8 @@ Import `EnemyStats` from `@/lib/schemas/enemy` (already imported for `EnemySchem
 
 #### Automated
 
-- [ ] 3.1 TypeScript compilation passes: `npm run check`
-- [ ] 3.2 Linting passes: `npm run lint`
+- [x] 3.1 TypeScript compilation passes: `npm run check` — 9a2a941
+- [x] 3.2 Linting passes: `npm run lint` — 9a2a941
 
 #### Manual
 
