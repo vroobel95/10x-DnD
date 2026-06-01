@@ -5,10 +5,11 @@ import { SubmitButton } from "@/components/auth/SubmitButton";
 import { ServerError } from "@/components/auth/ServerError";
 
 interface Props {
+  campaignId: string;
   serverError?: string | null;
 }
 
-export default function CreateBattleForm({ serverError }: Props) {
+export default function CreateBattleForm({ campaignId, serverError }: Props) {
   const [name, setName] = useState("");
   const [partyLevel, setPartyLevel] = useState("");
   const [location, setLocation] = useState("");
@@ -35,6 +36,7 @@ export default function CreateBattleForm({ serverError }: Props) {
 
   return (
     <form method="POST" action="/api/battles" className="space-y-4" onSubmit={handleSubmit} noValidate>
+      <input type="hidden" name="campaign_id" value={campaignId} />
       <ServerError message={serverError} />
 
       <FormField
