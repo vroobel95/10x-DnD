@@ -33,10 +33,11 @@ D&D 5e Game Masters lose preparation time hunting stat blocks and manually adjus
 | S-01 | create-battle                 | create a battle within their auto-created campaign and see it listed in the app                 | F-01          | FR-002                         | proposed |
 | S-02 | first-gated-generation        | type a natural-language combat scenario request, see AI-generated enemy cards, and confirm them | S-01, F-01    | US-01, FR-003, FR-004, FR-005  | blocked  |
 | S-03 | enemy-post-confirm-management | edit a confirmed enemy's stats and remove a confirmed enemy from a battle                       | S-02          | FR-007, FR-009                 | proposed |
-| S-04 | password-reset                | reset a forgotten password via email link and regain access to the app                          | —             | FR-010                         | proposed |
-| S-05 | campaign-management           | see a list of campaigns after login, choose one, create a new one, or delete an existing one    | F-01, S-01    | FR-001                         | proposed |
-| S-06 | delete-battle                 | delete a battle and all its confirmed enemies from the campaign battle list                     | S-05          | FR-011                         | proposed |
-| S-07 | pdf-export                    | export a battle's confirmed enemy cards as a printable PDF                                      | S-02, S-03    | FR-012                         | proposed |
+| S-04 | password-reset                | reset a forgotten password via email link and regain access to the app                          | —             | FR-010          | proposed           |
+| S-05 | campaign-management           | see a list of campaigns, choose one, create or delete; battle delete folded in (FR-011)         | F-01, S-01    | FR-001, FR-011  | proposed           |
+| S-06 | delete-battle                 | *(folded into S-05)*                                                                            | S-05          | FR-011          | folded into S-05   |
+| S-07 | pdf-export                    | export a battle's confirmed enemy cards as a printable PDF                                      | S-02, S-03, S-05 | FR-012       | proposed           |
+| S-08 | ux-improvements               | see DnD 5enemy branding on the landing page and get visual feedback during page loads and form submits | — | —         | proposed           |
 
 ## Baseline
 
@@ -110,47 +111,59 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Change ID:** password-reset
 - **PRD refs:** FR-010
 - **Prerequisites:** — (Supabase Auth already in place)
-- **Parallel with:** any other slice
+- **Parallel with:** S-03, S-05 — touches only auth pages; zero file overlap with any other slice
 - **Blockers:** —
 - **Unknowns:** —
-- **Risk:** low — Supabase's built-in reset flow (`resetPasswordForEmail` + PKCE redirect) handles the token lifecycle; implementation is two pages and a link on the sign-in form.
+- **Risk:** low — Supabase's built-in reset flow (`resetPasswordForEmail` + PKCE redirect) handles the token lifecycle; implementation is two pages and a link on the sign-in form. The `/api/auth/callback` route required for email confirmation (added as a bug fix 2026-06-01) handles the PKCE code exchange for password reset too.
 - **Status:** proposed
 
 ### S-05: Create and manage campaigns
 
-- **Outcome:** after logging in, GM sees a list of their campaigns and can choose one, create a new campaign, or delete an existing campaign; selecting a campaign navigates to its battle list.
+- **Outcome:** after logging in, GM sees a list of their campaigns and can choose one, create a new campaign, or delete an existing campaign (FR-011 folded in); selecting a campaign navigates to its battle list.
 - **Change ID:** campaign-management
-- **PRD refs:** FR-001
+- **PRD refs:** FR-001, FR-011
 - **Prerequisites:** F-01, S-01
-- **Parallel with:** S-04
+- **Parallel with:** S-03, S-04 — no file overlap with either (S-03 is component-only; S-04 is auth-only)
 - **Blockers:** —
 - **Unknowns:** —
-- **Risk:** this slice changes the post-login navigation path established in S-01 (root `/` was the battle list; it now becomes `/campaigns`); the existing auto-created campaign is preserved and visible in the list so existing data is not orphaned. Sequenced after S-01 so there is a working baseline to route from.
+- **Risk:** this slice is the widest in the roadmap — it rewrites the navigation architecture (root `/` → `/campaigns`, battle list moves to `/campaigns/[id]`, back-links in `battles/[id].astro` and `battles/new.astro` update). The `getUserCampaign` helper in `lib/campaigns.ts` changes contract (single → selectable); all callers (`battles/index.astro`, `battles/[id].astro`, `battles/new.astro`, `api/battles.ts`) must be migrated in the same PR. FR-011 (delete battle) is folded in: it adds one button and one API endpoint (`DELETE /api/battles/[id]`) to the campaign page this slice creates — keeping S-06 separate would produce a PR that modifies a file that doesn't exist in main yet. S-07 (PDF) also writes `battles/[id].astro`; that slice must be based on this slice's version, not the original.
 - **Status:** proposed
 
-### S-06: Delete battle
+### S-06: Delete battle (folded into S-05)
 
-- **Outcome:** GM can delete a battle and all its confirmed enemies from the campaign's battle list, with a confirmation step to prevent accidental deletion.
+- **Outcome:** folded into S-05 — see S-05 notes. Keeping as a roadmap entry for traceability.
 - **Change ID:** delete-battle
 - **PRD refs:** FR-011
 - **Prerequisites:** S-05
 - **Parallel with:** —
 - **Blockers:** —
 - **Unknowns:** —
-- **Risk:** low — delete cascades to enemies via FK already defined in data-schema; the main UX concern is preventing accidental deletion, addressed by an inline confirmation. Sequenced after S-05 because the battle list lives in the campaign page introduced there.
-- **Status:** proposed
+- **Risk:** none as a standalone — the scope is one button and one `DELETE /api/battles/[id]` endpoint. Folded into S-05 because the target page (`campaigns/[id].astro`) is created by S-05 and does not exist in `main` beforehand.
+- **Status:** folded into S-05
 
 ### S-07: Export battle as PDF
 
 - **Outcome:** GM can export a battle's confirmed enemy cards as a printable PDF, one card per enemy, suitable for use at the table.
 - **Change ID:** pdf-export
 - **PRD refs:** FR-012
-- **Prerequisites:** S-02, S-03
-- **Parallel with:** —
+- **Prerequisites:** S-02, S-03, S-05
+- **Parallel with:** — (must be sequenced after both S-03 and S-05)
 - **Blockers:** —
 - **Unknowns:**
   - Which PDF generation approach is compatible with Cloudflare Workers (workerd runtime)? Puppeteer/Chromium is unavailable; candidates are `pdf-lib` (pure JS), an external HTML-to-PDF API, or Cloudflare Browser Rendering (beta/paid). Requires a spike to confirm bundle size and runtime compatibility. — Owner: developer. Block: soft (implementation can't start until approach is picked).
-- **Risk:** PDF generation on Cloudflare Workers is non-trivial — the workerd runtime prohibits most node-native and browser-headless approaches. The unknown above is the primary risk; a spike should resolve it before `/10x-plan pdf-export`. Sequenced last because it depends on the full enemy data model being stable (S-03).
+- **Risk:** two sources of risk. (1) PDF generation on Cloudflare Workers — the workerd runtime prohibits most node-native and browser-headless approaches; spike required before planning. (2) `battles/[id].astro` write conflict with S-05 — both slices modify this file; S-07 must be based on S-05's version. Adding S-05 as an explicit prerequisite closes this risk: by the time S-07 starts, `battles/[id].astro` is settled. Sequenced last because the enemy data model must be stable (S-03) and the navigation architecture must be in place (S-05).
+- **Status:** proposed
+
+### S-08: UX improvements
+
+- **Outcome:** the landing page shows DnD 5enemy's product identity; users see visual loading feedback when navigating to a battle or submitting the create-battle form.
+- **Change ID:** ux-improvements
+- **PRD refs:** —
+- **Prerequisites:** —
+- **Parallel with:** S-03, S-04, S-05 — writes only `Welcome.astro`, `BattleCard.astro`, and `CreateBattleForm.tsx`; none of these files are touched by any Wave 1 slice
+- **Blockers:** —
+- **Unknowns:** —
+- **Risk:** low. Two distinct sub-tasks: (1) text replacement in `Welcome.astro`; (2) loading feedback in `BattleCard.astro` (inline script on link click) and `CreateBattleForm.tsx` (set `isSubmitting` flag before native form submit proceeds — `SubmitButton` already accepts `pendingText`, the flag is just never set on a valid submit today).
 - **Status:** proposed
 
 ## Backlog Handoff
@@ -161,10 +174,11 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-01       | create-battle                 | Create a battle within a campaign                       | no                    | Needs F-01 implemented                             |
 | S-02       | first-gated-generation        | Generate, view, and confirm AI enemy cards for a battle | no                    | Needs S-01 implemented + AI provider resolved (Q1) |
 | S-03       | enemy-post-confirm-management | Edit and remove confirmed enemies from a battle         | no                    | Needs S-02 implemented                             |
-| S-04       | password-reset                | Reset forgotten password via email link                 | yes                   | No schema changes; Supabase Auth handles token flow |
-| S-05       | campaign-management           | Campaign list, create, and delete                       | yes                   | Needs F-01 + S-01 implemented; revamps dashboard route |
-| S-06       | delete-battle                 | Delete a battle from the campaign battle list           | no                    | Needs S-05 implemented (battle list lives there)   |
-| S-07       | pdf-export                    | Export battle enemy cards as PDF                        | no                    | Needs S-02 + S-03 implemented; requires Workers PDF spike |
+| S-04       | password-reset                | Reset forgotten password via email link                 | yes                   | Fully independent; parallel with S-03 + S-05                             |
+| S-05       | campaign-management           | Campaign list, create, delete (FR-011 folded in)        | yes                   | Revamps nav architecture; fold S-06 in; widest PR in roadmap             |
+| S-06       | delete-battle                 | *(folded into S-05)*                                    | —                     | One button + DELETE endpoint; not worth a separate PR                    |
+| S-07       | pdf-export                    | Export battle enemy cards as PDF                        | no                    | Needs S-03 + S-05 done; Workers PDF spike required before planning       |
+| S-08       | ux-improvements               | Landing page rebrand + loading spinners                 | yes                   | No deps; parallel with S-03, S-04, S-05                                  |
 
 ## Open Roadmap Questions
 
