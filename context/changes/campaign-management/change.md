@@ -1,6 +1,6 @@
 ---
 change_id: campaign-management
-status: proposed
+status: planned
 created: 2026-06-01
 updated: 2026-06-01
 roadmap_id: S-05

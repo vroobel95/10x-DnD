@@ -29,9 +29,9 @@ D&D 5e Game Masters lose preparation time hunting stat blocks and manually adjus
 
 | ID   | Change ID                     | Outcome (user can …)                                                                            | Prerequisites | PRD refs                       | Status   |
 | ---- | ----------------------------- | ----------------------------------------------------------------------------------------------- | ------------- | ------------------------------ | -------- |
-| F-01 | data-schema                   | (foundation) campaigns, battles, and enemy tables deployed via migrations with RLS              | —             | FR-002, FR-005, FR-007, FR-009 | ready    |
-| S-01 | create-battle                 | create a battle within their auto-created campaign and see it listed in the app                 | F-01          | FR-002                         | proposed |
-| S-02 | first-gated-generation        | type a natural-language combat scenario request, see AI-generated enemy cards, and confirm them | S-01, F-01    | US-01, FR-003, FR-004, FR-005  | blocked  |
+| F-01 | data-schema                   | (foundation) campaigns, battles, and enemy tables deployed via migrations with RLS              | —             | FR-002, FR-005, FR-007, FR-009 | impl_reviewed |
+| S-01 | create-battle                 | create a battle within their auto-created campaign and see it listed in the app                 | F-01          | FR-002                         | impl_reviewed |
+| S-02 | first-gated-generation        | type a natural-language combat scenario request, see AI-generated enemy cards, and confirm them | S-01, F-01    | US-01, FR-003, FR-004, FR-005  | impl_reviewed |
 | S-03 | enemy-post-confirm-management | edit a confirmed enemy's stats and remove a confirmed enemy from a battle                       | S-02          | FR-007, FR-009                 | proposed |
 | S-04 | password-reset                | reset a forgotten password via email link and regain access to the app                          | —             | FR-010          | proposed           |
 | S-05 | campaign-management           | see a list of campaigns, choose one, create or delete; battle delete folded in (FR-011)         | F-01, S-01    | FR-001, FR-011  | proposed           |
@@ -64,7 +64,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** sequenced first because every must-have slice depends on the data layer; schema decisions made here are load-bearing — correcting a wrong data model is cheap before any slice ships and expensive after S-02 is live.
-- **Status:** ready
+- **Status:** impl_reviewed
 
 ## Slices
 
@@ -78,7 +78,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** sequenced immediately after F-01 because the generation flow (S-02) requires a battle context; this slice is intentionally thin — a clean battle-creation step that unblocks the north star with minimal scope.
-- **Status:** proposed
+- **Status:** impl_reviewed
 
 ### S-02: Generate → view → confirm enemies
 
@@ -91,7 +91,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:**
   - Which AI provider and model will generate D&D 5e stat blocks from Cloudflare Workers? (API key, SDK compatibility with workerd runtime, latency profile under the NFR "within a few seconds", structured JSON output strategy to guarantee D&D 5e-legal stat values.) — Owner: developer. Block: yes.
 - **Risk:** the AI generation is the product's riskiest assumption — the model may produce stat blocks that fail D&D 5e validity checks (impossible ability scores, illegal HP/AC ranges), requiring retry logic or prompt-engineering iteration; prompt design is not specified in the PRD and will surface as its own unknowns during `/10x-plan`. Sequenced directly after S-01 to validate the core hypothesis as early as the deadline allows.
-- **Status:** blocked
+- **Status:** impl_reviewed
 
 ### S-03: Edit and remove confirmed enemies
 
