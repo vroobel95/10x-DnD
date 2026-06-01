@@ -1,0 +1,69 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import CampaignBattleList from "@/components/campaigns/CampaignBattleList";
+import { createClient } from "@/lib/supabase";
+import type { Battle, Campaign } from "@/types";
+
+const { id } = Astro.params;
+
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+const user = Astro.locals.user;
+
+if (!supabase || !user) {
+  return Astro.redirect("/auth/signin");
+}
+
+const { data: campaign } = (await supabase
+  .from("campaigns")
+  .select("*")
+  .eq("id", id)
+  .single()) as { data: Campaign | null; error: unknown };
+
+if (!campaign) {
+  return Astro.redirect("/campaigns");
+}
+
+const { data: battlesData } = await supabase
+  .from("battles")
+  .select("*")
+  .eq("campaign_id", id)
+  .order("created_at", { ascending: false });
+
+const battles = (battlesData ?? []) as Battle[];
+---
+
+<Layout title={campaign.name}>
+  <div class="bg-cosmic min-h-screen p-4 sm:p-8">
+    <div class="mx-auto max-w-3xl">
+      <a href="/campaigns" class="mb-6 inline-flex items-center gap-2 text-sm text-blue-100/60 hover:text-white">
+        ← Back to campaigns
+      </a>
+
+      <div class="mb-8 flex items-center justify-between">
+        <div>
+          <h1 class="bg-linear-to-r from-blue-200 to-purple-200 bg-clip-text text-3xl font-bold text-transparent">
+            {campaign.name}
+          </h1>
+          {campaign.description && <p class="mt-1 text-sm text-blue-100/60">{campaign.description}</p>}
+        </div>
+        <a
+          href={`/battles/new?campaignId=${campaign.id}`}
+          class="inline-flex items-center justify-center rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-purple-500"
+        >
+          + New Battle
+        </a>
+      </div>
+
+      <CampaignBattleList battles={battles} campaignId={campaign.id} client:load />
+
+      <form method="POST" action="/api/auth/signout" class="mt-8 text-center">
+        <button
+          type="submit"
+          class="rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-sm text-white transition-colors hover:bg-white/20"
+        >
+          Sign out
+        </button>
+      </form>
+    </div>
+  </div>
+</Layout>
