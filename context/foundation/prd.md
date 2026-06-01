@@ -63,8 +63,9 @@ Existing tools generate individual monsters in isolation — the GM still has to
 
 ### Campaigns & Battles
 
-- FR-001: GM can create, edit, and delete campaigns. Priority: nice-to-have (a default campaign is auto-created on account signup — GM does not need to create one to use the app).
-  > Socrates: Counter-argument considered: "A single GM rarely runs more than one active campaign — one default campaign is enough and could be auto-created." Resolution: revised. Default campaign auto-created on signup; explicit campaign management demoted to nice-to-have. GM lands directly on the generator.
+- FR-001: GM can view a list of their campaigns, create a new campaign, and delete an existing campaign. After login, the app shows the campaign list rather than dropping directly into a single campaign. Priority: **must-have** (promoted from nice-to-have — 2026-06-01).
+  > Socrates (original): Counter-argument considered: "A single GM rarely runs more than one active campaign — one default campaign is enough and could be auto-created." Resolution: revised. Default campaign auto-created on signup; explicit campaign management demoted to nice-to-have. GM lands directly on the generator.
+  > Revised 2026-06-01: User feedback and implementation experience showed that campaign list visibility and the ability to manage multiple campaigns adds meaningful value and is feasible to implement now. FR-001 promoted to must-have and assigned to S-05.
 - FR-002: GM can create a battle within a campaign. Priority: must-have
   > Socrates: Counter-argument considered: "Battles as a layer under campaigns double the setup steps before a GM sees any generated enemy." Resolution: kept as must-have; user confirmed battles are explicitly created by the GM. Campaign friction is resolved by auto-creation (FR-001 revision), so the remaining battle-creation step is acceptable.
 
@@ -87,6 +88,18 @@ Existing tools generate individual monsters in isolation — the GM still has to
   > Socrates: Counter-argument considered: "GMs may prefer to regenerate rather than reuse — the same enemy in two battles can feel repetitive for players." Resolution: kept as nice-to-have; valid concern about player experience, confirmed this is low priority.
 - FR-009: GM can remove a confirmed enemy from a battle. Priority: must-have
   > Socrates: Added in response to FR-005 challenge. Makes confirmation reversible so GMs are not afraid to commit.
+
+### Auth & Account
+
+- FR-010: GM who has forgotten their password can request a password-reset email, follow the link, and set a new password. Priority: must-have (added 2026-06-01 — reported as a real blocker for account recovery).
+
+### Battle Management
+
+- FR-011: GM can delete a battle and all its associated enemies. Deletion requires a confirmation step to prevent accidental data loss. Priority: must-have (added 2026-06-01 — GMs need a way to remove unwanted or test battles).
+
+### Export
+
+- FR-012: GM can export a battle's confirmed enemy cards as a PDF, with one card per enemy, formatted for table use. Priority: nice-to-have (added 2026-06-01 — validated by user research; out of scope for v1 Non-Goals updated).
 
 ## Non-Functional Requirements
 
@@ -119,7 +132,7 @@ Role model: Flat — all authenticated Game Masters have equal capabilities. No 
 
 - No player-facing features: the app is GM-only. Players do not have accounts, cannot view battles, and have no interaction surface in MVP. Rationale: the pain is the GM's; player access adds an entirely different access model.
 - No integration with virtual tabletop platforms (Roll20, Foundry VTT, D&D Beyond, etc.) in MVP. Rationale: each integration is a separate scoped effort; the core value is enemy generation, not data portability.
-- No export or print functionality (PDF, text file, printable stat cards) in MVP. Rationale: out-of-scope for v1; GMs can read from screen.
+- No text-file export or VTT-import formats: the only export target is PDF (FR-012, nice-to-have). Rationale: text/VTT formats add per-platform maintenance; PDF covers the "print for the table" use case GMs actually asked for.
 - No offline mode: the app requires an active internet connection. Rationale: generation depends on a network call; offline caching is a future concern.
 - No multi-GM collaboration on shared campaigns: each campaign belongs to one GM. Rationale: single-user model keeps auth and data model simple for MVP.
 
