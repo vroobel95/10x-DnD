@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { createClient } from "@/lib/supabase";
 import type { Enemy } from "@/types";
+import { EnemySchema } from "@/lib/schemas/enemy";
 
 export const PATCH: APIRoute = async (context) => {
   const supabase = createClient(context.request.headers, context.cookies);
@@ -11,6 +12,42 @@ export const PATCH: APIRoute = async (context) => {
   const user = context.locals.user;
   if (!user) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const isJson = context.request.headers.get("content-type")?.includes("application/json");
+
+  if (isJson) {
+    let body: unknown;
+    try {
+      body = await context.request.json();
+    } catch {
+      return Response.json({ error: "Invalid request body" }, { status: 400 });
+    }
+
+    if (typeof body === "object" && body !== null && "stats" in body) {
+      const parsed = EnemySchema.safeParse(body.stats);
+      if (!parsed.success) {
+        const message = parsed.error.issues[0]?.message ?? "Invalid stats";
+        return Response.json({ error: message }, { status: 422 });
+      }
+
+      const result = await supabase
+        .from("enemies")
+        .update({
+          stats: parsed.data,
+          name: parsed.data.name,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", context.params.id)
+        .select()
+        .single();
+
+      if (result.error || !result.data) {
+        return Response.json({ error: "Enemy not found" }, { status: 404 });
+      }
+
+      return Response.json({ enemy: result.data as Enemy });
+    }
   }
 
   const result = await supabase
@@ -38,10 +75,14 @@ export const DELETE: APIRoute = async (context) => {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const deleteResult = await supabase.from("enemies").delete().eq("id", context.params.id);
+  const deleteResult = await supabase.from("enemies").delete().eq("id", context.params.id).select("id");
 
   if (deleteResult.error) {
     return Response.json({ error: "Could not delete enemy. Please try again." }, { status: 500 });
+  }
+
+  if (deleteResult.data.length === 0) {
+    return Response.json({ error: "Enemy not found" }, { status: 404 });
   }
 
   return Response.json({ success: true });
