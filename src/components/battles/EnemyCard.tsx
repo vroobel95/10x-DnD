@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { EnemySchema, type EnemyStats } from "@/lib/schemas/enemy";
 import type { Enemy } from "@/types";
 
@@ -5,8 +6,26 @@ interface Props {
   enemy: Enemy;
   onConfirm?: () => void;
   onDeny?: () => void;
+  onEditStart?: () => void;
+  onEditSave?: (stats: EnemyStats) => void;
+  onEditCancel?: () => void;
+  onRemoveStart?: () => void;
+  onRemoveConfirm?: () => void;
+  onRemoveCancel?: () => void;
   isLoading?: boolean;
+  isEditing?: boolean;
+  isRemoving?: boolean;
 }
+
+interface EditFormProps {
+  initialStats: EnemyStats;
+  onSave: (stats: EnemyStats) => void;
+  onCancel: () => void;
+  isLoading: boolean;
+}
+
+const inputCls =
+  "rounded border border-white/10 bg-white/5 px-2 py-1 text-sm text-white focus:border-purple-500/50 focus:outline-none";
 
 function modifier(score: number): string {
   const mod = Math.floor((score - 10) / 2);
@@ -23,11 +42,215 @@ function StatBox({ label, value }: { label: string; value: number }) {
   );
 }
 
-export function EnemyCard({ enemy, onConfirm, onDeny, isLoading }: Props) {
-  let stats: EnemyStats | null = null;
-  try {
-    stats = EnemySchema.parse(enemy.stats);
-  } catch {
+function numVal(n: number): number | "" {
+  return isNaN(n) ? "" : n;
+}
+
+function EnemyEditForm({ initialStats, onSave, onCancel, isLoading }: EditFormProps) {
+  const [draft, setDraft] = useState<EnemyStats>(initialStats);
+
+  return (
+    <div className="rounded-xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
+      <div className="mb-3 flex items-start gap-2">
+        <input
+          type="text"
+          value={draft.name}
+          onChange={(e) => {
+            setDraft((prev) => ({ ...prev, name: e.target.value }));
+          }}
+          className="flex-1 rounded border border-white/10 bg-white/5 px-3 py-1.5 text-lg font-bold text-white focus:border-purple-500/50 focus:outline-none"
+        />
+        <div className="flex shrink-0 items-center gap-1">
+          <span className="text-xs text-blue-100/50">CR</span>
+          <input
+            type="text"
+            value={draft.cr}
+            onChange={(e) => {
+              setDraft((prev) => ({ ...prev, cr: e.target.value }));
+            }}
+            className={`w-14 text-center ${inputCls}`}
+          />
+        </div>
+      </div>
+
+      <div className="mb-4 flex flex-wrap gap-3 text-sm">
+        <label className="flex items-center gap-1 text-blue-100/70">
+          HP
+          <input
+            type="number"
+            min={1}
+            value={numVal(draft.hp)}
+            onChange={(e) => {
+              setDraft((prev) => ({ ...prev, hp: e.target.valueAsNumber }));
+            }}
+            className={`w-16 ${inputCls}`}
+          />
+        </label>
+        <label className="flex items-center gap-1 text-blue-100/70">
+          AC
+          <input
+            type="number"
+            min={1}
+            max={30}
+            value={numVal(draft.ac)}
+            onChange={(e) => {
+              setDraft((prev) => ({ ...prev, ac: e.target.valueAsNumber }));
+            }}
+            className={`w-16 ${inputCls}`}
+          />
+        </label>
+        <label className="flex items-center gap-1 text-blue-100/70">
+          Speed
+          <input
+            type="text"
+            value={draft.speed}
+            onChange={(e) => {
+              setDraft((prev) => ({ ...prev, speed: e.target.value }));
+            }}
+            className={`w-24 ${inputCls}`}
+          />
+        </label>
+      </div>
+
+      <div className="mb-4 grid grid-cols-6 gap-1">
+        {(["str", "dex", "con", "int", "wis", "cha"] as const).map((attr) => (
+          <div
+            key={attr}
+            className="flex flex-col items-center gap-1 rounded-lg border border-white/10 bg-white/5 px-2 py-2"
+          >
+            <span className="text-xs font-semibold tracking-wide text-blue-100/50 uppercase">{attr}</span>
+            <input
+              type="number"
+              min={1}
+              max={30}
+              value={numVal(draft[attr])}
+              onChange={(e) => {
+                setDraft((prev) => ({ ...prev, [attr]: e.target.valueAsNumber }));
+              }}
+              className="w-full rounded border border-white/10 bg-white/5 px-1 py-0.5 text-center text-sm text-white focus:border-purple-500/50 focus:outline-none"
+            />
+          </div>
+        ))}
+      </div>
+
+      {draft.saving_throws && Object.keys(draft.saving_throws).length > 0 && (
+        <div className="mb-3">
+          <span className="text-xs font-semibold text-blue-100/80">Saves: </span>
+          <div className="mt-1 flex flex-wrap gap-2">
+            {Object.entries(draft.saving_throws).map(([k, v]) => (
+              <label key={k} className="flex items-center gap-1 text-xs text-blue-100/60">
+                {k}
+                <input
+                  type="number"
+                  value={numVal(v)}
+                  onChange={(e) => {
+                    setDraft((prev) => ({
+                      ...prev,
+                      saving_throws: { ...prev.saving_throws, [k]: e.target.valueAsNumber },
+                    }));
+                  }}
+                  className="w-12 rounded border border-white/10 bg-white/5 px-1 py-0.5 text-center text-xs text-white focus:border-purple-500/50 focus:outline-none"
+                />
+              </label>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {draft.skill_modifiers && Object.keys(draft.skill_modifiers).length > 0 && (
+        <div className="mb-3">
+          <span className="text-xs font-semibold text-blue-100/80">Skills: </span>
+          <div className="mt-1 flex flex-wrap gap-2">
+            {Object.entries(draft.skill_modifiers).map(([k, v]) => (
+              <label key={k} className="flex items-center gap-1 text-xs text-blue-100/60">
+                {k}
+                <input
+                  type="number"
+                  value={numVal(v)}
+                  onChange={(e) => {
+                    setDraft((prev) => ({
+                      ...prev,
+                      skill_modifiers: { ...prev.skill_modifiers, [k]: e.target.valueAsNumber },
+                    }));
+                  }}
+                  className="w-12 rounded border border-white/10 bg-white/5 px-1 py-0.5 text-center text-xs text-white focus:border-purple-500/50 focus:outline-none"
+                />
+              </label>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {draft.abilities.length > 0 && (
+        <ul className="mb-4 space-y-2 border-t border-white/10 pt-3">
+          {draft.abilities.map((ab, i) => (
+            <li key={i} className="space-y-1">
+              <input
+                type="text"
+                value={ab.name}
+                onChange={(e) => {
+                  setDraft((prev) => ({
+                    ...prev,
+                    abilities: prev.abilities.map((a, idx) => (idx === i ? { ...a, name: e.target.value } : a)),
+                  }));
+                }}
+                className={`w-full font-semibold ${inputCls}`}
+              />
+              <input
+                type="text"
+                value={ab.description}
+                onChange={(e) => {
+                  setDraft((prev) => ({
+                    ...prev,
+                    abilities: prev.abilities.map((a, idx) => (idx === i ? { ...a, description: e.target.value } : a)),
+                  }));
+                }}
+                className={`w-full text-blue-100/70 ${inputCls}`}
+              />
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <div className="flex gap-2 border-t border-white/10 pt-3">
+        <button
+          onClick={() => {
+            onSave(draft);
+          }}
+          disabled={isLoading}
+          className="flex-1 rounded-lg bg-purple-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-purple-500 disabled:opacity-50"
+        >
+          {isLoading ? "..." : "Save"}
+        </button>
+        <button
+          onClick={onCancel}
+          disabled={isLoading}
+          className="flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium text-blue-100/70 transition-colors hover:bg-white/10 disabled:opacity-50"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export function EnemyCard({
+  enemy,
+  onConfirm,
+  onDeny,
+  onEditStart,
+  onEditSave,
+  onEditCancel,
+  onRemoveStart,
+  onRemoveConfirm,
+  onRemoveCancel,
+  isLoading = false,
+  isEditing = false,
+  isRemoving = false,
+}: Props) {
+  const parseResult = EnemySchema.safeParse(enemy.stats);
+
+  if (!parseResult.success) {
     return (
       <div className="rounded-xl border border-red-500/30 bg-red-900/10 p-4 text-sm text-red-300">
         Could not parse stat block for <strong>{enemy.name}</strong>.
@@ -35,7 +258,13 @@ export function EnemyCard({ enemy, onConfirm, onDeny, isLoading }: Props) {
     );
   }
 
+  const stats = parseResult.data;
   const isPending = !!onConfirm || !!onDeny;
+  const isConfirmed = !!onEditSave;
+
+  if (isEditing && onEditSave && onEditCancel) {
+    return <EnemyEditForm initialStats={stats} onSave={onEditSave} onCancel={onEditCancel} isLoading={isLoading} />;
+  }
 
   return (
     <div className="rounded-xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
@@ -109,6 +338,47 @@ export function EnemyCard({ enemy, onConfirm, onDeny, isLoading }: Props) {
           >
             {isLoading ? "..." : "Deny"}
           </button>
+        </div>
+      )}
+
+      {isConfirmed && (
+        <div className="flex items-center gap-2 border-t border-white/10 pt-3">
+          {isRemoving ? (
+            <>
+              <span className="flex-1 text-sm text-blue-100/70">Remove this enemy?</span>
+              <button
+                onClick={onRemoveConfirm}
+                disabled={isLoading}
+                className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-red-500 disabled:opacity-50"
+              >
+                {isLoading ? "..." : "Yes"}
+              </button>
+              <button
+                onClick={onRemoveCancel}
+                disabled={isLoading}
+                className="rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium text-blue-100/70 transition-colors hover:bg-white/10 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={onEditStart}
+                disabled={isLoading}
+                className="flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium text-blue-100/70 transition-colors hover:bg-white/10 disabled:opacity-50"
+              >
+                Edit
+              </button>
+              <button
+                onClick={onRemoveStart}
+                disabled={isLoading}
+                className="flex-1 rounded-lg border border-red-500/30 bg-red-900/10 px-3 py-1.5 text-sm font-medium text-red-400 transition-colors hover:bg-red-900/20 disabled:opacity-50"
+              >
+                Remove
+              </button>
+            </>
+          )}
         </div>
       )}
     </div>
