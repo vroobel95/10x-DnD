@@ -17,6 +17,7 @@ const { data: campaign } = (await supabase
   .from("campaigns")
   .select("*")
   .eq("id", id)
+  .eq("user_id", user.id)
   .single()) as { data: Campaign | null; error: unknown };
 
 if (!campaign) {

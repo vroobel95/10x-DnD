@@ -13,7 +13,7 @@ if (!supabase || !user) {
   return Astro.redirect("/auth/signin");
 }
 
-const rawCampaigns = await getUserCampaigns(supabase, user.id);
+const { data: rawCampaigns, error: campaignsError } = await getUserCampaigns(supabase, user.id);
 const campaigns: CampaignWithCount[] = rawCampaigns.map((c: Record<string, unknown>) => ({
   id: c.id as string,
   user_id: c.user_id as string,
@@ -34,6 +34,12 @@ const campaigns: CampaignWithCount[] = rawCampaigns.map((c: Record<string, unkno
         </h1>
         <CreateCampaignForm client:load />
       </div>
+
+      {campaignsError && (
+        <div class="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+          Could not load campaigns. Please try refreshing the page.
+        </div>
+      )}
 
       <CampaignList campaigns={campaigns} client:load />
 

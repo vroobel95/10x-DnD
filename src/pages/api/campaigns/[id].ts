@@ -30,10 +30,14 @@ export const PATCH: APIRoute = async (context) => {
   if (name.length > 200) {
     return Response.json({ error: "Campaign name must be 200 characters or fewer" }, { status: 400 });
   }
+  const description = body.description?.trim() || null;
+  if (description && description.length > 500) {
+    return Response.json({ error: "Description must be 500 characters or fewer" }, { status: 400 });
+  }
 
   const { data: campaign, error } = await supabase
     .from("campaigns")
-    .update({ name, updated_at: new Date().toISOString() })
+    .update({ name, description, updated_at: new Date().toISOString() })
     .eq("id", id)
     .eq("user_id", user.id)
     .select("*")
@@ -59,9 +63,15 @@ export const DELETE: APIRoute = async (context) => {
 
   const { id } = context.params;
 
-  const { error } = await supabase.from("campaigns").delete().eq("id", id).eq("user_id", user.id);
+  const { data, error } = await supabase
+    .from("campaigns")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .select("id")
+    .single();
 
-  if (error) {
+  if (error || !data) {
     return Response.json({ error: "Campaign not found" }, { status: 404 });
   }
 

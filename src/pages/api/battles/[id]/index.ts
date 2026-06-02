@@ -16,10 +16,21 @@ export const DELETE: APIRoute = async (context) => {
 
   const { id } = context.params;
 
+  const { data: userCampaigns } = await supabase
+    .from("campaigns")
+    .select("id")
+    .eq("user_id", user.id);
+  const campaignIds = (userCampaigns ?? []).map((c: { id: string }) => c.id);
+
+  if (campaignIds.length === 0) {
+    return Response.json({ error: "Battle not found" }, { status: 404 });
+  }
+
   const { data, error } = await supabase
     .from("battles")
     .delete()
     .eq("id", id)
+    .in("campaign_id", campaignIds)
     .select("id, campaign_id")
     .single();
 

@@ -15,7 +15,10 @@ export const GET: APIRoute = async (context) => {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const campaigns = await getUserCampaigns(supabase, user.id);
+  const { data: campaigns, error } = await getUserCampaigns(supabase, user.id);
+  if (error) {
+    return Response.json({ error: "Could not load campaigns" }, { status: 500 });
+  }
   return Response.json({ campaigns });
 };
 
