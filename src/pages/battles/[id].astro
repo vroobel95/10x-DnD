@@ -76,7 +76,7 @@ const createdDate = new Date(b.created_at).toLocaleDateString("en-US", {
         </span>
       </div>
 
-      <EnemiesSection battleId={b.id} initialPending={initialPending} initialConfirmed={initialConfirmed} client:load />
+      <EnemiesSection battleId={b.id} initialPending={initialPending} initialConfirmed={initialConfirmed} client:only="react" />
     </div>
   </div>
 </Layout>
