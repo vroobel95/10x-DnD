@@ -7,10 +7,7 @@ export const POST: APIRoute = async (context) => {
   const formData = await context.request.formData();
   const email = formData.get("email")?.toString() ?? "";
 
-  const redirectTo = new URL(
-    `/api/auth/callback?next=/auth/reset-password&type=recovery`,
-    context.request.url,
-  ).href;
+  const redirectTo = new URL("/api/auth/recovery-callback", context.request.url).href;
 
   const supabase = createClient(context.request.headers, context.cookies);
   if (supabase) {
