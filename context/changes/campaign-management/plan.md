@@ -188,6 +188,8 @@ Add the two new campaign pages, the CampaignList and CampaignBattleList React is
 
 **Contract**: Protected by middleware (added in step 6). Reads `user` from `Astro.locals.user`; if null, redirect to `/auth/signin`. Calls `getUserCampaigns(supabase, user.id)`. Maps the `battles` FK count field to `battleCount` for each campaign. Renders page heading, a "New Campaign" form (inline at top — `name` + optional `description` inputs, POST to `/api/campaigns`), and `<CampaignList campaigns={...} client:load />`. Reads `?error=` for the error banner.
 
+**Addendum (2026-06-02 impl review)**: Campaign creation implemented as a separate React island (`CreateCampaignForm.tsx`) sending JSON via fetch instead of an inline HTML form with native POST. The API POST handler reads JSON body accordingly. Error handling is fully client-side within the component (no `?error=` query param). This provides better UX (toggle open/close, loading states, client-side redirect to `/campaigns/${id}`).
+
 #### 5. Campaign detail / battle list page
 
 **File**: `src/pages/campaigns/[id].astro`
@@ -211,6 +213,8 @@ Add the two new campaign pages, the CampaignList and CampaignBattleList React is
 **Intent**: Redirect authenticated users to `/campaigns`; show the Welcome landing page for unauthenticated users.
 
 **Contract**: In the frontmatter: `if (Astro.locals.user) return Astro.redirect("/campaigns")`. Remove the static `<Welcome />` import and render it only in the non-redirect path (i.e., no user → render Welcome as before).
+
+**Addendum (2026-06-02 impl review)**: Intentionally NOT implemented. The root page renders the Welcome landing page for all users. Authenticated users reach `/campaigns` via the post-login redirect through `dashboard.astro`. Keeping "/" as the public landing page allows authenticated users to view it without signing out.
 
 #### 8. Update dashboard redirect
 
@@ -345,9 +349,9 @@ The `description` column migration must be applied to Supabase before deploying 
 
 #### Automated
 
-- [ ] 1.1 Migration applies cleanly: `npx supabase db push`
-- [ ] 1.2 TypeScript compilation passes: `npm run check`
-- [ ] 1.3 Linting passes: `npm run lint`
+- [x] 1.1 Migration applies cleanly: `npx supabase db push` — aa685f8
+- [x] 1.2 TypeScript compilation passes: `npm run check` — aa685f8
+- [x] 1.3 Linting passes: `npm run lint` — aa685f8
 
 #### Manual
 
@@ -358,8 +362,8 @@ The `description` column migration must be applied to Supabase before deploying 
 
 #### Automated
 
-- [ ] 2.1 TypeScript compilation passes: `npm run check`
-- [ ] 2.2 Linting passes: `npm run lint`
+- [x] 2.1 TypeScript compilation passes: `npm run check` — fb375ff
+- [x] 2.2 Linting passes: `npm run lint` — fb375ff
 
 #### Manual
 
@@ -373,8 +377,8 @@ The `description` column migration must be applied to Supabase before deploying 
 
 #### Automated
 
-- [ ] 3.1 TypeScript compilation passes: `npm run check`
-- [ ] 3.2 Linting passes: `npm run lint`
+- [x] 3.1 TypeScript compilation passes: `npm run check` — ebfd492
+- [x] 3.2 Linting passes: `npm run lint` — ebfd492
 
 #### Manual
 
@@ -391,8 +395,8 @@ The `description` column migration must be applied to Supabase before deploying 
 
 #### Automated
 
-- [ ] 4.1 TypeScript compilation passes (no getUserCampaign errors): `npm run check`
-- [ ] 4.2 Linting passes: `npm run lint`
+- [x] 4.1 TypeScript compilation passes (no getUserCampaign errors): `npm run check` — 946a219
+- [x] 4.2 Linting passes: `npm run lint` — 946a219
 
 #### Manual
 

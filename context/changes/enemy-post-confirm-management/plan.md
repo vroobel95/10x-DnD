@@ -169,6 +169,7 @@ Extend `EnemyCard` with two new confirmed-card UI modes: an inline edit form tha
 **Intent**: Add the six action callbacks and two state flags for confirmed-card behaviour. The existing `onConfirm`, `onDeny`, and `isLoading` props are unchanged.
 
 **Contract**: Add to `Props`:
+
 ```
 onEditSave?: (stats: EnemyStats) => void;
 onEditCancel?: () => void;
@@ -178,6 +179,7 @@ onRemoveCancel?: () => void;
 isEditing?: boolean;
 isRemoving?: boolean;
 ```
+
 Import `EnemyStats` from `@/lib/schemas/enemy` (already imported for `EnemySchema.parse`).
 
 #### 2. Add edit form local draft state

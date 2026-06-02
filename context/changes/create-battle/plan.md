@@ -65,6 +65,7 @@ Create `src/pages/api/battles.ts` exporting both `GET` (list battles as JSON) an
 **Contract**:
 
 `POST`:
+
 - Reads FormData fields: `name` (string), `party_level` (string, optional), `location` (string, optional).
 - Creates Supabase client via `createClient(context.request.headers, context.cookies)`. If null, redirects to `/battles/new?error=Supabase+is+not+configured`.
 - Gets user from `context.locals.user`. If null, redirects to `/auth/signin`.
@@ -75,6 +76,7 @@ Create `src/pages/api/battles.ts` exporting both `GET` (list battles as JSON) an
 - On success, redirects to `/battles/${battle.id}`.
 
 `GET`:
+
 - Same client + user check; returns `Response.json({ error: "Unauthorized" }, { status: 401 })` if not authenticated.
 - Looks up campaign, queries `battles` ordered by `created_at DESC`. Returns `Response.json({ battles })`.
 

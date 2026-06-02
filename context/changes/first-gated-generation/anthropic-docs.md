@@ -18,10 +18,10 @@ For Cloudflare Workers, ensure `nodejs_compat` is in your `wrangler.jsonc` compa
 ## Client Instantiation
 
 ```ts
-import { createAnthropic } from '@ai-sdk/anthropic';
-import { ANTHROPIC_API_KEY } from 'astro:env/server'; // NOT process.env — Workers don't surface it
+import { createAnthropic } from "@ai-sdk/anthropic";
+import { ANTHROPIC_API_KEY } from "astro:env/server"; // NOT process.env — Workers don't surface it
 
-const anthropic = createAnthropic({ apiKey: ANTHROPIC_API_KEY ?? '' });
+const anthropic = createAnthropic({ apiKey: ANTHROPIC_API_KEY ?? "" });
 ```
 
 ---
@@ -29,21 +29,21 @@ const anthropic = createAnthropic({ apiKey: ANTHROPIC_API_KEY ?? '' });
 ## Structured Output with Zod (`Output.object`)
 
 ```ts
-import { generateText, Output } from 'ai';
-import { createAnthropic } from '@ai-sdk/anthropic';
-import { z } from 'zod';
+import { generateText, Output } from "ai";
+import { createAnthropic } from "@ai-sdk/anthropic";
+import { z } from "zod";
 
-const anthropic = createAnthropic({ apiKey: ANTHROPIC_API_KEY ?? '' });
+const anthropic = createAnthropic({ apiKey: ANTHROPIC_API_KEY ?? "" });
 
 const MySchema = z.object({
   items: z.array(z.string()),
 });
 
 const { output } = await generateText({
-  model: anthropic('claude-sonnet-4-6'),
+  model: anthropic("claude-sonnet-4-6"),
   output: Output.object({ schema: MySchema }),
-  system: 'You are a helpful assistant.',
-  prompt: 'List 3 items.',
+  system: "You are a helpful assistant.",
+  prompt: "List 3 items.",
 });
 
 console.log(output); // { items: ['...', '...', '...'] }
@@ -65,11 +65,11 @@ console.log(output); // { items: ['...', '...', '...'] }
 
 ```ts
 interface GenerateTextOptions {
-  model: LanguageModel;       // anthropic('claude-sonnet-4-6')
-  output?: OutputStrategy;    // Output.object({ schema }) for structured output
-  system?: string;            // system prompt
-  prompt?: string;            // user prompt
-  messages?: CoreMessage[];   // alternative to prompt for multi-turn
+  model: LanguageModel; // anthropic('claude-sonnet-4-6')
+  output?: OutputStrategy; // Output.object({ schema }) for structured output
+  system?: string; // system prompt
+  prompt?: string; // user prompt
+  messages?: CoreMessage[]; // alternative to prompt for multi-turn
   temperature?: number;
   maxTokens?: number;
 }

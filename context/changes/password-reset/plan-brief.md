@@ -16,14 +16,14 @@ A "Forgot password?" link on the sign-in page leads to an email-input form. Afte
 
 ## Key Decisions Made
 
-| Decision | Choice | Why |
-|---|---|---|
-| Post-reset landing | `/auth/signin?success=1` with green banner | Forces a clean re-login confirming the new password works |
-| Confirm password field | Yes — two fields with client-side match validation | Prevents typos that would lock the user out again |
-| Expired link destination | `/auth/forgot-password?error=...` | Actionable — puts user exactly where they request a new link |
-| Email-sent UX | Same page, form swaps to confirmation message | Mirrors `confirm-email.astro` pattern; no extra page needed |
-| Reset-password page guard | Redirect to forgot-password if no session | Prevents a broken empty form for direct URL access |
-| Anti-enumeration | Always redirect to `?success=1` from forgot-password API | Never reveal whether an email is registered |
+| Decision                  | Choice                                                           | Why                                                          |
+| ------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------ |
+| Post-reset landing        | `/auth/signin?success=1` with green banner                       | Forces a clean re-login confirming the new password works    |
+| Confirm password field    | Yes — two fields with client-side match validation               | Prevents typos that would lock the user out again            |
+| Expired link destination  | `/auth/forgot-password?error=...`                                | Actionable — puts user exactly where they request a new link |
+| Email-sent UX             | Same page, form swaps to confirmation message                    | Mirrors `confirm-email.astro` pattern; no extra page needed  |
+| Reset-password page guard | Redirect to forgot-password if no session                        | Prevents a broken empty form for direct URL access           |
+| Anti-enumeration          | Always redirect to `?success=1` from forgot-password API         | Never reveal whether an email is registered                  |
 | Error routing in callback | `type=recovery` query param distinguishes reset vs signup errors | One callback handles both flows; errors go to the right page |
 
 ## Scope
@@ -38,11 +38,11 @@ Reuses the existing PKCE callback route entirely — `resetPasswordForEmail` sen
 
 ## Phases at a Glance
 
-| Phase | What it delivers | Key risk |
-|---|---|---|
-| 1. Callback + Sign-in updates | Error routing for recovery type; success banner; forgot-password link | Minimal — two small changes to existing files |
-| 2. Forgot-password page + API | Email form, confirmation message, `resetPasswordForEmail` call | Anti-enumeration logic must be verified manually |
-| 3. Reset-password page + API | Session-guarded new-password form, `updateUser` call, success redirect | Recovery session expiry edge case must be tested |
+| Phase                         | What it delivers                                                       | Key risk                                         |
+| ----------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------ |
+| 1. Callback + Sign-in updates | Error routing for recovery type; success banner; forgot-password link  | Minimal — two small changes to existing files    |
+| 2. Forgot-password page + API | Email form, confirmation message, `resetPasswordForEmail` call         | Anti-enumeration logic must be verified manually |
+| 3. Reset-password page + API  | Session-guarded new-password form, `updateUser` call, success redirect | Recovery session expiry edge case must be tested |
 
 **Prerequisites:** Supabase dashboard — Auth → URL Configuration → Redirect URLs must include the production URL + `http://localhost:4321` (required for the PKCE callback to be allowed)
 **Estimated effort:** ~1 session across 3 phases

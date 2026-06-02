@@ -36,3 +36,10 @@
 - **Problem**: When ANTHROPIC_API_KEY is undefined, the code passes an empty string to createAnthropic({ apiKey: '' }). This causes an opaque Anthropic auth error at request time instead of a clear message at function entry. The env field is marked optional: true in astro.config.mjs, so undefined is a valid runtime state.
 - **Rule**: When a function requires a secret/env var, guard at the top with a clear error instead of falling back to empty strings
 - **Applies to**: All functions that consume secrets or env vars
+
+## Confirm row deletion before returning success on DELETE endpoints
+
+- **Context**: src/pages/api/campaigns/[id].ts:62 vs src/pages/api/battles/[id]/index.ts:19
+- **Problem**: Supabase `.delete()` without `.select().single()` returns no error when zero rows match, so the endpoint reports `{success: true}` even when nothing was deleted. The battle DELETE endpoint correctly uses `.select("id").single()` to confirm a row was actually removed.
+- **Rule**: Always chain `.select("id").single()` after `.delete()` and check `!data` to return 404 for non-existent or unauthorized resources
+- **Applies to**: All API DELETE endpoints using Supabase

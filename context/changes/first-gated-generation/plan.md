@@ -79,6 +79,7 @@ Install the AI SDK, extend the env schema for the Anthropic API key, define the 
 **Intent**: Register `ANTHROPIC_API_KEY` as a server-side secret in Astro's env schema so it is accessible via `astro:env/server` in the AI lib and API routes.
 
 **Contract**: Add to the existing `env.schema` object, following the same pattern as `SUPABASE_URL`:
+
 ```ts
 ANTHROPIC_API_KEY: envField.string({ context: "server", access: "secret", optional: true }),
 ```
@@ -100,7 +101,7 @@ ANTHROPIC_API_KEY: envField.string({ context: "server", access: "secret", option
 **Contract**: Export `EnemySchema`, `EnemyGroupSchema`, `EnemyStats` (inferred type), and `EnemyGroup`. The schema must include numeric range constraints that enforce D&D 5e validity — these are the guardrails the PRD requires. On validation failure, Zod throws and the route returns an error to the GM.
 
 ```ts
-import { z } from 'zod';
+import { z } from "zod";
 
 const AbilitySchema = z.object({
   name: z.string().min(1),
@@ -109,10 +110,10 @@ const AbilitySchema = z.object({
 
 export const EnemySchema = z.object({
   name: z.string().min(1),
-  cr: z.string().min(1),                             // e.g. "1/2", "5", "10"
+  cr: z.string().min(1), // e.g. "1/2", "5", "10"
   hp: z.number().int().min(1),
   ac: z.number().int().min(1).max(30),
-  speed: z.string().min(1),                          // e.g. "30 ft."
+  speed: z.string().min(1), // e.g. "30 ft."
   str: z.number().int().min(1).max(30),
   dex: z.number().int().min(1).max(30),
   con: z.number().int().min(1).max(30),
@@ -139,6 +140,7 @@ export type EnemyGroup = z.infer<typeof EnemyGroupSchema>;
 **Intent**: Isolate all Claude API interaction in one place. The route handlers call `generateEnemies(battle, prompt)` and never import the AI SDK directly — this keeps generation logic testable and swappable.
 
 **Contract**: Export `generateEnemies(battle: Pick<Battle, 'party_level' | 'location'>, prompt: string): Promise<EnemyGroup>`. The function must:
+
 - Import `ANTHROPIC_API_KEY` from `astro:env/server` (not `process.env`)
 - Create the Anthropic client via `createAnthropic({ apiKey: ANTHROPIC_API_KEY })` from `@ai-sdk/anthropic`
 - Call `generateText` with `Output.object({ schema: EnemyGroupSchema })` from `ai`
@@ -148,11 +150,11 @@ export type EnemyGroup = z.infer<typeof EnemyGroupSchema>;
 - Propagate errors from `generateText` — the route handler catches and sanitizes them
 
 ```ts
-import { generateText, Output } from 'ai';
-import { createAnthropic } from '@ai-sdk/anthropic';
-import { ANTHROPIC_API_KEY } from 'astro:env/server';
-import { EnemyGroupSchema, type EnemyGroup } from '@/lib/schemas/enemy';
-import type { Battle } from '@/types';
+import { generateText, Output } from "ai";
+import { createAnthropic } from "@ai-sdk/anthropic";
+import { ANTHROPIC_API_KEY } from "astro:env/server";
+import { EnemyGroupSchema, type EnemyGroup } from "@/lib/schemas/enemy";
+import type { Battle } from "@/types";
 
 const SYSTEM_PROMPT = `You are a D&D 5th Edition expert. Generate valid enemy stat blocks.
 Rules:
@@ -163,20 +165,18 @@ Rules:
 Output JSON only.`;
 
 export async function generateEnemies(
-  battle: Pick<Battle, 'party_level' | 'location'>,
+  battle: Pick<Battle, "party_level" | "location">,
   prompt: string,
 ): Promise<EnemyGroup> {
-  const anthropic = createAnthropic({ apiKey: ANTHROPIC_API_KEY ?? '' });
+  const anthropic = createAnthropic({ apiKey: ANTHROPIC_API_KEY ?? "" });
   const contextParts = [
     battle.party_level != null ? `Party level: ${battle.party_level}` : null,
     battle.location ? `Location: ${battle.location}` : null,
   ].filter(Boolean);
-  const fullPrompt = contextParts.length > 0
-    ? `${contextParts.join('. ')}. ${prompt}`
-    : prompt;
+  const fullPrompt = contextParts.length > 0 ? `${contextParts.join(". ")}. ${prompt}` : prompt;
 
   const { output } = await generateText({
-    model: anthropic('claude-sonnet-4-6'),
+    model: anthropic("claude-sonnet-4-6"),
     output: Output.object({ schema: EnemyGroupSchema }),
     system: SYSTEM_PROMPT,
     prompt: fullPrompt,
@@ -219,6 +219,7 @@ Create the `POST /api/battles/[id]/generate` endpoint. It verifies auth and batt
 **Intent**: Accept a prompt string, verify the GM owns the battle, call the AI lib, persist the generated enemies as pending, and return the saved records. The client needs the DB-assigned IDs to make subsequent confirm/deny calls.
 
 **Contract**: Export `export const POST: APIRoute`. The handler must:
+
 1. Init Supabase via `createClient(context.request.headers, context.cookies)` — return 500 if null
 2. Check `context.locals.user` — return 401 if null
 3. Read `battleId` from `context.params.id`
@@ -325,13 +326,15 @@ Add the generation UI to the battle detail page. A React island (`EnemiesSection
 **Intent**: Replace the S-02 placeholder with the `EnemiesSection` island. Pre-fetch all enemies for the battle (pending + confirmed) server-side and pass them as initial props so the island starts with correct data without an additional client-side fetch.
 
 **Contract**: After the existing battle fetch, add an enemies query:
+
 ```ts
 const { data: allEnemies } = await supabase
-  .from('enemies')
-  .select('*')
-  .eq('battle_id', battle.id)
-  .order('created_at', { ascending: true });
+  .from("enemies")
+  .select("*")
+  .eq("battle_id", battle.id)
+  .order("created_at", { ascending: true });
 ```
+
 Split into `initialPending` and `initialConfirmed` arrays by `status`. Remove the placeholder div at line 58. Render `<EnemiesSection battleId={battle.id} initialPending={initialPending} initialConfirmed={initialConfirmed} client:load />`. Import `EnemiesSection` from `@/components/battles/EnemiesSection`.
 
 ### Success Criteria

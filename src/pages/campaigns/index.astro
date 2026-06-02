@@ -1,0 +1,58 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import CampaignList from "@/components/campaigns/CampaignList";
+import CreateCampaignForm from "@/components/campaigns/CreateCampaignForm";
+import { createClient } from "@/lib/supabase";
+import { getUserCampaigns } from "@/lib/campaigns";
+import type { CampaignWithCount } from "@/components/campaigns/CampaignList";
+
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+const user = Astro.locals.user;
+
+if (!supabase || !user) {
+  return Astro.redirect("/auth/signin");
+}
+
+const { data: rawCampaigns, error: campaignsError } = await getUserCampaigns(supabase, user.id);
+const campaigns: CampaignWithCount[] = rawCampaigns.map((c: Record<string, unknown>) => ({
+  id: c.id as string,
+  user_id: c.user_id as string,
+  name: c.name as string,
+  description: (c.description as string | null) ?? null,
+  created_at: c.created_at as string,
+  updated_at: c.updated_at as string,
+  battleCount: (c.battles as { count: number }[])[0]?.count ?? 0,
+}));
+---
+
+<Layout title="My Campaigns">
+  <div class="bg-cosmic min-h-screen p-4 sm:p-8">
+    <div class="mx-auto max-w-3xl">
+      <div class="mb-8 flex items-center justify-between">
+        <h1 class="bg-linear-to-r from-blue-200 to-purple-200 bg-clip-text text-3xl font-bold text-transparent">
+          My Campaigns
+        </h1>
+        <CreateCampaignForm client:load />
+      </div>
+
+      {
+        campaignsError && (
+          <div class="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+            Could not load campaigns. Please try refreshing the page.
+          </div>
+        )
+      }
+
+      <CampaignList campaigns={campaigns} client:load />
+
+      <form method="POST" action="/api/auth/signout" class="mt-8 text-center">
+        <button
+          type="submit"
+          class="rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-sm text-white transition-colors hover:bg-white/20"
+        >
+          Sign out
+        </button>
+      </form>
+    </div>
+  </div>
+</Layout>
