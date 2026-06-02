@@ -137,6 +137,8 @@ Add `editingId` and `removingId` state to `EnemiesSection` and wire up the six n
 
 **Contract**: Each confirmed `EnemyCard` receives: `onEditSave`, `onEditCancel`, `onRemoveStart`, `onRemoveConfirm`, `onRemoveCancel`, `isEditing={editingId === enemy.id}`, `isRemoving={removingId === enemy.id}`, `isLoading={loadingId === enemy.id}`.
 
+**Implementation note**: `handleEditStart(enemy)` / `onEditStart` was added as a discovered necessity — the Edit button in the read-only footer must set `editingId`. Not listed in the original contract above (plan gap); seven props total are passed.
+
 ### Success Criteria
 
 #### Automated Verification
@@ -185,6 +187,8 @@ Import `EnemyStats` from `@/lib/schemas/enemy` (already imported for `EnemySchem
 **Intent**: When `isEditing` becomes true, initialize a local `draft` state from the current parsed stats. The draft holds the in-progress edits until Save or Cancel.
 
 **Contract**: `const [draft, setDraft] = useState<EnemyStats | null>(null)`. In a `useEffect` keyed on `isEditing`: when `isEditing` becomes true and stats parse successfully, set draft to the parsed stats; when `isEditing` becomes false, reset draft to null. All form inputs read from and write to `draft`.
+
+**Implementation note**: Implemented as a standalone `EnemyEditForm` component (lines 49–235 in EnemyCard.tsx) with `useState<EnemyStats>(initialStats)` — draft resets on mount/unmount instead of useEffect. Behavior equivalent; component extraction is cleaner.
 
 #### 3. Render edit form when isEditing
 

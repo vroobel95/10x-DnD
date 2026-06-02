@@ -1,8 +1,8 @@
 ---
 change_id: enemy-post-confirm-management
-status: planned
+status: impl_reviewed
 created: 2026-06-01
-updated: 2026-06-01
+updated: 2026-06-02
 roadmap_id: S-03
 prd_refs: FR-007, FR-009
 ---
