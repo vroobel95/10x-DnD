@@ -16,19 +16,19 @@ Login → `/campaigns` (card list with battle counts, create/rename/delete). Cli
 
 ## Key Decisions Made
 
-| Decision | Choice | Why |
-|---|---|---|
-| Campaign description | Add via migration (nullable TEXT) | GMs want to annotate campaigns with setting/party notes |
-| Campaign rename | Yes — inline on campaign list | Completes FR-001; small PATCH route + inline edit UX |
-| Battle URL | Keep `/battles/[id]` | battle.campaign_id already in data; no URL churn |
-| New battle route | `/battles/new?campaignId=[id]` | Reuses existing page; one hidden field added |
-| Delete warning | Show battle count in confirmation | "Delete 'X' and its 3 battles?" prevents accidental data loss |
-| Campaign list UI | React island (CampaignList.tsx) | Rename + delete need client-side state |
-| Battle list UI | React island (CampaignBattleList.tsx) | Delete confirmation needs client-side state |
-| Root redirect | Auth → /campaigns, no-auth → Welcome | Landing page preserved for new visitors |
-| Ownership in battles/[id] | Direct query + RLS (no getUserCampaign) | Simpler; RLS already verified in data-schema |
-| Missing campaignId | Redirect to /campaigns with error | Recoverable — GM lands where they pick a campaign |
-| GET /api/battles | Require ?campaignId, return 400 if absent | Explicit contract; prevents cross-campaign data leaks |
+| Decision                  | Choice                                    | Why                                                           |
+| ------------------------- | ----------------------------------------- | ------------------------------------------------------------- |
+| Campaign description      | Add via migration (nullable TEXT)         | GMs want to annotate campaigns with setting/party notes       |
+| Campaign rename           | Yes — inline on campaign list             | Completes FR-001; small PATCH route + inline edit UX          |
+| Battle URL                | Keep `/battles/[id]`                      | battle.campaign_id already in data; no URL churn              |
+| New battle route          | `/battles/new?campaignId=[id]`            | Reuses existing page; one hidden field added                  |
+| Delete warning            | Show battle count in confirmation         | "Delete 'X' and its 3 battles?" prevents accidental data loss |
+| Campaign list UI          | React island (CampaignList.tsx)           | Rename + delete need client-side state                        |
+| Battle list UI            | React island (CampaignBattleList.tsx)     | Delete confirmation needs client-side state                   |
+| Root redirect             | Auth → /campaigns, no-auth → Welcome      | Landing page preserved for new visitors                       |
+| Ownership in battles/[id] | Direct query + RLS (no getUserCampaign)   | Simpler; RLS already verified in data-schema                  |
+| Missing campaignId        | Redirect to /campaigns with error         | Recoverable — GM lands where they pick a campaign             |
+| GET /api/battles          | Require ?campaignId, return 400 if absent | Explicit contract; prevents cross-campaign data leaks         |
 
 ## Scope
 
@@ -42,12 +42,12 @@ Two new React islands (`CampaignList.tsx`, `CampaignBattleList.tsx`) handle inte
 
 ## Phases at a Glance
 
-| Phase | What it delivers | Key risk |
-|---|---|---|
-| 1. Data Layer & Lib | Migration + Campaign type + getUserCampaigns | Migration must be applied before deploy |
-| 2. Campaign & Battle APIs | All CRUD routes + battle DELETE | Battle DELETE path constraint (index.ts not [id].ts) |
-| 3. Campaign UI & Navigation | CampaignList, pages, middleware, root redirect | Widest phase — most new files |
-| 4. Legacy Route Migration | All getUserCampaign callers migrated | Compiler errors until this phase completes |
+| Phase                       | What it delivers                               | Key risk                                             |
+| --------------------------- | ---------------------------------------------- | ---------------------------------------------------- |
+| 1. Data Layer & Lib         | Migration + Campaign type + getUserCampaigns   | Migration must be applied before deploy              |
+| 2. Campaign & Battle APIs   | All CRUD routes + battle DELETE                | Battle DELETE path constraint (index.ts not [id].ts) |
+| 3. Campaign UI & Navigation | CampaignList, pages, middleware, root redirect | Widest phase — most new files                        |
+| 4. Legacy Route Migration   | All getUserCampaign callers migrated           | Compiler errors until this phase completes           |
 
 **Prerequisites:** F-01 and S-01 implemented (campaigns and battles tables exist, battles flow works)
 **Estimated effort:** ~2-3 sessions across 4 phases

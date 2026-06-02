@@ -13,6 +13,9 @@ export default defineConfig({
   integrations: [react(), sitemap()],
   vite: {
     plugins: [tailwindcss()],
+    optimizeDeps: {
+      exclude: ["lucide-react"],
+    },
     ssr: {
       optimizeDeps: {
         esbuildOptions: {

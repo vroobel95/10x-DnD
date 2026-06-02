@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Wand2 } from "lucide-react";
 import { EnemyCard } from "@/components/battles/EnemyCard";
 import type { Enemy } from "@/types";
+import type { EnemyStats } from "@/lib/schemas/enemy";
 
 interface Props {
   battleId: string;
@@ -17,6 +18,8 @@ export default function EnemiesSection({ battleId, initialPending, initialConfir
   const [generateError, setGenerateError] = useState<string | null>(null);
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [removingId, setRemovingId] = useState<string | null>(null);
 
   async function handleGenerate(e: React.SyntheticEvent) {
     e.preventDefault();
@@ -77,6 +80,67 @@ export default function EnemiesSection({ battleId, initialPending, initialConfir
     } finally {
       setLoadingId(null);
     }
+  }
+
+  async function handleEditSave(enemy: Enemy, stats: EnemyStats): Promise<void> {
+    setLoadingId(enemy.id);
+    setActionError(null);
+    try {
+      const res = await fetch(`/api/enemies/${enemy.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ stats }),
+      });
+      const data = (await res.json()) as { error?: string; enemy?: Enemy };
+      if (!res.ok) {
+        setActionError(data.error ?? "Could not save changes. Please try again.");
+      } else {
+        const updatedEnemy = data.enemy;
+        if (updatedEnemy) {
+          setConfirmed((prev) => prev.map((e) => (e.id === enemy.id ? updatedEnemy : e)));
+          setEditingId(null);
+        }
+      }
+    } catch {
+      setActionError("Could not save changes. Please try again.");
+    } finally {
+      setLoadingId(null);
+    }
+  }
+
+  function handleEditStart(enemy: Enemy) {
+    setEditingId(enemy.id);
+  }
+
+  function handleEditCancel() {
+    setEditingId(null);
+  }
+
+  function handleRemoveStart(enemy: Enemy) {
+    setRemovingId(enemy.id);
+  }
+
+  async function handleRemoveConfirm(enemy: Enemy): Promise<void> {
+    setLoadingId(enemy.id);
+    setActionError(null);
+    try {
+      const res = await fetch(`/api/enemies/${enemy.id}`, { method: "DELETE" });
+      if (res.ok) {
+        setConfirmed((prev) => prev.filter((e) => e.id !== enemy.id));
+        setRemovingId(null);
+      } else {
+        const data = (await res.json()) as { error?: string };
+        setActionError(data.error ?? "Could not remove enemy. Please try again.");
+      }
+    } catch {
+      setActionError("Could not remove enemy. Please try again.");
+    } finally {
+      setLoadingId(null);
+    }
+  }
+
+  function handleRemoveCancel() {
+    setRemovingId(null);
   }
 
   return (
@@ -144,9 +208,34 @@ export default function EnemiesSection({ battleId, initialPending, initialConfir
       {confirmed.length > 0 && (
         <section>
           <h2 className="mb-3 text-sm font-semibold tracking-wide text-blue-100/50 uppercase">Confirmed Enemies</h2>
+          {actionError && (
+            <p className="mb-3 flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-900/30 px-3 py-2 text-sm text-red-300">
+              {actionError}
+            </p>
+          )}
           <div className="space-y-4">
             {confirmed.map((enemy) => (
-              <EnemyCard key={enemy.id} enemy={enemy} />
+              <EnemyCard
+                key={enemy.id}
+                enemy={enemy}
+                onEditStart={() => {
+                  handleEditStart(enemy);
+                }}
+                onEditSave={(stats) => {
+                  void handleEditSave(enemy, stats);
+                }}
+                onEditCancel={handleEditCancel}
+                onRemoveStart={() => {
+                  handleRemoveStart(enemy);
+                }}
+                onRemoveConfirm={() => {
+                  void handleRemoveConfirm(enemy);
+                }}
+                onRemoveCancel={handleRemoveCancel}
+                isEditing={editingId === enemy.id}
+                isRemoving={removingId === enemy.id}
+                isLoading={loadingId === enemy.id}
+              />
             ))}
           </div>
         </section>

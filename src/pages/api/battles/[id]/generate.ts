@@ -1,6 +1,5 @@
 import type { APIRoute } from "astro";
 import { createClient } from "@/lib/supabase";
-import { getUserCampaign } from "@/lib/campaigns";
 import { generateEnemies } from "@/lib/ai";
 
 export const POST: APIRoute = async (context) => {
@@ -32,17 +31,7 @@ export const POST: APIRoute = async (context) => {
     return Response.json({ error: "Prompt is too long (max 2000 characters)" }, { status: 400 });
   }
 
-  const campaign = await getUserCampaign(supabase, user.id);
-  if (!campaign) {
-    return Response.json({ error: "No campaign found" }, { status: 403 });
-  }
-
-  const battleResult = await supabase
-    .from("battles")
-    .select("id, party_level, location")
-    .eq("id", battleId)
-    .eq("campaign_id", campaign.id)
-    .single();
+  const battleResult = await supabase.from("battles").select("id, party_level, location").eq("id", battleId).single();
 
   const battle = battleResult.data;
 

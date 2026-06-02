@@ -16,16 +16,16 @@ Every confirmed enemy card shows "Edit" and "Remove" buttons. Edit flips the car
 
 ## Key Decisions Made
 
-| Decision | Choice | Why | Source |
-|---|---|---|---|
-| Edit UX | Inline — card flips to edit state | Stays in context; matches existing Confirm/Deny pattern | Plan |
-| Edit scope | All fields + ability text | GMs need to tweak descriptions as well as numbers | Plan |
-| Remove confirmation | Inline toggle (no modal) | Prevents accidental delete; avoids blocking layer | Plan |
-| PATCH route | Body discriminant (empty = confirm, `{stats}` = edit) | One endpoint, confirm flow unchanged, REST-conventional | Plan |
-| Validation | Server-side EnemySchema only | Single source of truth; matches project conventions | Plan |
-| Name sync | Update both `name` column and `stats.name` | Prevents divergence for queries that read `enemies.name` directly | Plan |
-| Concurrent edits | One at a time via `editingId` in EnemiesSection | Simpler state; draft is lightweight enough that silent discard is acceptable | Plan |
-| Pending edit scope | Confirmed-only | "Confirm first, then tweak" is the cleaner mental model | Plan |
+| Decision            | Choice                                                | Why                                                                          | Source |
+| ------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------- | ------ |
+| Edit UX             | Inline — card flips to edit state                     | Stays in context; matches existing Confirm/Deny pattern                      | Plan   |
+| Edit scope          | All fields + ability text                             | GMs need to tweak descriptions as well as numbers                            | Plan   |
+| Remove confirmation | Inline toggle (no modal)                              | Prevents accidental delete; avoids blocking layer                            | Plan   |
+| PATCH route         | Body discriminant (empty = confirm, `{stats}` = edit) | One endpoint, confirm flow unchanged, REST-conventional                      | Plan   |
+| Validation          | Server-side EnemySchema only                          | Single source of truth; matches project conventions                          | Plan   |
+| Name sync           | Update both `name` column and `stats.name`            | Prevents divergence for queries that read `enemies.name` directly            | Plan   |
+| Concurrent edits    | One at a time via `editingId` in EnemiesSection       | Simpler state; draft is lightweight enough that silent discard is acceptable | Plan   |
+| Pending edit scope  | Confirmed-only                                        | "Confirm first, then tweak" is the cleaner mental model                      | Plan   |
 
 ## Scope
 
@@ -39,11 +39,11 @@ Single API change (PATCH body discriminant) + two component changes (EnemiesSect
 
 ## Phases at a Glance
 
-| Phase | What it delivers | Key risk |
-|---|---|---|
-| 1. Extend PATCH Route | Body-discriminant PATCH; hardened DELETE | None — logic is straightforward; confirm path unchanged |
-| 2. EnemiesSection State | editingId/removingId state; 6 new handlers wired to confirmed cards | Handler proliferation — keep naming consistent |
-| 3. EnemyCard UI | Edit form (all fields) + remove toggle in confirmed card footer | Edit form layout — many inputs in one card; needs visual grouping |
+| Phase                   | What it delivers                                                    | Key risk                                                          |
+| ----------------------- | ------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| 1. Extend PATCH Route   | Body-discriminant PATCH; hardened DELETE                            | None — logic is straightforward; confirm path unchanged           |
+| 2. EnemiesSection State | editingId/removingId state; 6 new handlers wired to confirmed cards | Handler proliferation — keep naming consistent                    |
+| 3. EnemyCard UI         | Edit form (all fields) + remove toggle in confirmed card footer     | Edit form layout — many inputs in one card; needs visual grouping |
 
 **Prerequisites:** S-02 implemented (confirmed enemies must exist to test against)
 **Estimated effort:** ~1 session across 3 phases

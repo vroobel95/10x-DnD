@@ -27,17 +27,17 @@ D&D 5e Game Masters lose preparation time hunting stat blocks and manually adjus
 
 ## At a glance
 
-| ID   | Change ID                     | Outcome (user can …)                                                                            | Prerequisites | PRD refs                       | Status   |
-| ---- | ----------------------------- | ----------------------------------------------------------------------------------------------- | ------------- | ------------------------------ | -------- |
-| F-01 | data-schema                   | (foundation) campaigns, battles, and enemy tables deployed via migrations with RLS              | —             | FR-002, FR-005, FR-007, FR-009 | impl_reviewed |
-| S-01 | create-battle                 | create a battle within their auto-created campaign and see it listed in the app                 | F-01          | FR-002                         | impl_reviewed |
-| S-02 | first-gated-generation        | type a natural-language combat scenario request, see AI-generated enemy cards, and confirm them | S-01, F-01    | US-01, FR-003, FR-004, FR-005  | impl_reviewed |
-| S-03 | enemy-post-confirm-management | edit a confirmed enemy's stats and remove a confirmed enemy from a battle                       | S-02          | FR-007, FR-009                 | proposed |
-| S-04 | password-reset                | reset a forgotten password via email link and regain access to the app                          | —             | FR-010          | proposed           |
-| S-05 | campaign-management           | see a list of campaigns, choose one, create or delete; battle delete folded in (FR-011)         | F-01, S-01    | FR-001, FR-011  | proposed           |
-| S-06 | delete-battle                 | *(folded into S-05)*                                                                            | S-05          | FR-011          | folded into S-05   |
-| S-07 | pdf-export                    | export a battle's confirmed enemy cards as a printable PDF                                      | S-02, S-03, S-05 | FR-012       | proposed           |
-| S-08 | ux-improvements               | see DnD 5enemy branding on the landing page and get visual feedback during page loads and form submits | — | —         | proposed           |
+| ID   | Change ID                     | Outcome (user can …)                                                                                   | Prerequisites    | PRD refs                       | Status           |
+| ---- | ----------------------------- | ------------------------------------------------------------------------------------------------------ | ---------------- | ------------------------------ | ---------------- |
+| F-01 | data-schema                   | (foundation) campaigns, battles, and enemy tables deployed via migrations with RLS                     | —                | FR-002, FR-005, FR-007, FR-009 | impl_reviewed    |
+| S-01 | create-battle                 | create a battle within their auto-created campaign and see it listed in the app                        | F-01             | FR-002                         | impl_reviewed    |
+| S-02 | first-gated-generation        | type a natural-language combat scenario request, see AI-generated enemy cards, and confirm them        | S-01, F-01       | US-01, FR-003, FR-004, FR-005  | impl_reviewed    |
+| S-03 | enemy-post-confirm-management | edit a confirmed enemy's stats and remove a confirmed enemy from a battle                              | S-02             | FR-007, FR-009                 | proposed         |
+| S-04 | password-reset                | reset a forgotten password via email link and regain access to the app                                 | —                | FR-010                         | proposed         |
+| S-05 | campaign-management           | see a list of campaigns, choose one, create or delete; battle delete folded in (FR-011)                | F-01, S-01       | FR-001, FR-011                 | proposed         |
+| S-06 | delete-battle                 | _(folded into S-05)_                                                                                   | S-05             | FR-011                         | folded into S-05 |
+| S-07 | pdf-export                    | export a battle's confirmed enemy cards as a printable PDF                                             | S-02, S-03, S-05 | FR-012                         | proposed         |
+| S-08 | ux-improvements               | see DnD 5enemy branding on the landing page and get visual feedback during page loads and form submits | —                | —                              | proposed         |
 
 ## Baseline
 
@@ -168,17 +168,17 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 ## Backlog Handoff
 
-| Roadmap ID | Change ID                     | Suggested issue title                                   | Ready for `/10x-plan` | Notes                                              |
-| ---------- | ----------------------------- | ------------------------------------------------------- | --------------------- | -------------------------------------------------- |
-| F-01       | data-schema                   | Design and migrate campaign/battle/enemy schema         | yes                   | Run `/10x-plan data-schema`                        |
-| S-01       | create-battle                 | Create a battle within a campaign                       | no                    | Needs F-01 implemented                             |
-| S-02       | first-gated-generation        | Generate, view, and confirm AI enemy cards for a battle | no                    | Needs S-01 implemented + AI provider resolved (Q1) |
-| S-03       | enemy-post-confirm-management | Edit and remove confirmed enemies from a battle         | no                    | Needs S-02 implemented                             |
-| S-04       | password-reset                | Reset forgotten password via email link                 | yes                   | Fully independent; parallel with S-03 + S-05                             |
-| S-05       | campaign-management           | Campaign list, create, delete (FR-011 folded in)        | yes                   | Revamps nav architecture; fold S-06 in; widest PR in roadmap             |
-| S-06       | delete-battle                 | *(folded into S-05)*                                    | —                     | One button + DELETE endpoint; not worth a separate PR                    |
-| S-07       | pdf-export                    | Export battle enemy cards as PDF                        | no                    | Needs S-03 + S-05 done; Workers PDF spike required before planning       |
-| S-08       | ux-improvements               | Landing page rebrand + loading spinners                 | yes                   | No deps; parallel with S-03, S-04, S-05                                  |
+| Roadmap ID | Change ID                     | Suggested issue title                                   | Ready for `/10x-plan` | Notes                                                              |
+| ---------- | ----------------------------- | ------------------------------------------------------- | --------------------- | ------------------------------------------------------------------ |
+| F-01       | data-schema                   | Design and migrate campaign/battle/enemy schema         | yes                   | Run `/10x-plan data-schema`                                        |
+| S-01       | create-battle                 | Create a battle within a campaign                       | no                    | Needs F-01 implemented                                             |
+| S-02       | first-gated-generation        | Generate, view, and confirm AI enemy cards for a battle | no                    | Needs S-01 implemented + AI provider resolved (Q1)                 |
+| S-03       | enemy-post-confirm-management | Edit and remove confirmed enemies from a battle         | no                    | Needs S-02 implemented                                             |
+| S-04       | password-reset                | Reset forgotten password via email link                 | yes                   | Fully independent; parallel with S-03 + S-05                       |
+| S-05       | campaign-management           | Campaign list, create, delete (FR-011 folded in)        | yes                   | Revamps nav architecture; fold S-06 in; widest PR in roadmap       |
+| S-06       | delete-battle                 | _(folded into S-05)_                                    | —                     | One button + DELETE endpoint; not worth a separate PR              |
+| S-07       | pdf-export                    | Export battle enemy cards as PDF                        | no                    | Needs S-03 + S-05 done; Workers PDF spike required before planning |
+| S-08       | ux-improvements               | Landing page rebrand + loading spinners                 | yes                   | No deps; parallel with S-03, S-04, S-05                            |
 
 ## Open Roadmap Questions
 

@@ -1,8 +1,8 @@
 ---
 change_id: campaign-management
-status: planned
+status: impl_reviewed
 created: 2026-06-01
-updated: 2026-06-01
+updated: 2026-06-02
 roadmap_id: S-05
 prd_refs: FR-001, FR-011
 ---

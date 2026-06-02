@@ -2,6 +2,12 @@
 import Layout from "@/layouts/Layout.astro";
 import CreateBattleForm from "@/components/battles/CreateBattleForm";
 
+const campaignId = Astro.url.searchParams.get("campaignId");
+
+if (!campaignId) {
+  return Astro.redirect(`/campaigns?error=${encodeURIComponent("Select a campaign to create a battle")}`);
+}
+
 const error = Astro.url.searchParams.get("error");
 ---
 
@@ -13,9 +19,9 @@ const error = Astro.url.searchParams.get("error");
       >
         New Battle
       </h1>
-      <CreateBattleForm serverError={error} client:load />
+      <CreateBattleForm campaignId={campaignId} serverError={error} client:load />
       <p class="mt-4 text-center text-sm text-blue-100/60">
-        <a href="/battles" class="text-purple-300 hover:underline">Back to battles</a>
+        <a href={`/campaigns/${campaignId}`} class="text-purple-300 hover:underline">Back to campaign</a>
       </p>
     </div>
   </div>

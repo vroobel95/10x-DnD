@@ -16,20 +16,21 @@ The dashboard lists the GM's battles with name, party level, and created date. "
 
 ## Key Decisions Made
 
-| Decision | Choice | Why (1 sentence) |
-|----------|--------|-----------------|
-| Battle list location | Dashboard becomes the battle list | GM lands directly on their battles after sign-in — no extra navigation layer |
-| Create battle form fields | Name (required) + party_level + location (optional) | Full schema exposed upfront so S-02 can read context without a separate edit step |
-| Post-create destination | Navigate to /battles/[id] | Provides a clear landing page for S-02 to build on, rather than dropping back to the list |
-| Battle list design | Cards with name, party level, created date | Surfaces the fields the GM filled in; matches existing glassmorphic card pattern |
-| Battle detail page scope | Skeleton only — metadata + S-02 placeholder | Keeps S-01 thin; S-02 fills the generation form in the same page |
-| Form validation | Server-side only (redirect with ?error=) | Matches existing auth API route pattern exactly; no new React state patterns in S-01 |
-| API structure | POST /api/battles (create) + GET /api/battles (list JSON) | POST follows auth route pattern; GET available for S-02 client-side use |
-| Campaign not found | Redirect with error message | Simple, matches existing error pattern; unlikely edge case in practice |
+| Decision                  | Choice                                                    | Why (1 sentence)                                                                          |
+| ------------------------- | --------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Battle list location      | Dashboard becomes the battle list                         | GM lands directly on their battles after sign-in — no extra navigation layer              |
+| Create battle form fields | Name (required) + party_level + location (optional)       | Full schema exposed upfront so S-02 can read context without a separate edit step         |
+| Post-create destination   | Navigate to /battles/[id]                                 | Provides a clear landing page for S-02 to build on, rather than dropping back to the list |
+| Battle list design        | Cards with name, party level, created date                | Surfaces the fields the GM filled in; matches existing glassmorphic card pattern          |
+| Battle detail page scope  | Skeleton only — metadata + S-02 placeholder               | Keeps S-01 thin; S-02 fills the generation form in the same page                          |
+| Form validation           | Server-side only (redirect with ?error=)                  | Matches existing auth API route pattern exactly; no new React state patterns in S-01      |
+| API structure             | POST /api/battles (create) + GET /api/battles (list JSON) | POST follows auth route pattern; GET available for S-02 client-side use                   |
+| Campaign not found        | Redirect with error message                               | Simple, matches existing error pattern; unlikely edge case in practice                    |
 
 ## Scope
 
 **In scope:**
+
 - `POST /api/battles` — create a battle (campaign lookup, validation, insert, redirect)
 - `GET /api/battles` — return battles as JSON (for S-02 future use)
 - Dashboard overhaul — battle list + "New Battle" link + `BattleCard.astro`
@@ -38,6 +39,7 @@ The dashboard lists the GM's battles with name, party level, and created date. "
 - Middleware: add `/battles` to `PROTECTED_ROUTES`
 
 **Out of scope:**
+
 - Campaign management UI (auto-created campaign only)
 - Client-side form validation
 - Battle editing or deletion (S-03)
@@ -50,12 +52,12 @@ Four files modified or created per phase. The create-battle form follows the `si
 
 ## Phases at a Glance
 
-| Phase | What it delivers | Key risk |
-|-------|-----------------|----------|
-| 1. API Layer | POST and GET /api/battles | Campaign lookup returns null for edge-case new accounts |
-| 2. Dashboard Overhaul | Battle list + BattleCard on dashboard | Empty state needs to be usable, not confusing |
-| 3. Create Battle Page & Form | /battles/new with form, server error display | party_level string→integer parsing |
-| 4. Battle Detail Skeleton & Route Guard | /battles/[id] skeleton, /battles/* protected | RLS null → redirect must not loop |
+| Phase                                   | What it delivers                              | Key risk                                                |
+| --------------------------------------- | --------------------------------------------- | ------------------------------------------------------- |
+| 1. API Layer                            | POST and GET /api/battles                     | Campaign lookup returns null for edge-case new accounts |
+| 2. Dashboard Overhaul                   | Battle list + BattleCard on dashboard         | Empty state needs to be usable, not confusing           |
+| 3. Create Battle Page & Form            | /battles/new with form, server error display  | party_level string→integer parsing                      |
+| 4. Battle Detail Skeleton & Route Guard | /battles/[id] skeleton, /battles/\* protected | RLS null → redirect must not loop                       |
 
 **Prerequisites:** F-01 (data-schema) implemented and migrations applied — the `battles` table and auto-campaign trigger must be live.
 **Estimated effort:** ~1 session across 4 phases.
