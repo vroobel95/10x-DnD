@@ -54,7 +54,7 @@ const battles = (battlesData ?? []) as Battle[];
         </a>
       </div>
 
-      <CampaignBattleList battles={battles} campaignId={campaign.id} client:only="react" />
+      <CampaignBattleList battles={battles} campaignId={campaign.id} client:load />
 
       <form method="POST" action="/api/auth/signout" class="mt-8 text-center">
         <button

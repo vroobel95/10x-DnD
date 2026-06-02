@@ -32,10 +32,10 @@ const campaigns: CampaignWithCount[] = rawCampaigns.map((c: Record<string, unkno
         <h1 class="bg-linear-to-r from-blue-200 to-purple-200 bg-clip-text text-3xl font-bold text-transparent">
           My Campaigns
         </h1>
-        <CreateCampaignForm client:only="react" />
+        <CreateCampaignForm client:load />
       </div>
 
-      <CampaignList campaigns={campaigns} client:only="react" />
+      <CampaignList campaigns={campaigns} client:load />
 
       <form method="POST" action="/api/auth/signout" class="mt-8 text-center">
         <button

@@ -21,7 +21,7 @@ const error = Astro.url.searchParams.get("error");
       >
         New Battle
       </h1>
-      <CreateBattleForm campaignId={campaignId} serverError={error} client:only="react" />
+      <CreateBattleForm campaignId={campaignId} serverError={error} client:load />
       <p class="mt-4 text-center text-sm text-blue-100/60">
         <a href={`/campaigns/${campaignId}`} class="text-purple-300 hover:underline">Back to campaign</a>
       </p>
