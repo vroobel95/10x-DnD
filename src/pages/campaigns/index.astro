@@ -1,6 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import CampaignList from "@/components/campaigns/CampaignList";
+import CreateCampaignForm from "@/components/campaigns/CreateCampaignForm";
 import { createClient } from "@/lib/supabase";
 import { getUserCampaigns } from "@/lib/campaigns";
 import type { CampaignWithCount } from "@/components/campaigns/CampaignList";
@@ -22,8 +23,6 @@ const campaigns: CampaignWithCount[] = rawCampaigns.map((c: Record<string, unkno
   updated_at: c.updated_at as string,
   battleCount: (c.battles as Array<{ count: number }>)?.[0]?.count ?? 0,
 }));
-
-const error = Astro.url.searchParams.get("error");
 ---
 
 <Layout title="My Campaigns">
@@ -33,51 +32,7 @@ const error = Astro.url.searchParams.get("error");
         <h1 class="bg-linear-to-r from-blue-200 to-purple-200 bg-clip-text text-3xl font-bold text-transparent">
           My Campaigns
         </h1>
-      </div>
-
-      {
-        error && (
-          <div class="mb-6 rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
-            {error}
-          </div>
-        )
-      }
-
-      <div class="mb-8 rounded-xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
-        <h2 class="mb-4 text-sm font-semibold uppercase tracking-wider text-blue-100/60">New Campaign</h2>
-        <form method="POST" action="/api/campaigns" class="space-y-3">
-          <div>
-            <label for="name" class="mb-1 block text-sm font-medium text-white">Name</label>
-            <input
-              id="name"
-              name="name"
-              type="text"
-              required
-              maxlength="200"
-              placeholder="e.g. Curse of Strahd"
-              class="w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-sm text-white placeholder-blue-100/40 focus:border-purple-400/60 focus:outline-none"
-            />
-          </div>
-          <div>
-            <label for="description" class="mb-1 block text-sm font-medium text-white">
-              Description <span class="text-blue-100/40">(optional)</span>
-            </label>
-            <input
-              id="description"
-              name="description"
-              type="text"
-              maxlength="500"
-              placeholder="A brief note about this campaign"
-              class="w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-sm text-white placeholder-blue-100/40 focus:border-purple-400/60 focus:outline-none"
-            />
-          </div>
-          <button
-            type="submit"
-            class="inline-flex items-center justify-center rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-purple-500"
-          >
-            + Create Campaign
-          </button>
-        </form>
+        <CreateCampaignForm client:load />
       </div>
 
       <CampaignList campaigns={campaigns} client:load />
