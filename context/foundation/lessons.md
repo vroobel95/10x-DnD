@@ -23,6 +23,13 @@
 - **Rule**: Every fetch-based action handler must check the response status and surface failures to the user
 - **Applies to**: All React components with fetch-based mutation handlers
 
+## Separate DB errors from not-found cases in Supabase mutation routes
+
+- **Context**: src/pages/api/enemies/[id].ts:45-47, 60-62
+- **Problem**: PATCH branches use `if (result.error || !result.data)` and return 404 "Enemy not found" for both a real Supabase error (network/schema failure) and a missing row. The DELETE branch in the same file correctly separates these two cases into 500 vs. 404 — PATCH did not follow suit.
+- **Rule**: [fill in — e.g. "Always split `result.error` (→ 500) from `!result.data` (→ 404) in Supabase mutation responses; never collapse them into a single 404"]
+- **Applies to**: [fill in — e.g. "All API routes that perform Supabase update/delete and check the result"]
+
 ## Fail fast on missing required secrets instead of passing empty defaults
 
 - **Context**: src/lib/ai.ts:19
