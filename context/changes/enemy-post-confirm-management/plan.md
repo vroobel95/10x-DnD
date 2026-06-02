@@ -267,10 +267,10 @@ Import `EnemyStats` from `@/lib/schemas/enemy` (already imported for `EnemySchem
 
 #### Manual
 
-- [ ] 1.3 PATCH with empty body still confirms enemy
-- [ ] 1.4 PATCH with valid `{stats}` body updates stats + name columns
-- [ ] 1.5 PATCH with invalid stats returns 422 with readable message
-- [ ] 1.6 DELETE with unknown ID returns 404
+- [x] 1.3 PATCH with empty body still confirms enemy
+- [x] 1.4 PATCH with valid `{stats}` body updates stats + name columns
+- [x] 1.5 PATCH with invalid stats returns 422 with readable message
+- [x] 1.6 DELETE with unknown ID returns 404
 
 ### Phase 2: EnemiesSection State and Handlers
 
@@ -281,9 +281,9 @@ Import `EnemyStats` from `@/lib/schemas/enemy` (already imported for `EnemySchem
 
 #### Manual
 
-- [ ] 2.3 Edit on a confirmed card sets that card to edit mode only
-- [ ] 2.4 Edit on second card silently discards first card's draft
-- [ ] 2.5 actionError banner appears after a failed save or remove
+- [x] 2.3 Edit on a confirmed card sets that card to edit mode only
+- [x] 2.4 Edit on second card silently discards first card's draft
+- [x] 2.5 actionError banner appears after a failed save or remove
 
 ### Phase 3: EnemyCard Edit Form and Remove Toggle
 
@@ -294,9 +294,9 @@ Import `EnemyStats` from `@/lib/schemas/enemy` (already imported for `EnemySchem
 
 #### Manual
 
-- [ ] 3.3 Confirmed card shows Edit and Remove buttons
-- [ ] 3.4 Edit flips card to pre-populated form; Save persists to DB
-- [ ] 3.5 Invalid stat value shows error banner, no DB update
-- [ ] 3.6 Cancel reverts card to read-only original values
-- [ ] 3.7 Remove shows inline confirmation; Yes deletes; Cancel dismisses
-- [ ] 3.8 Pending cards unaffected
+- [x] 3.3 Confirmed card shows Edit and Remove buttons
+- [x] 3.4 Edit flips card to pre-populated form; Save persists to DB
+- [x] 3.5 Invalid stat value shows error banner, no DB update
+- [x] 3.6 Cancel reverts card to read-only original values
+- [x] 3.7 Remove shows inline confirmation; Yes deletes; Cancel dismisses
+- [x] 3.8 Pending cards unaffected
