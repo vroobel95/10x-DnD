@@ -137,6 +137,8 @@ Add `editingId` and `removingId` state to `EnemiesSection` and wire up the six n
 
 **Contract**: Each confirmed `EnemyCard` receives: `onEditSave`, `onEditCancel`, `onRemoveStart`, `onRemoveConfirm`, `onRemoveCancel`, `isEditing={editingId === enemy.id}`, `isRemoving={removingId === enemy.id}`, `isLoading={loadingId === enemy.id}`.
 
+**Implementation note**: `handleEditStart(enemy)` / `onEditStart` was added as a discovered necessity — the Edit button in the read-only footer must set `editingId`. Not listed in the original contract above (plan gap); seven props total are passed.
+
 ### Success Criteria
 
 #### Automated Verification
@@ -185,6 +187,8 @@ Import `EnemyStats` from `@/lib/schemas/enemy` (already imported for `EnemySchem
 **Intent**: When `isEditing` becomes true, initialize a local `draft` state from the current parsed stats. The draft holds the in-progress edits until Save or Cancel.
 
 **Contract**: `const [draft, setDraft] = useState<EnemyStats | null>(null)`. In a `useEffect` keyed on `isEditing`: when `isEditing` becomes true and stats parse successfully, set draft to the parsed stats; when `isEditing` becomes false, reset draft to null. All form inputs read from and write to `draft`.
+
+**Implementation note**: Implemented as a standalone `EnemyEditForm` component (lines 49–235 in EnemyCard.tsx) with `useState<EnemyStats>(initialStats)` — draft resets on mount/unmount instead of useEffect. Behavior equivalent; component extraction is cleaner.
 
 #### 3. Render edit form when isEditing
 
@@ -262,41 +266,41 @@ Import `EnemyStats` from `@/lib/schemas/enemy` (already imported for `EnemySchem
 
 #### Automated
 
-- [ ] 1.1 TypeScript compilation passes: `npm run check`
-- [ ] 1.2 Linting passes: `npm run lint`
+- [x] 1.1 TypeScript compilation passes: `npm run check` — 83e2d09
+- [x] 1.2 Linting passes: `npm run lint` — 83e2d09
 
 #### Manual
 
-- [ ] 1.3 PATCH with empty body still confirms enemy
-- [ ] 1.4 PATCH with valid `{stats}` body updates stats + name columns
-- [ ] 1.5 PATCH with invalid stats returns 422 with readable message
-- [ ] 1.6 DELETE with unknown ID returns 404
+- [x] 1.3 PATCH with empty body still confirms enemy
+- [x] 1.4 PATCH with valid `{stats}` body updates stats + name columns
+- [x] 1.5 PATCH with invalid stats returns 422 with readable message
+- [x] 1.6 DELETE with unknown ID returns 404
 
 ### Phase 2: EnemiesSection State and Handlers
 
 #### Automated
 
-- [ ] 2.1 TypeScript compilation passes: `npm run check`
-- [ ] 2.2 Linting passes: `npm run lint`
+- [x] 2.1 TypeScript compilation passes: `npm run check` — 8ad02a9
+- [x] 2.2 Linting passes: `npm run lint` — 8ad02a9
 
 #### Manual
 
-- [ ] 2.3 Edit on a confirmed card sets that card to edit mode only
-- [ ] 2.4 Edit on second card silently discards first card's draft
-- [ ] 2.5 actionError banner appears after a failed save or remove
+- [x] 2.3 Edit on a confirmed card sets that card to edit mode only
+- [x] 2.4 Edit on second card silently discards first card's draft
+- [x] 2.5 actionError banner appears after a failed save or remove
 
 ### Phase 3: EnemyCard Edit Form and Remove Toggle
 
 #### Automated
 
-- [ ] 3.1 TypeScript compilation passes: `npm run check`
-- [ ] 3.2 Linting passes: `npm run lint`
+- [x] 3.1 TypeScript compilation passes: `npm run check` — 9a2a941
+- [x] 3.2 Linting passes: `npm run lint` — 9a2a941
 
 #### Manual
 
-- [ ] 3.3 Confirmed card shows Edit and Remove buttons
-- [ ] 3.4 Edit flips card to pre-populated form; Save persists to DB
-- [ ] 3.5 Invalid stat value shows error banner, no DB update
-- [ ] 3.6 Cancel reverts card to read-only original values
-- [ ] 3.7 Remove shows inline confirmation; Yes deletes; Cancel dismisses
-- [ ] 3.8 Pending cards unaffected
+- [x] 3.3 Confirmed card shows Edit and Remove buttons
+- [x] 3.4 Edit flips card to pre-populated form; Save persists to DB
+- [x] 3.5 Invalid stat value shows error banner, no DB update
+- [x] 3.6 Cancel reverts card to read-only original values
+- [x] 3.7 Remove shows inline confirmation; Yes deletes; Cancel dismisses
+- [x] 3.8 Pending cards unaffected
