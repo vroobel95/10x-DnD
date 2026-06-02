@@ -13,11 +13,10 @@ if (!supabase || !user) {
   return Astro.redirect("/campaigns");
 }
 
-const { data: battle } = (await supabase
-  .from("battles")
-  .select("*")
-  .eq("id", id)
-  .single()) as { data: Battle | null; error: unknown };
+const { data: battle } = (await supabase.from("battles").select("*").eq("id", id).single()) as {
+  data: Battle | null;
+  error: unknown;
+};
 
 if (!battle) {
   return Astro.redirect("/campaigns");

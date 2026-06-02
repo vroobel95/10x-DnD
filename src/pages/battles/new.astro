@@ -5,9 +5,7 @@ import CreateBattleForm from "@/components/battles/CreateBattleForm";
 const campaignId = Astro.url.searchParams.get("campaignId");
 
 if (!campaignId) {
-  return Astro.redirect(
-    `/campaigns?error=${encodeURIComponent("Select a campaign to create a battle")}`,
-  );
+  return Astro.redirect(`/campaigns?error=${encodeURIComponent("Select a campaign to create a battle")}`);
 }
 
 const error = Astro.url.searchParams.get("error");

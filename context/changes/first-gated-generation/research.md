@@ -58,7 +58,7 @@ SUPABASE_KEY: envField.string({ context: "server", access: "secret", optional: t
 `ANTHROPIC_API_KEY` must be added to the same schema using the same `envField.string({ context: "server", access: "secret" })` pattern. It is then imported as:
 
 ```ts
-import { ANTHROPIC_API_KEY } from 'astro:env/server';
+import { ANTHROPIC_API_KEY } from "astro:env/server";
 ```
 
 This is the only correct pattern — do **not** use `import.meta.env.ANTHROPIC_API_KEY` or `process.env.ANTHROPIC_API_KEY` in API routes.
@@ -91,6 +91,7 @@ export const POST: APIRoute = async (context) => {
 ```
 
 Key callouts:
+
 - **Auth guard** ([`src/middleware.ts`](https://github.com/vroobel95/10x-DnD/blob/5fbe1dbb75e7441a6e685cca6567c05f83f06d6e/src/middleware.ts)) only protects page routes under `/battles*`, not API routes — auth must be re-checked manually in every API route via `context.locals.user`
 - **Locals shape** ([`src/env.d.ts:1-5`](https://github.com/vroobel95/10x-DnD/blob/5fbe1dbb75e7441a6e685cca6567c05f83f06d6e/src/env.d.ts)): `{ user: User | null }` — populated by middleware from Supabase session
 - **Ownership verification** must go through the campaign join (per the lessons.md pattern — the campaign-lookup query must be extracted to a helper since it already exists in 3 places: `src/pages/api/battles.ts:15, :72; src/pages/battles/index.astro:13`)
@@ -116,14 +117,14 @@ This is the exact slot where the generation UI (prompt input + enemy cards) will
 
 **`anthropic-docs.md` documents the native `@anthropic-ai/sdk` — but `ai-provider-research.md` decided to use the Vercel AI SDK (`@ai-sdk/anthropic`). These are incompatible.**
 
-| | `anthropic-docs.md` (as written) | `ai-provider-research.md` (the decision) |
-|---|---|---|
-| **Package** | `@anthropic-ai/sdk` | `ai` + `@ai-sdk/anthropic` |
-| **Install** | `npm install @anthropic-ai/sdk zod` | `npm i ai @ai-sdk/anthropic zod` |
-| **Structured output** | `client.messages.parse()` + `zodOutputFormat()` | `generateText()` + `Output.object()` |
-| **Return shape** | `message.parsed_output?.field` | destructured `{ output }` |
-| **Zod helper** | `zodOutputFormat` from `@anthropic-ai/sdk/helpers/zod` | `Output.object()` from `ai` |
-| **Provider init** | `new Anthropic({ apiKey })` | `createAnthropic({ apiKey })` from `@ai-sdk/anthropic` |
+|                       | `anthropic-docs.md` (as written)                       | `ai-provider-research.md` (the decision)               |
+| --------------------- | ------------------------------------------------------ | ------------------------------------------------------ |
+| **Package**           | `@anthropic-ai/sdk`                                    | `ai` + `@ai-sdk/anthropic`                             |
+| **Install**           | `npm install @anthropic-ai/sdk zod`                    | `npm i ai @ai-sdk/anthropic zod`                       |
+| **Structured output** | `client.messages.parse()` + `zodOutputFormat()`        | `generateText()` + `Output.object()`                   |
+| **Return shape**      | `message.parsed_output?.field`                         | destructured `{ output }`                              |
+| **Zod helper**        | `zodOutputFormat` from `@anthropic-ai/sdk/helpers/zod` | `Output.object()` from `ai`                            |
+| **Provider init**     | `new Anthropic({ apiKey })`                            | `createAnthropic({ apiKey })` from `@ai-sdk/anthropic` |
 
 A developer following `anthropic-docs.md` today would write code that does not compile against the decided packages. The docs need to be replaced **before** `/10x-plan` begins.
 

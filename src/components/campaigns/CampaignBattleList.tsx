@@ -23,7 +23,7 @@ export default function CampaignBattleList({ battles: initial, campaignId }: Pro
     try {
       const res = await fetch(`/api/battles/${id}`, { method: "DELETE" });
       if (!res.ok) {
-        const data = await res.json();
+        const data = (await res.json()) as { error?: string };
         setActionError(data.error ?? "Could not delete battle");
         return;
       }
@@ -114,7 +114,9 @@ export default function CampaignBattleList({ battles: initial, campaignId }: Pro
               </div>
             ) : (
               <button
-                onClick={() => handleDeleteStart(battle.id)}
+                onClick={() => {
+                  handleDeleteStart(battle.id);
+                }}
                 className="rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-1.5 text-xs font-medium text-red-300 transition-colors hover:bg-red-500/20"
               >
                 Delete

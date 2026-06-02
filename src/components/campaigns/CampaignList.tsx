@@ -33,7 +33,7 @@ export default function CampaignList({ campaigns: initial }: Props) {
         body: JSON.stringify({ name }),
       });
       if (!res.ok) {
-        const data = await res.json();
+        const data = (await res.json()) as { error?: string };
         setActionError(data.error ?? "Could not rename campaign");
         return;
       }
@@ -62,7 +62,7 @@ export default function CampaignList({ campaigns: initial }: Props) {
     try {
       const res = await fetch(`/api/campaigns/${id}`, { method: "DELETE" });
       if (!res.ok) {
-        const data = await res.json();
+        const data = (await res.json()) as { error?: string };
         setActionError(data.error ?? "Could not delete campaign");
         return;
       }
@@ -106,18 +106,17 @@ export default function CampaignList({ campaigns: initial }: Props) {
         });
 
         return (
-          <div
-            key={campaign.id}
-            className="rounded-xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl"
-          >
+          <div key={campaign.id} className="rounded-xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
             {isEditing ? (
               <div className="mb-3 flex gap-2">
                 <input
                   className="flex-1 rounded-lg border border-white/20 bg-white/10 px-3 py-1.5 text-sm text-white placeholder-blue-100/40 focus:border-purple-400/60 focus:outline-none"
                   value={renamingDraft}
-                  onChange={(e) => setRenamingDraft(e.target.value)}
+                  onChange={(e) => {
+                    setRenamingDraft(e.target.value);
+                  }}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter") handleRenameSave(campaign.id);
+                    if (e.key === "Enter") void handleRenameSave(campaign.id);
                     if (e.key === "Escape") handleRenameCancel();
                   }}
                   autoFocus
@@ -181,13 +180,17 @@ export default function CampaignList({ campaigns: initial }: Props) {
             ) : (
               <div className="flex gap-2">
                 <button
-                  onClick={() => handleRenameStart(campaign.id, campaign.name)}
+                  onClick={() => {
+                    handleRenameStart(campaign.id, campaign.name);
+                  }}
                   className="rounded-lg border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-white/20"
                 >
                   Rename
                 </button>
                 <button
-                  onClick={() => handleDeleteStart(campaign.id)}
+                  onClick={() => {
+                    handleDeleteStart(campaign.id);
+                  }}
                   className="rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-1.5 text-xs font-medium text-red-300 transition-colors hover:bg-red-500/20"
                 >
                   Delete

@@ -1,5 +1,5 @@
 ---
-project: 'DnD 5enemy'
+project: "DnD 5enemy"
 context_type: greenfield
 product_type: web-app
 target_scale:
@@ -8,7 +8,7 @@ target_scale:
   data_volume: small
 timeline_budget:
   mvp_weeks: 3
-  hard_deadline: '2026-07-05'
+  hard_deadline: "2026-07-05"
   after_hours_only: true
 checkpoint:
   current_phase: 8

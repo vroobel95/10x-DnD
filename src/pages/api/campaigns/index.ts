@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { createClient } from "@/lib/supabase";
 import { getUserCampaigns } from "@/lib/campaigns";
+import type { Campaign } from "@/types";
 
 export const prerender = false;
 
@@ -37,9 +38,9 @@ export const POST: APIRoute = async (context) => {
   let description: string | null;
 
   try {
-    const body = await context.request.json() as { name?: string; description?: string };
+    const body = (await context.request.json()) as { name?: string; description?: string };
     name = body.name?.trim() ?? "";
-    description = body.description?.trim() || null;
+    description = body.description?.trim() ?? null;
   } catch {
     return Response.json({ error: "Invalid request body" }, { status: 400 });
   }
@@ -54,13 +55,13 @@ export const POST: APIRoute = async (context) => {
     return Response.json({ error: "Description must be 500 characters or fewer" }, { status: 400 });
   }
 
-  const { data: campaign, error } = await supabase
+  const { data: campaign } = (await supabase
     .from("campaigns")
     .insert({ user_id: user.id, name, description, updated_at: new Date().toISOString() })
     .select("*")
-    .single();
+    .single()) as { data: Campaign | null };
 
-  if (error || !campaign) {
+  if (!campaign) {
     return Response.json({ error: "Could not create campaign. Please try again." }, { status: 500 });
   }
 

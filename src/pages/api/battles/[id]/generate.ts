@@ -31,11 +31,7 @@ export const POST: APIRoute = async (context) => {
     return Response.json({ error: "Prompt is too long (max 2000 characters)" }, { status: 400 });
   }
 
-  const battleResult = await supabase
-    .from("battles")
-    .select("id, party_level, location")
-    .eq("id", battleId)
-    .single();
+  const battleResult = await supabase.from("battles").select("id, party_level, location").eq("id", battleId).single();
 
   const battle = battleResult.data;
 

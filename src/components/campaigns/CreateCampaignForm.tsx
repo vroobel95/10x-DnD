@@ -19,7 +19,7 @@ export default function CreateCampaignForm() {
     setError(null);
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     const trimmedName = name.trim();
     if (!trimmedName) {
@@ -34,7 +34,7 @@ export default function CreateCampaignForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: trimmedName, description: description.trim() || undefined }),
       });
-      const data = await res.json() as { campaign?: { id: string }; error?: string };
+      const data = (await res.json()) as { campaign?: { id: string }; error?: string };
       if (!res.ok || !data.campaign) {
         setError(data.error ?? "Could not create campaign. Please try again.");
         return;
@@ -60,7 +60,7 @@ export default function CreateCampaignForm() {
 
   return (
     <div className="rounded-xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
-      <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-blue-100/60">New Campaign</h2>
+      <h2 className="mb-4 text-sm font-semibold tracking-wider text-blue-100/60 uppercase">New Campaign</h2>
       <form onSubmit={handleSubmit} className="space-y-3">
         {error && (
           <div className="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
@@ -78,7 +78,9 @@ export default function CreateCampaignForm() {
             maxLength={200}
             placeholder="e.g. Curse of Strahd"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => {
+              setName(e.target.value);
+            }}
             className="w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-sm text-white placeholder-blue-100/40 focus:border-purple-400/60 focus:outline-none"
             autoFocus
           />
@@ -93,7 +95,9 @@ export default function CreateCampaignForm() {
             maxLength={500}
             placeholder="A brief note about this campaign"
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={(e) => {
+              setDescription(e.target.value);
+            }}
             className="w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-sm text-white placeholder-blue-100/40 focus:border-purple-400/60 focus:outline-none"
           />
         </div>
