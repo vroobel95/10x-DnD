@@ -16,7 +16,5 @@ export const GET: APIRoute = async (context) => {
     }
   }
 
-  return context.redirect(
-    `/auth/forgot-password?error=${encodeURIComponent("Reset link is invalid or has expired")}`,
-  );
+  return context.redirect(`/auth/forgot-password?error=${encodeURIComponent("Reset link is invalid or has expired")}`);
 };

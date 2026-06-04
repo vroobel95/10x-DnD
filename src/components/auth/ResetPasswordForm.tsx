@@ -5,6 +5,8 @@ import { PasswordToggle } from "@/components/auth/PasswordToggle";
 import { SubmitButton } from "@/components/auth/SubmitButton";
 import { ServerError } from "@/components/auth/ServerError";
 
+const MIN_PASSWORD_LENGTH = 6;
+
 interface Props {
   serverError?: string | null;
 }
@@ -20,6 +22,8 @@ export default function ResetPasswordForm({ serverError }: Props) {
     const next: typeof errors = {};
     if (!password) {
       next.password = "Password is required";
+    } else if (password.length < MIN_PASSWORD_LENGTH) {
+      next.password = `Password must be at least ${MIN_PASSWORD_LENGTH} characters`;
     }
     if (!confirmPassword) {
       next.confirm_password = "Please confirm your password";

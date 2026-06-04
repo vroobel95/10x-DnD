@@ -12,21 +12,29 @@ export const POST: APIRoute = async (context) => {
   const password = formData.get("password")?.toString() ?? "";
   const confirmPassword = formData.get("confirm_password")?.toString() ?? "";
 
-  if (password !== confirmPassword) {
+  if (!password || password.length < 6) {
     return context.redirect(
-      `/auth/reset-password?error=${encodeURIComponent("Passwords do not match")}`,
+      `/auth/reset-password?error=${encodeURIComponent("Password must be at least 6 characters")}`,
     );
   }
 
+  if (password !== confirmPassword) {
+    return context.redirect(`/auth/reset-password?error=${encodeURIComponent("Passwords do not match")}`);
+  }
+
   const supabase = createClient(context.request.headers, context.cookies);
-  if (supabase) {
-    const { error } = await supabase.auth.updateUser({ password });
-    if (error) {
-      console.error("updateUser error:", error.message);
-      return context.redirect(
-        `/auth/reset-password?error=${encodeURIComponent("Could not update password. Please try again.")}`,
-      );
-    }
+  if (!supabase) {
+    return context.redirect(
+      `/auth/reset-password?error=${encodeURIComponent("Service unavailable. Please try again later.")}`,
+    );
+  }
+
+  const { error } = await supabase.auth.updateUser({ password });
+  if (error) {
+    console.error("updateUser error:", error.message);
+    return context.redirect(
+      `/auth/reset-password?error=${encodeURIComponent("Could not update password. Please try again.")}`,
+    );
   }
 
   return context.redirect("/auth/signin?success=1");

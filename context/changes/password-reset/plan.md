@@ -196,6 +196,10 @@ Add the completion end of the reset flow: a session-guarded page where the GM en
 8. Navigate directly to `/auth/reset-password` without clicking a link; verify redirect to `/auth/forgot-password`
 9. Submit forgot-password with an unregistered email; verify same confirmation message as registered email
 
+## Addendum: Dedicated Recovery Callback (post-plan)
+
+The original plan routed Supabase recovery emails through the shared `/api/auth/callback?next=/auth/reset-password&type=recovery`. This caused a bug where after a successful password reset, the user was redirected to the main page instead of the reset-password page. Fix (commit e578762): a dedicated `/api/auth/recovery-callback` route that always redirects to `/auth/reset-password` on success. The `redirectTo` in `forgot-password.ts` now points to `/api/auth/recovery-callback`. The `type=recovery` branch was removed from `callback.ts` as dead code.
+
 ## References
 
 - Auth callback: `src/pages/api/auth/callback.ts`

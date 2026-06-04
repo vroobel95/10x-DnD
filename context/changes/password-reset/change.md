@@ -1,8 +1,8 @@
 ---
 change_id: password-reset
-status: planned
+status: impl_reviewed
 created: 2026-06-01
-updated: 2026-06-01
+updated: 2026-06-04
 roadmap_id: S-04
 prd_refs: FR-010
 ---
