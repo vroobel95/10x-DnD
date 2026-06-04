@@ -431,14 +431,14 @@ Fill §6.1 and §6.2 of `context/foundation/test-plan.md` with the concrete patt
 
 #### Automated
 
-- [x] 1.1 `npm run test -- --passWithNoTests` exits 0
-- [x] 1.2 `npm run lint` passes with no new errors from config files
+- [x] 1.1 `npm run test -- --passWithNoTests` exits 0 — d348d9f
+- [x] 1.2 `npm run lint` passes with no new errors from config files — d348d9f
 
 ### Phase 2: Schema Unit Tests
 
 #### Automated
 
-- [ ] 2.1 `npm run test` exits 0 with all schema boundary-value tests passing
+- [x] 2.1 `npm run test` exits 0 with all schema boundary-value tests passing
 
 ### Phase 3: Mutation Route Fixes and Integration Tests
 
