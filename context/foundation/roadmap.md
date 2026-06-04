@@ -38,6 +38,8 @@ D&D 5e Game Masters lose preparation time hunting stat blocks and manually adjus
 | S-06 | delete-battle                 | _(folded into S-05)_                                                                                   | S-05             | FR-011                         | folded into S-05 |
 | S-07 | pdf-export                    | export a battle's confirmed enemy cards as a printable PDF                                             | S-02, S-03, S-05 | FR-012                         | proposed         |
 | S-08 | ux-improvements               | see DnD 5enemy branding on the landing page and get visual feedback during page loads and form submits | —                | —                              | proposed         |
+| S-09 | battle-environment            | see AI-generated atmospheric and environmental details for a battle (terrain, hazards, ambiance)        | S-01             | —                              | proposed         |
+| S-10 | main-enemy-profile            | if a battle has a main enemy, see its generated narrative description, unique characteristics, and 3 roleplay dialogue lines | S-02 | —               | proposed         |
 
 ## Baseline
 
@@ -152,6 +154,30 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:**
   - Which PDF generation approach is compatible with Cloudflare Workers (workerd runtime)? Puppeteer/Chromium is unavailable; candidates are `pdf-lib` (pure JS), an external HTML-to-PDF API, or Cloudflare Browser Rendering (beta/paid). Requires a spike to confirm bundle size and runtime compatibility. — Owner: developer. Block: soft (implementation can't start until approach is picked).
 - **Risk:** two sources of risk. (1) PDF generation on Cloudflare Workers — the workerd runtime prohibits most node-native and browser-headless approaches; spike required before planning. (2) `battles/[id].astro` write conflict with S-05 — both slices modify this file; S-07 must be based on S-05's version. Adding S-05 as an explicit prerequisite closes this risk: by the time S-07 starts, `battles/[id].astro` is settled. Sequenced last because the enemy data model must be stable (S-03) and the navigation architecture must be in place (S-05).
+- **Status:** proposed
+
+### S-09: Battle environment
+
+- **Outcome:** GM can view AI-generated atmospheric and environmental details for a battle — terrain features, environmental hazards, lighting conditions, ambient ambiance, and battleground trivia — displayed on the battle page and persisted to the battle.
+- **Change ID:** battle-environment
+- **PRD refs:** —
+- **Prerequisites:** S-01 (battle must exist before environment can be attached)
+- **Parallel with:** S-08 — no file overlap expected
+- **Blockers:** —
+- **Unknowns:** scope of "environment" (pure flavor text vs. D&D mechanical effects vs. both), generation trigger (auto on battle creation vs. on-demand button), whether to allow regeneration, where it lives in the battle UI — to be resolved during `/10x-plan`.
+- **Risk:** low–medium. Core risk is prompt design: the AI must produce concise, GM-usable content rather than walls of text. UI placement and DB storage shape need a plan decision before implementation.
+- **Status:** proposed
+
+### S-10: Main enemy profile
+
+- **Outcome:** if a battle has a designated main enemy (boss), GM sees a generated profile card containing a narrative description, unique characteristics and tactics, and 3 example roleplay dialogue lines — helping the GM portray the villain convincingly at the table.
+- **Change ID:** main-enemy-profile
+- **PRD refs:** —
+- **Prerequisites:** S-02 (enemies must exist to designate one as the main enemy)
+- **Parallel with:** S-09 — no file overlap expected
+- **Blockers:** —
+- **Unknowns:** how the GM designates a main enemy (toggle on enemy card? field on battle creation? auto-inferred from CR?), where the profile is stored (new `main_enemy_profile` JSONB column on `battles`, or extended `stats` on the enemy?), whether the profile is generated on designation or on demand.
+- **Risk:** low. Scope is well-defined: one AI call → one structured output → one UI card. Main decision is the designation UX and the data model placement.
 - **Status:** proposed
 
 ### S-08: UX improvements
