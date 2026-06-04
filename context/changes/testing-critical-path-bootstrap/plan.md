@@ -438,19 +438,19 @@ Fill §6.1 and §6.2 of `context/foundation/test-plan.md` with the concrete patt
 
 #### Automated
 
-- [x] 2.1 `npm run test` exits 0 with all schema boundary-value tests passing
+- [x] 2.1 `npm run test` exits 0 with all schema boundary-value tests passing — 7f38782
 
 ### Phase 3: Mutation Route Fixes and Integration Tests
 
 #### Automated
 
-- [ ] 3.1 `npm run test` exits 0 with all mutation route integration tests passing
-- [ ] 3.2 `npm run lint` passes with no new errors from route fixes
-- [ ] 3.3 `npx astro check` passes — route fixes introduce no type errors
+- [x] 3.1 `npm run test` exits 0 with all mutation route integration tests passing
+- [x] 3.2 `npm run lint` passes with no new errors from route fixes
+- [x] 3.3 `npx astro check` passes — route fixes introduce no type errors
 
 #### Manual
 
-- [ ] 3.4 Battle list for a campaign renders correctly in dev server after battles GET fix
+- [x] 3.4 Battle list for a campaign renders correctly in dev server after battles GET fix
 
 ### Phase 4: Generate Route Integration Tests
 

@@ -36,19 +36,22 @@ export const PATCH: APIRoute = async (context) => {
     return Response.json({ error: "Description must be 500 characters or fewer" }, { status: 400 });
   }
 
-  const { data: campaign } = (await supabase
+  const updateResult = await supabase
     .from("campaigns")
     .update({ name, description, updated_at: new Date().toISOString() })
     .eq("id", id)
     .eq("user_id", user.id)
     .select("*")
-    .single()) as { data: Campaign | null };
+    .single();
 
-  if (!campaign) {
-    return Response.json({ error: "Campaign not found" }, { status: 404 });
+  if (updateResult.error) {
+    if (updateResult.error.code === "PGRST116") {
+      return Response.json({ error: "Campaign not found" }, { status: 404 });
+    }
+    return Response.json({ error: "Could not update campaign. Please try again." }, { status: 500 });
   }
 
-  return Response.json({ campaign });
+  return Response.json({ campaign: updateResult.data as Campaign });
 };
 
 export const DELETE: APIRoute = async (context) => {
@@ -64,9 +67,13 @@ export const DELETE: APIRoute = async (context) => {
 
   const { id } = context.params;
 
-  const { data } = await supabase.from("campaigns").delete().eq("id", id).eq("user_id", user.id).select("id").single();
+  const { data, error } = await supabase.from("campaigns").delete().eq("id", id).eq("user_id", user.id).select("id");
 
-  if (!data) {
+  if (error) {
+    return Response.json({ error: "Could not delete campaign. Please try again." }, { status: 500 });
+  }
+
+  if (data.length === 0) {
     return Response.json({ error: "Campaign not found" }, { status: 404 });
   }
 

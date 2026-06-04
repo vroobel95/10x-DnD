@@ -110,11 +110,15 @@ export const GET: APIRoute = async (context) => {
     return Response.json({ error: "Campaign not found" }, { status: 404 });
   }
 
-  const { data: battles } = await supabase
+  const { data: battles, error } = await supabase
     .from("battles")
     .select("*")
     .eq("campaign_id", campaignId)
     .order("created_at", { ascending: false });
 
-  return Response.json({ battles: battles ?? [] });
+  if (error) {
+    return Response.json({ error: "Could not load battles. Please try again." }, { status: 500 });
+  }
+
+  return Response.json({ battles });
 };

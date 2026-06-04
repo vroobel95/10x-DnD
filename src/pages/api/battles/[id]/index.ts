@@ -23,15 +23,18 @@ export const DELETE: APIRoute = async (context) => {
     return Response.json({ error: "Battle not found" }, { status: 404 });
   }
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("battles")
     .delete()
     .eq("id", id)
     .in("campaign_id", campaignIds)
-    .select("id, campaign_id")
-    .single();
+    .select("id, campaign_id");
 
-  if (!data) {
+  if (error) {
+    return Response.json({ error: "Could not delete battle. Please try again." }, { status: 500 });
+  }
+
+  if (data.length === 0) {
     return Response.json({ error: "Battle not found" }, { status: 404 });
   }
 

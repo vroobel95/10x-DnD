@@ -33,11 +33,14 @@ export const POST: APIRoute = async (context) => {
 
   const battleResult = await supabase.from("battles").select("id, party_level, location").eq("id", battleId).single();
 
-  const battle = battleResult.data;
-
-  if (!battle) {
-    return Response.json({ error: "Battle not found" }, { status: 404 });
+  if (battleResult.error) {
+    if (battleResult.error.code === "PGRST116") {
+      return Response.json({ error: "Battle not found" }, { status: 404 });
+    }
+    return Response.json({ error: "Could not load battle. Please try again." }, { status: 500 });
   }
+
+  const battle = battleResult.data;
 
   let enemyGroup: Awaited<ReturnType<typeof generateEnemies>>;
   try {

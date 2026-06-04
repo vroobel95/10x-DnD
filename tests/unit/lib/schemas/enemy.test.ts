@@ -74,7 +74,7 @@ describe("EnemySchema", () => {
       expect(EnemySchema.safeParse({ ...baseline, cr: "" }).success).toBe(false);
     });
 
-    it("accepts cr: \"1/8\"", () => {
+    it('accepts cr: "1/8"', () => {
       expect(EnemySchema.safeParse({ ...baseline, cr: "1/8" }).success).toBe(true);
     });
   });
