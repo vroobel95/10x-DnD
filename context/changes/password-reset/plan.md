@@ -196,6 +196,10 @@ Add the completion end of the reset flow: a session-guarded page where the GM en
 8. Navigate directly to `/auth/reset-password` without clicking a link; verify redirect to `/auth/forgot-password`
 9. Submit forgot-password with an unregistered email; verify same confirmation message as registered email
 
+## Addendum: Dedicated Recovery Callback (post-plan)
+
+The original plan routed Supabase recovery emails through the shared `/api/auth/callback?next=/auth/reset-password&type=recovery`. This caused a bug where after a successful password reset, the user was redirected to the main page instead of the reset-password page. Fix (commit e578762): a dedicated `/api/auth/recovery-callback` route that always redirects to `/auth/reset-password` on success. The `redirectTo` in `forgot-password.ts` now points to `/api/auth/recovery-callback`. The `type=recovery` branch was removed from `callback.ts` as dead code.
+
 ## References
 
 - Auth callback: `src/pages/api/auth/callback.ts`
@@ -210,8 +214,8 @@ Add the completion end of the reset flow: a session-guarded page where the GM en
 
 #### Automated
 
-- [ ] 1.1 TypeScript compilation passes: `npm run check`
-- [ ] 1.2 Linting passes: `npm run lint`
+- [x] 1.1 TypeScript compilation passes: `npm run check` — 13a0046
+- [x] 1.2 Linting passes: `npm run lint` — 13a0046
 
 #### Manual
 
@@ -223,8 +227,8 @@ Add the completion end of the reset flow: a session-guarded page where the GM en
 
 #### Automated
 
-- [ ] 2.1 TypeScript compilation passes: `npm run check`
-- [ ] 2.2 Linting passes: `npm run lint`
+- [x] 2.1 TypeScript compilation passes: `npm run check` — 9d4ce74
+- [x] 2.2 Linting passes: `npm run lint` — 9d4ce74
 
 #### Manual
 
@@ -237,8 +241,8 @@ Add the completion end of the reset flow: a session-guarded page where the GM en
 
 #### Automated
 
-- [ ] 3.1 TypeScript compilation passes: `npm run check`
-- [ ] 3.2 Linting passes: `npm run lint`
+- [x] 3.1 TypeScript compilation passes: `npm run check` — 7b75b9d
+- [x] 3.2 Linting passes: `npm run lint` — 7b75b9d
 
 #### Manual
 

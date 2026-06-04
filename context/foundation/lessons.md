@@ -43,3 +43,17 @@
 - **Problem**: Supabase `.delete()` without `.select().single()` returns no error when zero rows match, so the endpoint reports `{success: true}` even when nothing was deleted. The battle DELETE endpoint correctly uses `.select("id").single()` to confirm a row was actually removed.
 - **Rule**: Always chain `.select("id").single()` after `.delete()` and check `!data` to return 404 for non-existent or unauthorized resources
 - **Applies to**: All API DELETE endpoints using Supabase
+
+## Validate redirect targets to prevent open redirects
+
+- **Context**: src/pages/api/auth/callback.ts:6,14
+- **Problem**: The `next` query parameter is read and used directly in `context.redirect(next)` without validation. An attacker can craft a callback URL with `next=https://evil.com` to redirect users off-site after a successful auth code exchange. This is a classic open redirect (OWASP).
+- **Rule**: [fill in]
+- **Applies to**: [fill in]
+
+## Guard against null Supabase client instead of falling through to success
+
+- **Context**: src/pages/api/auth/forgot-password.ts:12-26, src/pages/api/auth/reset-password.ts:21-32
+- **Problem**: When `createClient` returns null (Supabase misconfigured), the `if (supabase) { ... }` pattern silently skips the Supabase call and falls through to a success redirect. On the forgot-password route this shows "check your email" when no email was sent; on the reset-password route this shows "Password updated" when nothing changed — locking the user out.
+- **Rule**: [fill in]
+- **Applies to**: [fill in]
