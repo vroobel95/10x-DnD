@@ -9,8 +9,10 @@ export const POST: APIRoute = async (context) => {
   }
 
   const formData = await context.request.formData();
-  const password = formData.get("password")?.toString() ?? "";
-  const confirmPassword = formData.get("confirm_password")?.toString() ?? "";
+  const passwordValue = formData.get("password");
+  const password = typeof passwordValue === "string" ? passwordValue : "";
+  const confirmPasswordValue = formData.get("confirm_password");
+  const confirmPassword = typeof confirmPasswordValue === "string" ? confirmPasswordValue : "";
 
   if (!password || password.length < 6) {
     return context.redirect(
@@ -31,7 +33,6 @@ export const POST: APIRoute = async (context) => {
 
   const { error } = await supabase.auth.updateUser({ password });
   if (error) {
-    console.error("updateUser error:", error.message);
     return context.redirect(
       `/auth/reset-password?error=${encodeURIComponent("Could not update password. Please try again.")}`,
     );

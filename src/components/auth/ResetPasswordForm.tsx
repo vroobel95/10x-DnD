@@ -34,7 +34,7 @@ export default function ResetPasswordForm({ serverError }: Props) {
     return Object.keys(next).length === 0;
   }
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     if (!validate()) {
       e.preventDefault();
     }

@@ -5,7 +5,8 @@ export const prerender = false;
 
 export const POST: APIRoute = async (context) => {
   const formData = await context.request.formData();
-  const email = formData.get("email")?.toString() ?? "";
+  const emailValue = formData.get("email");
+  const email = typeof emailValue === "string" ? emailValue : "";
 
   const redirectTo = new URL("/api/auth/recovery-callback", context.request.url).href;
 
@@ -18,11 +19,8 @@ export const POST: APIRoute = async (context) => {
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
   if (error) {
-    console.error("resetPasswordForEmail error:", error.message);
     if (error.status === 429) {
-      return context.redirect(
-        `/auth/forgot-password?error=${encodeURIComponent("Please wait before trying again.")}`,
-      );
+      return context.redirect(`/auth/forgot-password?error=${encodeURIComponent("Please wait before trying again.")}`);
     }
     if (error.status && error.status >= 500) {
       return context.redirect(
