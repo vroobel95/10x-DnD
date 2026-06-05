@@ -456,7 +456,7 @@ Fill §6.1 and §6.2 of `context/foundation/test-plan.md` with the concrete patt
 
 #### Automated
 
-- [ ] 4.1 `npm run test` exits 0 with all generate route tests passing, including AI-throw → no-DB-write assertion
+- [x] 4.1 `npm run test` exits 0 with all generate route tests passing, including AI-throw → no-DB-write assertion — HEAD
 
 ### Phase 5: Cookbook Update and Status Close-Out
 
