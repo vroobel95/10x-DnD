@@ -13,9 +13,15 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# playwright
+tests/e2e/.auth/
+playwright-report/
+test-results/
+
 # environment variables
 .env
 .env.production
+.env.e2e
 
 # cloudflare
 .dev.vars
@@ -33,3 +39,5 @@ pnpm-debug.log*
 
 .dev.vars
 .vscode/mcp.json
+
+.playwright-cli

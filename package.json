@@ -12,7 +12,10 @@
     "test:coverage": "vitest run --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "e2e-test": "playwright-cli open http://localhost:4321 --headed --browser=msedge",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.81",
@@ -43,6 +46,7 @@
   "devDependencies": {
     "@eslint/compat": "^2.0.3",
     "@eslint/js": "^9.29.0",
+    "@playwright/test": "^1.60.0",
     "@vitest/coverage-v8": "^4.1.8",
     "eslint": "^9.29.0",
     "eslint-config-prettier": "^10.1.8",
