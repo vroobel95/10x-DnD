@@ -456,15 +456,15 @@ Fill §6.1 and §6.2 of `context/foundation/test-plan.md` with the concrete patt
 
 #### Automated
 
-- [x] 4.1 `npm run test` exits 0 with all generate route tests passing, including AI-throw → no-DB-write assertion — HEAD
+- [x] 4.1 `npm run test` exits 0 with all generate route tests passing, including AI-throw → no-DB-write assertion — efb2e7f
 
 ### Phase 5: Cookbook Update and Status Close-Out
 
 #### Automated
 
-- [ ] 5.1 `npm run test` exits 0 (full suite — no regression from cookbook edits)
+- [x] 5.1 `npm run test` exits 0 (full suite — no regression from cookbook edits) — HEAD
 
 #### Manual
 
-- [ ] 5.2 `context/foundation/test-plan.md` §6.1 and §6.2 contain concrete patterns (not "TBD")
-- [ ] 5.3 §3 Phase 1 row shows `complete`
+- [x] 5.2 `context/foundation/test-plan.md` §6.1 and §6.2 contain concrete patterns (not "TBD") — HEAD
+- [x] 5.3 §3 Phase 1 row shows `complete` — HEAD

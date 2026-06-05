@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-04 (Phase 1 planned)
+> Last updated: 2026-06-05 (Phase 1 complete)
 
 ---
 
@@ -73,7 +73,7 @@ orchestrator updates Status as artifacts appear on disk.
 
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|---|---|---|---|---|---|
-| 1 | Test runner bootstrap + critical contracts | Bootstrap vitest; prove AI stat validation rejects illegal values; prove generation fails cleanly on AI errors; prove mutation routes distinguish error / not-found / success | #1, #3, #7 | unit, integration | planned | context/changes/testing-critical-path-bootstrap/ |
+| 1 | Test runner bootstrap + critical contracts | Bootstrap vitest; prove AI stat validation rejects illegal values; prove generation fails cleanly on AI errors; prove mutation routes distinguish error / not-found / success | #1, #3, #7 | unit, integration | complete | context/changes/testing-critical-path-bootstrap/ |
 | 2 | Auth flow integrity | Prove auth callback redirect validation blocks external targets; null client returns error not silent success; confirm enemies persist after PATCH | #2, #4 | integration | not started | — |
 | 3 | Ownership boundary | Prove API routes reject cross-user resource access at the route layer; prove error responses contain only safe messages | #5, #6 | integration | not started | — |
 | 4 | CI quality gates | Wire vitest into GitHub Actions; tests block merge on every PR | cross-cutting | CI config | not started | — |
@@ -130,11 +130,26 @@ the relevant rollout phase ships; before that, the sub-section reads
 
 ### 6.1 Adding a unit test (stat validation or pure logic)
 
-TBD — see §3 Phase 1. Pattern: prove D&D 5e legal range enforcement; oracle from PRD §Guardrails, not from AI output.
+- **Location**: `tests/unit/` mirroring `src/` structure (e.g. `tests/unit/lib/schemas/enemy.test.ts` for `src/lib/schemas/enemy.ts`)
+- **Naming**: `*.test.ts`
+- **Run locally**: `npm run test`
+- **Reference test**: `tests/unit/lib/schemas/enemy.test.ts`
+- **Oracle rule**: assert against D&D 5e PRD guardrails, not against the schema implementation — prevents the oracle-from-implementation anti-pattern. Example: `str: 0` → `success: false` because the PRD says STR ≥ 1, not because `.min(1)` is in the Zod schema.
+- **Pattern**: build a valid baseline fixture, then spread overrides per test case. Call `Schema.safeParse({ ...baseline, override })` and assert `.success`.
 
 ### 6.2 Adding an integration test for an API route
 
-TBD — see §3 Phase 1. Pattern: mock Supabase at the module boundary; assert error/not-found/success status codes independently; cover the failure path, not only the happy path.
+- **Location**: `tests/integration/api/`
+- **Run locally**: `npm run test`
+- **Reference test**: `tests/integration/api/battles.test.ts`
+- **Mocking policy**:
+  - Mock `@/lib/supabase` and `@/lib/ai` at module boundary via `vi.mock` at the top of each test file — never mock Supabase query internals individually.
+  - Use `makeSupabaseMock(tableResults)` from `tests/helpers/supabase.ts` to configure per-table chainable query results. Key: `from` is a `vi.fn()`, so `expect(mock.from).not.toHaveBeenCalledWith("table")` asserts no write occurred.
+  - When `createClient` must return null (null-client guard test), use `vi.mocked(createClient).mockReturnValue(null)` directly.
+- **Context stub**: construct an `APIContext` minimal object inline per test using only the fields the handler reads (`request`, `cookies`, `locals`, `params`, `url`). Cast as `unknown as APIContext`. Define a per-file `makeContext(options?)` helper.
+- **Coverage rule**: every route under test must have cases for: null client → 500, unauthorized (null user) → 401, Supabase error → 500, not-found → 404, and happy path → 200.
+- **Discriminated union pattern**: `.single()` uses PGRST116 (`error.code === "PGRST116"`) for not-found. DELETE without `.single()` returns an array — check `data.length === 0` for not-found. After an `if (error)` guard, TypeScript narrows `data` to non-null — remove any `?? []` or `!data` checks that would become dead code.
+- **AI failure assertion**: when `generateEnemies` mock is set to reject, assert both the 500 response and that `supabase.from` was never called with `"enemies"` — proves no DB write on AI failure.
 
 ### 6.3 Adding an auth flow integration test
 
