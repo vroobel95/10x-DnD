@@ -41,7 +41,9 @@ describe("GET /api/battles", () => {
   });
 
   it("returns 404 when campaign ownership check fails", async () => {
-    vi.mocked(createClient).mockReturnValue(makeSupabaseMock({ campaigns: { data: null, error: null } }));
+    vi.mocked(createClient).mockReturnValue(
+      makeSupabaseMock({ campaigns: { data: null, error: { code: "PGRST116", message: "No rows found" } } }),
+    );
     const res = await GET(makeContext());
     expect(res.status).toBe(404);
   });

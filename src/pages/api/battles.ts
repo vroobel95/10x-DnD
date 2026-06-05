@@ -19,15 +19,18 @@ export const POST: APIRoute = async (context) => {
     return context.redirect(`/campaigns?error=${encodeURIComponent("Campaign is required")}`);
   }
 
-  const { data: ownedCampaign } = await supabase
+  const ownedCampaignResult = await supabase
     .from("campaigns")
     .select("id")
     .eq("id", campaignId)
     .eq("user_id", user.id)
     .single();
 
-  if (!ownedCampaign) {
-    return context.redirect(`/campaigns?error=${encodeURIComponent("Campaign not found")}`);
+  if (ownedCampaignResult.error) {
+    if (ownedCampaignResult.error.code === "PGRST116") {
+      return context.redirect(`/campaigns?error=${encodeURIComponent("Campaign not found")}`);
+    }
+    return context.redirect(`/campaigns?error=${encodeURIComponent("Could not verify campaign. Please try again.")}`);
   }
 
   const name = (form.get("name") as string | null)?.trim() ?? "";
@@ -99,15 +102,18 @@ export const GET: APIRoute = async (context) => {
     return Response.json({ error: "campaignId required" }, { status: 400 });
   }
 
-  const { data: ownedCampaign } = await supabase
+  const ownedCampaignResult = await supabase
     .from("campaigns")
     .select("id")
     .eq("id", campaignId)
     .eq("user_id", user.id)
     .single();
 
-  if (!ownedCampaign) {
-    return Response.json({ error: "Campaign not found" }, { status: 404 });
+  if (ownedCampaignResult.error) {
+    if (ownedCampaignResult.error.code === "PGRST116") {
+      return Response.json({ error: "Campaign not found" }, { status: 404 });
+    }
+    return Response.json({ error: "Could not verify campaign. Please try again." }, { status: 500 });
   }
 
   const { data: battles, error } = await supabase

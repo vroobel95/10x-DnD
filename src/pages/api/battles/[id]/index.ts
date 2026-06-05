@@ -16,8 +16,16 @@ export const DELETE: APIRoute = async (context) => {
 
   const { id } = context.params;
 
-  const { data: userCampaigns } = await supabase.from("campaigns").select("id").eq("user_id", user.id);
-  const campaignIds = (userCampaigns ?? []).map((c: { id: string }) => c.id);
+  const { data: userCampaigns, error: campaignsError } = await supabase
+    .from("campaigns")
+    .select("id")
+    .eq("user_id", user.id);
+
+  if (campaignsError) {
+    return Response.json({ error: "Could not load battles. Please try again." }, { status: 500 });
+  }
+
+  const campaignIds = userCampaigns.map((c: { id: string }) => c.id);
 
   if (campaignIds.length === 0) {
     return Response.json({ error: "Battle not found" }, { status: 404 });

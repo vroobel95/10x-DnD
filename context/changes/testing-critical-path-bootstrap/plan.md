@@ -444,13 +444,13 @@ Fill §6.1 and §6.2 of `context/foundation/test-plan.md` with the concrete patt
 
 #### Automated
 
-- [x] 3.1 `npm run test` exits 0 with all mutation route integration tests passing
-- [x] 3.2 `npm run lint` passes with no new errors from route fixes
-- [x] 3.3 `npx astro check` passes — route fixes introduce no type errors
+- [x] 3.1 `npm run test` exits 0 with all mutation route integration tests passing — b0fd6e8
+- [x] 3.2 `npm run lint` passes with no new errors from route fixes — b0fd6e8
+- [x] 3.3 `npx astro check` passes — route fixes introduce no type errors — b0fd6e8
 
 #### Manual
 
-- [x] 3.4 Battle list for a campaign renders correctly in dev server after battles GET fix
+- [x] 3.4 Battle list for a campaign renders correctly in dev server after battles GET fix — b0fd6e8
 
 ### Phase 4: Generate Route Integration Tests
 

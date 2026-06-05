@@ -33,6 +33,14 @@ describe("DELETE /api/battles/[id]", () => {
     expect(res.status).toBe(401);
   });
 
+  it("returns 500 when campaigns query errors", async () => {
+    vi.mocked(createClient).mockReturnValue(
+      makeSupabaseMock({ campaigns: { data: null, error: { message: "DB error" } } }),
+    );
+    const res = await DELETE(makeContext());
+    expect(res.status).toBe(500);
+  });
+
   it("returns 404 when user has no campaigns", async () => {
     vi.mocked(createClient).mockReturnValue(makeSupabaseMock({ campaigns: { data: [], error: null } }));
     const res = await DELETE(makeContext());
