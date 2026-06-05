@@ -41,3 +41,4 @@ test-results/
 .vscode/mcp.json
 
 .playwright-cli
+playwright/.auth/
