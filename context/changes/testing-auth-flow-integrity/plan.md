@@ -304,16 +304,16 @@ Fill §6.3 in `test-plan.md` with the auth test pattern this phase delivered. Ad
 
 #### Automated
 
-- [x] 2.1 `npm run test` exits 0 with all enemy confirm/delete tests passing
-- [x] 2.2 `npm run lint` passes with no new errors from Phase 2 files
+- [x] 2.1 `npm run test` exits 0 with all enemy confirm/delete tests passing — 7686966
+- [x] 2.2 `npm run lint` passes with no new errors from Phase 2 files — 7686966
 
 ### Phase 3: Cookbook Update and Close-Out
 
 #### Automated
 
-- [ ] 3.1 `npm run test` exits 0 — full suite, no regressions from cookbook edits
+- [x] 3.1 `npm run test` exits 0 — full suite, no regressions from cookbook edits
 
 #### Manual
 
-- [ ] 3.2 `context/foundation/test-plan.md` §6.3 contains the auth test pattern (not "TBD")
-- [ ] 3.3 §3 Phase 2 row shows `complete`
+- [x] 3.2 `context/foundation/test-plan.md` §6.3 contains the auth test pattern (not "TBD")
+- [x] 3.3 §3 Phase 2 row shows `complete`

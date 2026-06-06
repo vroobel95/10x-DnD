@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-05 (Phase 1 complete)
+> Last updated: 2026-06-06 (Phase 2 complete)
 
 ---
 
@@ -74,7 +74,7 @@ orchestrator updates Status as artifacts appear on disk.
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|---|---|---|---|---|---|
 | 1 | Test runner bootstrap + critical contracts | Bootstrap vitest; prove AI stat validation rejects illegal values; prove generation fails cleanly on AI errors; prove mutation routes distinguish error / not-found / success | #1, #3, #7 | unit, integration | complete | context/changes/testing-critical-path-bootstrap/ |
-| 2 | Auth flow integrity | Prove auth callback redirect validation blocks external targets; null client returns error not silent success; confirm enemies persist after PATCH | #2, #4 | integration | change opened | context/changes/testing-auth-flow-integrity/ |
+| 2 | Auth flow integrity | Prove auth callback redirect validation blocks external targets; null client returns error not silent success; confirm enemies persist after PATCH | #2, #4 | integration | complete | context/changes/testing-auth-flow-integrity/ |
 | 3 | Ownership boundary | Prove API routes reject cross-user resource access at the route layer; prove error responses contain only safe messages | #5, #6 | integration | not started | — |
 | 4 | CI quality gates | Wire vitest into GitHub Actions; tests block merge on every PR | cross-cutting | CI config | not started | — |
 
@@ -153,7 +153,19 @@ the relevant rollout phase ships; before that, the sub-section reads
 
 ### 6.3 Adding an auth flow integration test
 
-TBD — see §3 Phase 2. Pattern: redirect validation logic (external domain blocked); null client returns error; cover the failure paths the lessons.md records as having been burned.
+- **Location**: `tests/integration/api/auth-*.test.ts`
+- **Run locally**: `npm run test`
+- **Reference test**: `tests/integration/api/auth-callback.test.ts`
+- **Mocking policy**:
+  - Mock `@/lib/supabase` at module boundary via `vi.mock` as in §6.2.
+  - Use `makeAuthClientMock(results?)` from `tests/helpers/auth.ts` for `supabase.auth.*` methods (`exchangeCodeForSession`, `resetPasswordForEmail`, `updateUser`). Each key is optional and defaults to `{ error: null }`.
+  - Use `makeSupabaseMock(tableResults)` from `tests/helpers/supabase.ts` (§6.2) for `supabase.from()` routes — the two helpers cover different call surfaces; do not mix them.
+  - When `createClient` must return null (null-client guard test), use `vi.mocked(createClient).mockReturnValue(null)` directly.
+- **Context stub**: define a per-file `makeContext(options?)` helper. Auth routes call `context.redirect(url)` — the stub **must** include `redirect: (url: string) => new Response(null, { status: 302, headers: { Location: url } })`. Without this the handler throws at runtime.
+- **POST routes (forgot-password, reset-password)**: build the stub `Request` with `method: "POST"`, `headers: { "Content-Type": "application/x-www-form-urlencoded" }`, and body `new URLSearchParams({ field: value }).toString()`. A bare `new Request(url)` causes `formData()` to throw.
+- **Assertion pattern**: assert `res.status === 302` then `res.headers.get("location")`. Use `.toBe()` for stable destinations (e.g. `"/auth/reset-password"`); use `.toContain("error=")` for error query params; use `decodeURIComponent(location)` before asserting on human-readable error text.
+- **Coverage rule**: every auth route under test must have (a) null client → error redirect (not a success redirect), and (b) for callback specifically: `next=https://external.com` → `location === "/"` (open-redirect blocked) and `next=//evil.com` → `location === "/"` (double-slash bypass blocked).
+- **Email-enumeration-safe fallthrough**: `forgot-password.ts` intentionally redirects non-429/non-500 Supabase errors to the success page to prevent revealing whether an email is registered. Test this as a documented behavior, not a bug.
 
 ### 6.4 Adding an ownership boundary test
 
