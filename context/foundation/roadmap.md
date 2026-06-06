@@ -3,7 +3,7 @@ project: "DnD 5enemy"
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-05-25
+updated: 2026-06-06
 prd_version: 1
 main_goal: speed
 top_blocker: external
@@ -40,6 +40,7 @@ D&D 5e Game Masters lose preparation time hunting stat blocks and manually adjus
 | S-08 | ux-improvements               | see DnD 5enemy branding on the landing page and get visual feedback during page loads and form submits | —                | —                              | proposed         |
 | S-09 | battle-environment            | see AI-generated atmospheric and environmental details for a battle (terrain, hazards, ambiance)        | S-01             | —                              | proposed         |
 | S-10 | main-enemy-profile            | if a battle has a main enemy, see its generated narrative description, unique characteristics, and 3 roleplay dialogue lines | S-02 | —               | proposed         |
+| S-11 | sentry-setup                  | server errors, unhandled exceptions, and AI generation failures surface in Sentry with environment context                  | —    | —               | proposed         |
 
 ## Baseline
 
@@ -192,6 +193,19 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Risk:** low. Two distinct sub-tasks: (1) text replacement in `Welcome.astro`; (2) loading feedback in `BattleCard.astro` (inline script on link click) and `CreateBattleForm.tsx` (set `isSubmitting` flag before native form submit proceeds — `SubmitButton` already accepts `pendingText`, the flag is just never set on a valid submit today).
 - **Status:** proposed
 
+### S-11: Sentry error tracking
+
+- **Outcome:** server errors, unhandled exceptions, and AI generation failures (including silent swallows) are captured by Sentry with environment tag, release, and request context — giving the developer observability over production issues without needing to dig through Cloudflare logs.
+- **Change ID:** sentry-setup
+- **PRD refs:** —
+- **Prerequisites:** — (fully independent; the baseline already notes observability as a gap)
+- **Parallel with:** any slice — purely additive; no shared files with any other slice
+- **Blockers:** —
+- **Unknowns:**
+  - `@sentry/node` does not run on the Cloudflare Workers (workerd) runtime. The correct package is `@sentry/cloudflare` (or `@sentry/astro` with the Cloudflare adapter). SDK compatibility and instrumentation approach need a quick spike before planning. — Owner: developer. Block: soft.
+- **Risk:** low–medium. Core risk is workerd runtime compatibility: Sentry's standard SDK uses Node APIs unavailable in workerd; using the wrong package silently no-ops at runtime. Additional consideration: Sentry's DSN and environment config must be stored as Wrangler secrets, not committed. Once the right SDK is confirmed the implementation is straightforward — wrap the server entrypoint, instrument catch blocks that currently swallow errors silently, and add a source-map upload step to CI.
+- **Status:** proposed
+
 ## Backlog Handoff
 
 | Roadmap ID | Change ID                     | Suggested issue title                                   | Ready for `/10x-plan` | Notes                                                              |
@@ -205,6 +219,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-06       | delete-battle                 | _(folded into S-05)_                                    | —                     | One button + DELETE endpoint; not worth a separate PR              |
 | S-07       | pdf-export                    | Export battle enemy cards as PDF                        | no                    | Needs S-03 + S-05 done; Workers PDF spike required before planning |
 | S-08       | ux-improvements               | Landing page rebrand + loading spinners                 | yes                   | No deps; parallel with S-03, S-04, S-05                            |
+| S-11       | sentry-setup                  | Configure Sentry error tracking on Cloudflare Workers   | no                    | No deps; parallel with any slice; requires `@sentry/cloudflare` spike before planning |
 
 ## Open Roadmap Questions
 
