@@ -297,15 +297,15 @@ Fill §6.3 in `test-plan.md` with the auth test pattern this phase delivered. Ad
 
 #### Automated
 
-- [x] 1.1 `npm run test` exits 0 with all five Phase 1 test files passing
-- [x] 1.2 `npm run lint` passes with no new errors from Phase 1 files
+- [x] 1.1 `npm run test` exits 0 with all five Phase 1 test files passing — 4eabd8a
+- [x] 1.2 `npm run lint` passes with no new errors from Phase 1 files — 4eabd8a
 
 ### Phase 2: Enemy Confirm and Delete Integration Tests (Risk #4)
 
 #### Automated
 
-- [ ] 2.1 `npm run test` exits 0 with all enemy confirm/delete tests passing
-- [ ] 2.2 `npm run lint` passes with no new errors from Phase 2 files
+- [x] 2.1 `npm run test` exits 0 with all enemy confirm/delete tests passing
+- [x] 2.2 `npm run lint` passes with no new errors from Phase 2 files
 
 ### Phase 3: Cookbook Update and Close-Out
 
