@@ -311,9 +311,9 @@ Fill §6.3 in `test-plan.md` with the auth test pattern this phase delivered. Ad
 
 #### Automated
 
-- [x] 3.1 `npm run test` exits 0 — full suite, no regressions from cookbook edits
+- [x] 3.1 `npm run test` exits 0 — full suite, no regressions from cookbook edits — 29d92da
 
 #### Manual
 
-- [x] 3.2 `context/foundation/test-plan.md` §6.3 contains the auth test pattern (not "TBD")
-- [x] 3.3 §3 Phase 2 row shows `complete`
+- [x] 3.2 `context/foundation/test-plan.md` §6.3 contains the auth test pattern (not "TBD") — 29d92da
+- [x] 3.3 §3 Phase 2 row shows `complete` — 29d92da
