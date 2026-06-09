@@ -370,8 +370,8 @@ Fill the test-plan cookbook §6.4 with the IDOR test pattern established in this
 
 #### Automated
 
-- [x] 3.1 `npm run test` exits 0 — all new auth-signin and auth-signup tests pass alongside the existing suite
-- [x] 3.2 `npm run lint` passes
+- [x] 3.1 `npm run test` exits 0 — all new auth-signin and auth-signup tests pass alongside the existing suite — ca0508e
+- [x] 3.2 `npm run lint` passes — ca0508e
 
 #### Manual
 
@@ -381,9 +381,9 @@ Fill the test-plan cookbook §6.4 with the IDOR test pattern established in this
 
 #### Automated
 
-- [ ] 4.1 `npm run test` exits 0 — full suite, no regressions
+- [x] 4.1 `npm run test` exits 0 — full suite, no regressions
 
 #### Manual
 
-- [ ] 4.2 `context/foundation/test-plan.md` §6.4 contains the IDOR pattern (not "TBD")
-- [ ] 4.3 §3 Phase 3 row shows `complete`
+- [x] 4.2 `context/foundation/test-plan.md` §6.4 contains the IDOR pattern (not "TBD")
+- [x] 4.3 §3 Phase 3 row shows `complete`

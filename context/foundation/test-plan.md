@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-06 (Phase 2 complete)
+> Last updated: 2026-06-09 (Phase 3 complete)
 
 ---
 
@@ -75,7 +75,7 @@ orchestrator updates Status as artifacts appear on disk.
 |---|---|---|---|---|---|---|
 | 1 | Test runner bootstrap + critical contracts | Bootstrap vitest; prove AI stat validation rejects illegal values; prove generation fails cleanly on AI errors; prove mutation routes distinguish error / not-found / success | #1, #3, #7 | unit, integration | complete | context/changes/testing-critical-path-bootstrap/ |
 | 2 | Auth flow integrity | Prove auth callback redirect validation blocks external targets; null client returns error not silent success; confirm enemies persist after PATCH | #2, #4 | integration | complete | context/changes/testing-auth-flow-integrity/ |
-| 3 | Ownership boundary | Prove API routes reject cross-user resource access at the route layer; prove error responses contain only safe messages | #5, #6 | integration | not started | — |
+| 3 | Ownership boundary | Prove API routes reject cross-user resource access at the route layer; prove error responses contain only safe messages | #5, #6 | integration | complete | context/changes/ownership-boundary/ |
 | 4 | CI quality gates | Wire vitest into GitHub Actions; tests block merge on every PR | cross-cutting | CI config | not started | — |
 
 **Status vocabulary** (fixed — parser literals):
@@ -169,7 +169,15 @@ the relevant rollout phase ships; before that, the sub-section reads
 
 ### 6.4 Adding an ownership boundary test
 
-TBD — see §3 Phase 3. Pattern: two-user setup; call route with User A credentials + User B's resource ID; assert 404.
+- **Location**: existing `tests/integration/api/<route>.test.ts` for the route under test
+- **Run locally**: `npm run test`
+- **Reference test**: `tests/integration/api/enemies-id.test.ts` (IDOR cases)
+- **No real second user needed**: simulate cross-user access by setting `locals.user = { id: "user-a" }` and configuring the mock so the ownership lookup returns no matching row.
+- **Mock pattern by route shape**:
+  - Routes that use `.single()` for the ownership check: mock the ownership table as `{ data: null, error: { code: "PGRST116", message: "..." } }` (PGRST116 = not found via `.single()`).
+  - Routes that check `data.length === 0` (array return): mock the ownership table as `{ data: [], error: null }`.
+- **Assert**: `res.status === 404`
+- **Key rule**: routes relying solely on RLS (no app-level `user_id` filter) must have an app-level ownership check added before IDOR tests can be written — mock-based integration tests do not enforce RLS. Add the guard first (reference: Phase 3 of this rollout added app-level checks to `enemies/[id].ts` and `generate.ts` before their IDOR tests could be written).
 
 ### 6.5 Adding a test for a new API route (general rule)
 
