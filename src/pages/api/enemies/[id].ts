@@ -14,6 +14,36 @@ export const PATCH: APIRoute = async (context) => {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const { data: userCampaigns, error: campaignsError } = await supabase
+    .from("campaigns")
+    .select("id")
+    .eq("user_id", user.id);
+
+  if (campaignsError) {
+    return Response.json({ error: "Could not update enemy. Please try again." }, { status: 500 });
+  }
+
+  const campaignIds = userCampaigns.map((c: { id: string }) => c.id);
+
+  if (campaignIds.length === 0) {
+    return Response.json({ error: "Enemy not found" }, { status: 404 });
+  }
+
+  const { data: userBattles, error: battlesError } = await supabase
+    .from("battles")
+    .select("id")
+    .in("campaign_id", campaignIds);
+
+  if (battlesError) {
+    return Response.json({ error: "Could not update enemy. Please try again." }, { status: 500 });
+  }
+
+  const battleIds = userBattles.map((b: { id: string }) => b.id);
+
+  if (battleIds.length === 0) {
+    return Response.json({ error: "Enemy not found" }, { status: 404 });
+  }
+
   const isJson = context.request.headers.get("content-type")?.includes("application/json");
 
   if (isJson) {
@@ -31,7 +61,6 @@ export const PATCH: APIRoute = async (context) => {
         return Response.json({ error: message }, { status: 422 });
       }
 
-      // Ownership enforced by RLS: enemies → battles → campaigns → auth.uid() (20260527000003_create_enemies.sql)
       const result = await supabase
         .from("enemies")
         .update({
@@ -40,6 +69,7 @@ export const PATCH: APIRoute = async (context) => {
           updated_at: new Date().toISOString(),
         })
         .eq("id", context.params.id)
+        .in("battle_id", battleIds)
         .select()
         .single();
 
@@ -54,11 +84,11 @@ export const PATCH: APIRoute = async (context) => {
     }
   }
 
-  // Ownership enforced by RLS: enemies → battles → campaigns → auth.uid() (20260527000003_create_enemies.sql)
   const result = await supabase
     .from("enemies")
     .update({ status: "confirmed", updated_at: new Date().toISOString() })
     .eq("id", context.params.id)
+    .in("battle_id", battleIds)
     .select()
     .single();
 
@@ -83,8 +113,42 @@ export const DELETE: APIRoute = async (context) => {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Ownership enforced by RLS: enemies → battles → campaigns → auth.uid() (20260527000003_create_enemies.sql)
-  const deleteResult = await supabase.from("enemies").delete().eq("id", context.params.id).select("id");
+  const { data: delCampaigns, error: delCampaignsError } = await supabase
+    .from("campaigns")
+    .select("id")
+    .eq("user_id", user.id);
+
+  if (delCampaignsError) {
+    return Response.json({ error: "Could not delete enemy. Please try again." }, { status: 500 });
+  }
+
+  const delCampaignIds = delCampaigns.map((c: { id: string }) => c.id);
+
+  if (delCampaignIds.length === 0) {
+    return Response.json({ error: "Enemy not found" }, { status: 404 });
+  }
+
+  const { data: delBattles, error: delBattlesError } = await supabase
+    .from("battles")
+    .select("id")
+    .in("campaign_id", delCampaignIds);
+
+  if (delBattlesError) {
+    return Response.json({ error: "Could not delete enemy. Please try again." }, { status: 500 });
+  }
+
+  const delBattleIds = delBattles.map((b: { id: string }) => b.id);
+
+  if (delBattleIds.length === 0) {
+    return Response.json({ error: "Enemy not found" }, { status: 404 });
+  }
+
+  const deleteResult = await supabase
+    .from("enemies")
+    .delete()
+    .eq("id", context.params.id)
+    .in("battle_id", delBattleIds)
+    .select("id");
 
   if (deleteResult.error) {
     return Response.json({ error: "Could not delete enemy. Please try again." }, { status: 500 });

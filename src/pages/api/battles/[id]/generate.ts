@@ -31,7 +31,11 @@ export const POST: APIRoute = async (context) => {
     return Response.json({ error: "Prompt is too long (max 2000 characters)" }, { status: 400 });
   }
 
-  const battleResult = await supabase.from("battles").select("id, party_level, location").eq("id", battleId).single();
+  const battleResult = await supabase
+    .from("battles")
+    .select("id, party_level, location, campaign_id")
+    .eq("id", battleId)
+    .single();
 
   if (battleResult.error) {
     if (battleResult.error.code === "PGRST116") {
@@ -41,6 +45,20 @@ export const POST: APIRoute = async (context) => {
   }
 
   const battle = battleResult.data;
+
+  const campaignResult = await supabase
+    .from("campaigns")
+    .select("id")
+    .eq("id", battle.campaign_id)
+    .eq("user_id", user.id)
+    .single();
+
+  if (campaignResult.error) {
+    if (campaignResult.error.code === "PGRST116") {
+      return Response.json({ error: "Battle not found" }, { status: 404 });
+    }
+    return Response.json({ error: "Could not load battle. Please try again." }, { status: 500 });
+  }
 
   let enemyGroup: Awaited<ReturnType<typeof generateEnemies>>;
   try {

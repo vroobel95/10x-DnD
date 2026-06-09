@@ -18,7 +18,7 @@ export const POST: APIRoute = async (context) => {
   });
 
   if (error) {
-    return context.redirect(`/auth/signup?error=${encodeURIComponent(error.message)}`);
+    return context.redirect(`/auth/signup?error=${encodeURIComponent("Could not create account. Please try again.")}`);
   }
 
   return context.redirect("/auth/confirm-email");
