@@ -363,15 +363,15 @@ Fill the test-plan cookbook §6.4 with the IDOR test pattern established in this
 
 #### Automated
 
-- [x] 2.1 `npm run test` exits 0 — all existing tests pass with updated mocks; all new IDOR cases pass
-- [x] 2.2 `npm run lint` passes with no new errors
+- [x] 2.1 `npm run test` exits 0 — all existing tests pass with updated mocks; all new IDOR cases pass — b2b850a
+- [x] 2.2 `npm run lint` passes with no new errors — b2b850a
 
 ### Phase 3: Error Safety Regression Tests
 
 #### Automated
 
-- [ ] 3.1 `npm run test` exits 0 — all new auth-signin and auth-signup tests pass alongside the existing suite
-- [ ] 3.2 `npm run lint` passes
+- [x] 3.1 `npm run test` exits 0 — all new auth-signin and auth-signup tests pass alongside the existing suite
+- [x] 3.2 `npm run lint` passes
 
 #### Manual
 
