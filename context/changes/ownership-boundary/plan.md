@@ -356,15 +356,15 @@ Fill the test-plan cookbook §6.4 with the IDOR test pattern established in this
 
 #### Automated
 
-- [x] 1.1 `npm run typecheck` passes with no new errors
-- [x] 1.2 `npm run lint` passes with no new errors
+- [x] 1.1 `npm run typecheck` passes with no new errors — de01934
+- [x] 1.2 `npm run lint` passes with no new errors — de01934
 
 ### Phase 2: IDOR Integration Tests
 
 #### Automated
 
-- [ ] 2.1 `npm run test` exits 0 — all existing tests pass with updated mocks; all new IDOR cases pass
-- [ ] 2.2 `npm run lint` passes with no new errors
+- [x] 2.1 `npm run test` exits 0 — all existing tests pass with updated mocks; all new IDOR cases pass
+- [x] 2.2 `npm run lint` passes with no new errors
 
 ### Phase 3: Error Safety Regression Tests
 

@@ -69,6 +69,17 @@ describe("DELETE /api/battles/[id]", () => {
     expect(res.status).toBe(404);
   });
 
+  it("returns 404 when battle belongs to another user's campaign (IDOR)", async () => {
+    vi.mocked(createClient).mockReturnValue(
+      makeSupabaseMock({
+        campaigns: { data: [{ id: "camp-other" }], error: null },
+        battles: { data: [], error: null },
+      }),
+    );
+    const res = await DELETE(makeContext());
+    expect(res.status).toBe(404);
+  });
+
   it("returns 200 with success:true on successful delete", async () => {
     vi.mocked(createClient).mockReturnValue(
       makeSupabaseMock({

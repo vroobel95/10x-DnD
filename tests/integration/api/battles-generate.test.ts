@@ -8,7 +8,7 @@ import { makeSupabaseMock } from "../../helpers/supabase";
 vi.mock("@/lib/supabase", () => ({ createClient: vi.fn() }));
 vi.mock("@/lib/ai", () => ({ generateEnemies: vi.fn() }));
 
-const battleData = { id: "b-1", party_level: 3, location: "cave" };
+const battleData = { id: "b-1", party_level: 3, location: "cave", campaign_id: "camp-1" };
 
 const validEnemy = {
   name: "Goblin",
@@ -91,8 +91,24 @@ describe("POST /api/battles/[id]/generate", () => {
     expect(res.status).toBe(500);
   });
 
+  it("returns 404 when battle does not belong to the authenticated user (IDOR)", async () => {
+    vi.mocked(createClient).mockReturnValue(
+      makeSupabaseMock({
+        battles: { data: { ...battleData, campaign_id: "camp-1" }, error: null },
+        campaigns: { data: null, error: { code: "PGRST116", message: "No rows found" } },
+      }),
+    );
+    const res = await POST(makeContext());
+    expect(res.status).toBe(404);
+  });
+
   it("returns 500 with safe message when generateEnemies throws", async () => {
-    vi.mocked(createClient).mockReturnValue(makeSupabaseMock({ battles: { data: battleData, error: null } }));
+    vi.mocked(createClient).mockReturnValue(
+      makeSupabaseMock({
+        battles: { data: battleData, error: null },
+        campaigns: { data: { id: "camp-1" }, error: null },
+      }),
+    );
     vi.mocked(generateEnemies).mockRejectedValue(new Error("Anthropic API error"));
     const res = await POST(makeContext());
     expect(res.status).toBe(500);
@@ -101,7 +117,10 @@ describe("POST /api/battles/[id]/generate", () => {
   });
 
   it("does not call enemies insert when generateEnemies throws", async () => {
-    const supabaseMock = makeSupabaseMock({ battles: { data: battleData, error: null } });
+    const supabaseMock = makeSupabaseMock({
+      battles: { data: battleData, error: null },
+      campaigns: { data: { id: "camp-1" }, error: null },
+    });
     vi.mocked(createClient).mockReturnValue(supabaseMock);
     vi.mocked(generateEnemies).mockRejectedValue(new Error("Anthropic API error"));
     await POST(makeContext());
@@ -112,6 +131,7 @@ describe("POST /api/battles/[id]/generate", () => {
     vi.mocked(createClient).mockReturnValue(
       makeSupabaseMock({
         battles: { data: battleData, error: null },
+        campaigns: { data: { id: "camp-1" }, error: null },
         enemies: { data: null, error: { message: "Insert failed" } },
       }),
     );
@@ -127,6 +147,7 @@ describe("POST /api/battles/[id]/generate", () => {
     vi.mocked(createClient).mockReturnValue(
       makeSupabaseMock({
         battles: { data: battleData, error: null },
+        campaigns: { data: { id: "camp-1" }, error: null },
         enemies: { data: insertedEnemies, error: null },
       }),
     );
