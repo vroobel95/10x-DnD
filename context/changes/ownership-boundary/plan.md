@@ -381,9 +381,9 @@ Fill the test-plan cookbook §6.4 with the IDOR test pattern established in this
 
 #### Automated
 
-- [x] 4.1 `npm run test` exits 0 — full suite, no regressions
+- [x] 4.1 `npm run test` exits 0 — full suite, no regressions — aef11ae
 
 #### Manual
 
-- [x] 4.2 `context/foundation/test-plan.md` §6.4 contains the IDOR pattern (not "TBD")
-- [x] 4.3 §3 Phase 3 row shows `complete`
+- [x] 4.2 `context/foundation/test-plan.md` §6.4 contains the IDOR pattern (not "TBD") — aef11ae
+- [x] 4.3 §3 Phase 3 row shows `complete` — aef11ae
