@@ -76,7 +76,7 @@ orchestrator updates Status as artifacts appear on disk.
 | 1 | Test runner bootstrap + critical contracts | Bootstrap vitest; prove AI stat validation rejects illegal values; prove generation fails cleanly on AI errors; prove mutation routes distinguish error / not-found / success | #1, #3, #7 | unit, integration | complete | context/changes/testing-critical-path-bootstrap/ |
 | 2 | Auth flow integrity | Prove auth callback redirect validation blocks external targets; null client returns error not silent success; confirm enemies persist after PATCH | #2, #4 | integration | complete | context/changes/testing-auth-flow-integrity/ |
 | 3 | Ownership boundary | Prove API routes reject cross-user resource access at the route layer; prove error responses contain only safe messages | #5, #6 | integration | complete | context/changes/ownership-boundary/ |
-| 4 | CI quality gates | Wire vitest into GitHub Actions; tests block merge on every PR | cross-cutting | CI config | not started | — |
+| 4 | CI quality gates | Wire vitest into GitHub Actions; tests block merge on every PR | cross-cutting | CI config | change opened | context/changes/testing-ci-quality-gates/ |
 
 **Status vocabulary** (fixed — parser literals):
 
