@@ -3,7 +3,7 @@ project: "DnD 5enemy"
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-06-06
+updated: 2026-06-06 (S-03, S-04, S-05 → impl_reviewed)
 prd_version: 1
 main_goal: speed
 top_blocker: external
@@ -32,9 +32,9 @@ D&D 5e Game Masters lose preparation time hunting stat blocks and manually adjus
 | F-01 | data-schema                   | (foundation) campaigns, battles, and enemy tables deployed via migrations with RLS                     | —                | FR-002, FR-005, FR-007, FR-009 | impl_reviewed    |
 | S-01 | create-battle                 | create a battle within their auto-created campaign and see it listed in the app                        | F-01             | FR-002                         | impl_reviewed    |
 | S-02 | first-gated-generation        | type a natural-language combat scenario request, see AI-generated enemy cards, and confirm them        | S-01, F-01       | US-01, FR-003, FR-004, FR-005  | impl_reviewed    |
-| S-03 | enemy-post-confirm-management | edit a confirmed enemy's stats and remove a confirmed enemy from a battle                              | S-02             | FR-007, FR-009                 | proposed         |
-| S-04 | password-reset                | reset a forgotten password via email link and regain access to the app                                 | —                | FR-010                         | proposed         |
-| S-05 | campaign-management           | see a list of campaigns, choose one, create or delete; battle delete folded in (FR-011)                | F-01, S-01       | FR-001, FR-011                 | proposed         |
+| S-03 | enemy-post-confirm-management | edit a confirmed enemy's stats and remove a confirmed enemy from a battle                              | S-02             | FR-007, FR-009                 | impl_reviewed    |
+| S-04 | password-reset                | reset a forgotten password via email link and regain access to the app                                 | —                | FR-010                         | impl_reviewed    |
+| S-05 | campaign-management           | see a list of campaigns, choose one, create or delete; battle delete folded in (FR-011)                | F-01, S-01       | FR-001, FR-011                 | impl_reviewed    |
 | S-06 | delete-battle                 | _(folded into S-05)_                                                                                   | S-05             | FR-011                         | folded into S-05 |
 | S-07 | pdf-export                    | export a battle's confirmed enemy cards as a printable PDF                                             | S-02, S-03, S-05 | FR-012                         | proposed         |
 | S-08 | ux-improvements               | see DnD 5enemy branding on the landing page and get visual feedback during page loads and form submits | —                | —                              | proposed         |
@@ -106,7 +106,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** sequenced last among must-haves because both FRs are post-confirmation operations that only make sense once an enemy has been generated and saved; FR-009 (remove) is what makes FR-005 (confirm) reversible and safe to use at the table — it completes the MVP contract.
-- **Status:** proposed
+- **Status:** impl_reviewed
 
 ### S-04: Reset password
 
@@ -118,7 +118,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** low — Supabase's built-in reset flow (`resetPasswordForEmail` + PKCE redirect) handles the token lifecycle; implementation is two pages and a link on the sign-in form. The `/api/auth/callback` route required for email confirmation (added as a bug fix 2026-06-01) handles the PKCE code exchange for password reset too.
-- **Status:** proposed
+- **Status:** impl_reviewed
 
 ### S-05: Create and manage campaigns
 
@@ -130,7 +130,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** this slice is the widest in the roadmap — it rewrites the navigation architecture (root `/` → `/campaigns`, battle list moves to `/campaigns/[id]`, back-links in `battles/[id].astro` and `battles/new.astro` update). The `getUserCampaign` helper in `lib/campaigns.ts` changes contract (single → selectable); all callers (`battles/index.astro`, `battles/[id].astro`, `battles/new.astro`, `api/battles.ts`) must be migrated in the same PR. FR-011 (delete battle) is folded in: it adds one button and one API endpoint (`DELETE /api/battles/[id]`) to the campaign page this slice creates — keeping S-06 separate would produce a PR that modifies a file that doesn't exist in main yet. S-07 (PDF) also writes `battles/[id].astro`; that slice must be based on this slice's version, not the original.
-- **Status:** proposed
+- **Status:** impl_reviewed
 
 ### S-06: Delete battle (folded into S-05)
 

@@ -27,8 +27,8 @@
 
 - **Context**: src/pages/api/enemies/[id].ts:45-47, 60-62
 - **Problem**: PATCH branches use `if (result.error || !result.data)` and return 404 "Enemy not found" for both a real Supabase error (network/schema failure) and a missing row. The DELETE branch in the same file correctly separates these two cases into 500 vs. 404 — PATCH did not follow suit.
-- **Rule**: [fill in — e.g. "Always split `result.error` (→ 500) from `!result.data` (→ 404) in Supabase mutation responses; never collapse them into a single 404"]
-- **Applies to**: [fill in — e.g. "All API routes that perform Supabase update/delete and check the result"]
+- **Rule**: Always split `result.error` (→ 500) from `!result.data` (→ 404) in Supabase mutation responses; never collapse them into a single branch that returns 404 for both cases
+- **Applies to**: All API routes that perform a Supabase `.update()` or `.delete()` and then inspect the result
 
 ## Fail fast on missing required secrets instead of passing empty defaults
 
@@ -48,12 +48,12 @@
 
 - **Context**: src/pages/api/auth/callback.ts:6,14
 - **Problem**: The `next` query parameter is read and used directly in `context.redirect(next)` without validation. An attacker can craft a callback URL with `next=https://evil.com` to redirect users off-site after a successful auth code exchange. This is a classic open redirect (OWASP).
-- **Rule**: [fill in]
-- **Applies to**: [fill in]
+- **Rule**: Never redirect to a URL taken from user-controlled input without validation. Validate that the target is a relative path (starts with `/` and does not start with `//`) before using it; otherwise fall back to a safe default (e.g., `/`)
+- **Applies to**: All API routes and auth callbacks that read a redirect target from query parameters, request body, or cookies
 
 ## Guard against null Supabase client instead of falling through to success
 
 - **Context**: src/pages/api/auth/forgot-password.ts:12-26, src/pages/api/auth/reset-password.ts:21-32
 - **Problem**: When `createClient` returns null (Supabase misconfigured), the `if (supabase) { ... }` pattern silently skips the Supabase call and falls through to a success redirect. On the forgot-password route this shows "check your email" when no email was sent; on the reset-password route this shows "Password updated" when nothing changed — locking the user out.
-- **Rule**: [fill in]
-- **Applies to**: [fill in]
+- **Rule**: Treat a null return from `createClient` as a fatal misconfiguration — return a 500 error immediately rather than silently skipping the Supabase call and falling through to a success response
+- **Applies to**: All API routes that call `createClient()` before performing any Supabase operation
