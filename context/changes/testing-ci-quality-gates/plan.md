@@ -370,13 +370,13 @@ merges.
 
 #### Automated
 
-- [ ] 2.1 `npm run typecheck` exits 0 locally (pre-flight before committing ci.yml)
-- [ ] 2.2 `npm run test` exits 0 locally after Phase 1
+- [x] 2.1 `npm run typecheck` exits 0 locally (pre-flight before committing ci.yml)
+- [x] 2.2 `npm run test` exits 0 locally after Phase 1
 - [ ] 2.3 CI run on a feature branch shows `npm run typecheck` and `npm run test` steps, both passing
 
 #### Manual
 
-- [ ] 2.4 Confirm `ci.yml` — no `env:` block on the typecheck or test steps; step order is lint → typecheck → test → build
+- [x] 2.4 Confirm `ci.yml` — no `env:` block on the typecheck or test steps; step order is lint → typecheck → test → build
 
 ### Phase 3: Enable branch protection and update documentation
 
