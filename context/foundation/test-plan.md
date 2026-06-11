@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-09 (Phase 3 complete)
+> Last updated: 2026-06-11 (Phase 4 complete)
 
 ---
 
@@ -76,7 +76,7 @@ orchestrator updates Status as artifacts appear on disk.
 | 1 | Test runner bootstrap + critical contracts | Bootstrap vitest; prove AI stat validation rejects illegal values; prove generation fails cleanly on AI errors; prove mutation routes distinguish error / not-found / success | #1, #3, #7 | unit, integration | complete | context/changes/testing-critical-path-bootstrap/ |
 | 2 | Auth flow integrity | Prove auth callback redirect validation blocks external targets; null client returns error not silent success; confirm enemies persist after PATCH | #2, #4 | integration | complete | context/changes/testing-auth-flow-integrity/ |
 | 3 | Ownership boundary | Prove API routes reject cross-user resource access at the route layer; prove error responses contain only safe messages | #5, #6 | integration | complete | context/changes/ownership-boundary/ |
-| 4 | CI quality gates | Wire vitest into GitHub Actions; tests block merge on every PR | cross-cutting | CI config | change opened | context/changes/testing-ci-quality-gates/ |
+| 4 | CI quality gates | Wire vitest into GitHub Actions; tests block merge on every PR | cross-cutting | CI config | complete | context/changes/testing-ci-quality-gates/ |
 
 **Status vocabulary** (fixed — parser literals):
 
@@ -114,10 +114,11 @@ The classic test base for this project. No test runner is installed yet; Phase 1
 
 | Gate | Where | Required? | Catches |
 |---|---|---|---|
-| lint + typecheck | local + CI | required now (already wired via husky + GitHub Actions) | syntactic / type drift |
-| unit + integration | local + CI | required after §3 Phase 1 | logic regressions, silent-failure patterns, invalid stat blocks |
-| ownership boundary tests | local + CI | required after §3 Phase 3 | IDOR regressions |
-| CI test gate (vitest in pipeline) | CI on PR | required after §3 Phase 4 | prevents untested code from merging |
+| lint (ESLint via lint-staged) | local (on commit) | required | staged-file lint violations |
+| lint (ESLint full) | CI on PR | required | all lint violations including unstaged |
+| typecheck (`astro check`) | CI on PR | required after §3 Phase 4 | TypeScript type errors in `.astro` and `.ts` files |
+| unit + integration (vitest) | CI on PR | required after §3 Phase 4 | logic regressions, silent-failure patterns, invalid stat blocks, IDOR regressions |
+| build | CI on PR + push to main | required | build failures, missing env references |
 | e2e on auth critical flow | CI on PR | optional — only if no integration seam exists | broken password reset / callback end-to-end |
 
 ---
@@ -197,14 +198,15 @@ contributors should respect these unless the underlying assumption changes.
 - **Landing page and purely visual UI components** — zero business logic; snapshot / E2E cost would not catch real regressions. Re-evaluate if the landing page gains interactive logic or gated content. (Source: Phase 2 interview Q5.)
 - **Generated TypeScript types / Zod schema shape (structural)** — the schema definition is the test; asserting its structure is an implementation mirror. Only test the *range constraints* and *business rules* inside the schema, not the shape. (Source: §1 principle #1, cost × signal.)
 - **Internal Supabase client internals** — Supabase's own SDK is tested by its maintainers. Mock at the module boundary, not at the internals. (Source: §1 principle #1.)
+- **`auth/signout.ts` null-client fall-through** — the `if (supabase)` guard skips `signOut()` and redirects to `/` when the Supabase client is null. Blast radius is minimal: worst case is a session cookie that expires naturally. The cost of a dedicated test outweighs the signal given this route has no validation, no mutation-with-confirmation, and no user-facing data at risk. The null-client anti-pattern is documented in `lessons.md` and is already guarded in higher-stakes routes (forgot-password, reset-password). (Source: Phase 4 research — §1 principle #1 cost × signal.)
 
 ---
 
 ## 8. Freshness Ledger
 
-- Strategy (§1–§5) last reviewed: 2026-06-04
-- Stack versions last verified: 2026-06-04
-- AI-native tool references last verified: 2026-06-04
+- Strategy (§1–§5) last reviewed: 2026-06-11
+- Stack versions last verified: 2026-06-11
+- AI-native tool references last verified: 2026-06-11
 
 Refresh (`/10x-test-plan --refresh`) when:
 
