@@ -43,12 +43,16 @@ describe("GET /api/campaigns", () => {
     vi.mocked(createClient).mockReturnValue(null);
     const res = await GET(makeGetContext());
     expect(res.status).toBe(500);
+    const body = await res.json();
+    expect(body.error).toBe("Supabase is not configured");
   });
 
   it("returns 401 when user is not authenticated", async () => {
     vi.mocked(createClient).mockReturnValue(makeSupabaseMock({}));
     const res = await GET(makeGetContext(null));
     expect(res.status).toBe(401);
+    const body = await res.json();
+    expect(body.error).toBe("Unauthorized");
   });
 
   it("returns 500 when campaigns query errors", async () => {
@@ -57,6 +61,8 @@ describe("GET /api/campaigns", () => {
     );
     const res = await GET(makeGetContext());
     expect(res.status).toBe(500);
+    const body = await res.json();
+    expect(body.error).toBe("Could not load campaigns");
   });
 
   it("returns 200 with campaigns list on success", async () => {
@@ -76,36 +82,64 @@ describe("POST /api/campaigns", () => {
     vi.mocked(createClient).mockReturnValue(null);
     const res = await POST(makePostContext());
     expect(res.status).toBe(500);
+    const body = await res.json();
+    expect(body.error).toBe("Supabase is not configured");
   });
 
   it("returns 401 when user is not authenticated", async () => {
     vi.mocked(createClient).mockReturnValue(makeSupabaseMock({}));
     const res = await POST(makePostContext(null));
     expect(res.status).toBe(401);
+    const body = await res.json();
+    expect(body.error).toBe("Unauthorized");
   });
 
   it("returns 400 when body is not valid JSON", async () => {
     vi.mocked(createClient).mockReturnValue(makeSupabaseMock({}));
     const res = await POST(makePostContext({ id: "user-1" }, "not-valid-json"));
     expect(res.status).toBe(400);
+    const body = await res.json();
+    expect(body.error).toBe("Invalid request body");
   });
 
   it("returns 400 when name is empty", async () => {
     vi.mocked(createClient).mockReturnValue(makeSupabaseMock({}));
     const res = await POST(makePostContext({ id: "user-1" }, { name: "" }));
     expect(res.status).toBe(400);
+    const body = await res.json();
+    expect(body.error).toBe("Campaign name is required");
+  });
+
+  it("returns 400 when name is whitespace only", async () => {
+    vi.mocked(createClient).mockReturnValue(makeSupabaseMock({}));
+    const res = await POST(makePostContext({ id: "user-1" }, { name: "   " }));
+    expect(res.status).toBe(400);
+    const body = await res.json();
+    expect(body.error).toBe("Campaign name is required");
+  });
+
+  it("returns 400 when name is missing from body", async () => {
+    vi.mocked(createClient).mockReturnValue(makeSupabaseMock({}));
+    const res = await POST(makePostContext({ id: "user-1" }, {}));
+    expect(res.status).toBe(400);
+    const body = await res.json();
+    expect(body.error).toBe("Campaign name is required");
   });
 
   it("returns 400 when name exceeds 200 characters", async () => {
     vi.mocked(createClient).mockReturnValue(makeSupabaseMock({}));
     const res = await POST(makePostContext({ id: "user-1" }, { name: "a".repeat(201) }));
     expect(res.status).toBe(400);
+    const body = await res.json();
+    expect(body.error).toBe("Campaign name must be 200 characters or fewer");
   });
 
   it("returns 400 when description exceeds 500 characters", async () => {
     vi.mocked(createClient).mockReturnValue(makeSupabaseMock({}));
     const res = await POST(makePostContext({ id: "user-1" }, { name: "Valid Name", description: "x".repeat(501) }));
     expect(res.status).toBe(400);
+    const body = await res.json();
+    expect(body.error).toBe("Description must be 500 characters or fewer");
   });
 
   it("returns 500 when campaigns insert fails", async () => {
@@ -114,6 +148,8 @@ describe("POST /api/campaigns", () => {
     );
     const res = await POST(makePostContext());
     expect(res.status).toBe(500);
+    const body = await res.json();
+    expect(body.error).toBe("Could not create campaign. Please try again.");
   });
 
   it("returns 200 with campaign on success", async () => {
@@ -122,6 +158,6 @@ describe("POST /api/campaigns", () => {
     const res = await POST(makePostContext());
     expect(res.status).toBe(200);
     const body = (await res.json()) as { campaign: typeof campaign };
-    expect(body.campaign.id).toBe("c-1");
+    expect(body.campaign).toEqual(campaign);
   });
 });

@@ -360,11 +360,11 @@ merges.
 
 #### Automated
 
-- [x] 1.1 `npm run test` passes with 13 test files, all tests green
+- [x] 1.1 `npm run test` passes with 13 test files, all tests green — 3e8cd45
 
 #### Manual
 
-- [x] 1.2 Test file covers 5-tier pattern for GET (null client, unauthorized, Supabase error, happy path) and all POST validation branches (null client, unauthorized, invalid JSON, empty name, name >200, Supabase error, happy path)
+- [x] 1.2 Test file covers 5-tier pattern for GET (null client, unauthorized, Supabase error, happy path) and all POST validation branches (null client, unauthorized, invalid JSON, empty name, name >200, Supabase error, happy path) — 3e8cd45
 
 ### Phase 2: Wire CI gates
 
