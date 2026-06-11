@@ -372,7 +372,7 @@ merges.
 
 - [x] 2.1 `npm run typecheck` exits 0 locally (pre-flight before committing ci.yml) — f5526ee
 - [x] 2.2 `npm run test` exits 0 locally after Phase 1 — f5526ee
-- [x] 2.3 CI run on a feature branch shows `npm run typecheck` and `npm run test` steps, both passing
+- [x] 2.3 CI run on a feature branch shows `npm run typecheck` and `npm run test` steps, both passing — f06e84b
 
 #### Manual
 
@@ -382,11 +382,11 @@ merges.
 
 #### Automated
 
-- [x] 3.1 `gh api repos/vroobel95/10x-DnD/branches/main/protection --jq '.required_status_checks.contexts'` returns `["ci"]`
+- [x] 3.1 `gh api repos/vroobel95/10x-DnD/branches/main/protection --jq '.required_status_checks.contexts'` returns `["ci"]` — f06e84b
 
 #### Manual
 
-- [x] 3.2 Test PR with a failing test confirms "Merge blocked" in GitHub UI; after fixing, merge succeeds
-- [x] 3.3 `test-plan.md` §5 table reflects accurate gate state (no false "typecheck already wired" claim)
-- [x] 3.4 `test-plan.md` §7 includes `auth/signout.ts` entry
-- [x] 3.5 `test-plan.md` header and §8 show `2026-06-11 (Phase 4 complete)`
+- [x] 3.2 Test PR with a failing test confirms "Merge blocked" in GitHub UI; after fixing, merge succeeds — f06e84b
+- [x] 3.3 `test-plan.md` §5 table reflects accurate gate state (no false "typecheck already wired" claim) — f06e84b
+- [x] 3.4 `test-plan.md` §7 includes `auth/signout.ts` entry — f06e84b
+- [x] 3.5 `test-plan.md` header and §8 show `2026-06-11 (Phase 4 complete)` — f06e84b
