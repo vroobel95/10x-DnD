@@ -1,9 +1,9 @@
 ---
 change_id: ownership-boundary
 title: Ownership boundary
-status: implemented
+status: impl_reviewed
 created: 2026-06-06
-updated: 2026-06-09
+updated: 2026-06-11
 archived_at: null
 ---
 
