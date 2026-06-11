@@ -3,6 +3,8 @@ import { createClient } from "@/lib/supabase";
 import type { Enemy } from "@/types";
 import { EnemySchema } from "@/lib/schemas/enemy";
 
+export const prerender = false;
+
 export const PATCH: APIRoute = async (context) => {
   const supabase = createClient(context.request.headers, context.cookies);
   if (!supabase) {
@@ -84,6 +86,7 @@ export const PATCH: APIRoute = async (context) => {
     }
   }
 
+  // Bare PATCH (no Content-Type: application/json) is the confirm contract — see EnemiesSection.tsx:53.
   const result = await supabase
     .from("enemies")
     .update({ status: "confirmed", updated_at: new Date().toISOString() })
@@ -113,33 +116,33 @@ export const DELETE: APIRoute = async (context) => {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { data: delCampaigns, error: delCampaignsError } = await supabase
+  const { data: userCampaigns, error: campaignsError } = await supabase
     .from("campaigns")
     .select("id")
     .eq("user_id", user.id);
 
-  if (delCampaignsError) {
+  if (campaignsError) {
     return Response.json({ error: "Could not delete enemy. Please try again." }, { status: 500 });
   }
 
-  const delCampaignIds = delCampaigns.map((c: { id: string }) => c.id);
+  const campaignIds = userCampaigns.map((c: { id: string }) => c.id);
 
-  if (delCampaignIds.length === 0) {
+  if (campaignIds.length === 0) {
     return Response.json({ error: "Enemy not found" }, { status: 404 });
   }
 
-  const { data: delBattles, error: delBattlesError } = await supabase
+  const { data: userBattles, error: battlesError } = await supabase
     .from("battles")
     .select("id")
-    .in("campaign_id", delCampaignIds);
+    .in("campaign_id", campaignIds);
 
-  if (delBattlesError) {
+  if (battlesError) {
     return Response.json({ error: "Could not delete enemy. Please try again." }, { status: 500 });
   }
 
-  const delBattleIds = delBattles.map((b: { id: string }) => b.id);
+  const battleIds = userBattles.map((b: { id: string }) => b.id);
 
-  if (delBattleIds.length === 0) {
+  if (battleIds.length === 0) {
     return Response.json({ error: "Enemy not found" }, { status: 404 });
   }
 
@@ -147,7 +150,7 @@ export const DELETE: APIRoute = async (context) => {
     .from("enemies")
     .delete()
     .eq("id", context.params.id)
-    .in("battle_id", delBattleIds)
+    .in("battle_id", battleIds)
     .select("id");
 
   if (deleteResult.error) {

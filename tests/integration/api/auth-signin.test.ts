@@ -5,8 +5,10 @@ import { POST } from "@/pages/api/auth/signin";
 
 vi.mock("@/lib/supabase", () => ({ createClient: vi.fn() }));
 
-function makeContext(): APIContext {
-  const body = new URLSearchParams({ email: "test@example.com", password: "password123" }).toString();
+function makeContext(
+  fields: Record<string, string> = { email: "test@example.com", password: "password123" },
+): APIContext {
+  const body = new URLSearchParams(fields).toString();
   return {
     request: new Request("http://localhost/api/auth/signin", {
       method: "POST",
@@ -27,6 +29,13 @@ function makeSigninMock(result: { error: unknown } = { error: null }): any {
 
 describe("POST /api/auth/signin", () => {
   beforeEach(() => vi.resetAllMocks());
+
+  it("redirects with error when required form fields are missing", async () => {
+    vi.mocked(createClient).mockReturnValue(makeSigninMock());
+    const res = await POST(makeContext({ email: "test@example.com" }));
+    expect(res.status).toBe(302);
+    expect(res.headers.get("location")).toContain("error=");
+  });
 
   it("redirects to error page when supabase client is null", async () => {
     vi.mocked(createClient).mockReturnValue(null);
