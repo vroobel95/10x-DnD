@@ -3,7 +3,7 @@ project: "DnD 5enemy"
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-06-06 (S-03, S-04, S-05 → impl_reviewed)
+updated: 2026-06-12 (S-03, S-04, S-05 → impl_reviewed; S-09 → impl_reviewed)
 prd_version: 1
 main_goal: speed
 top_blocker: external
@@ -38,7 +38,7 @@ D&D 5e Game Masters lose preparation time hunting stat blocks and manually adjus
 | S-06 | delete-battle                 | _(folded into S-05)_                                                                                   | S-05             | FR-011                         | folded into S-05 |
 | S-07 | pdf-export                    | export a battle's confirmed enemy cards as a printable PDF                                             | S-02, S-03, S-05 | FR-012                         | proposed         |
 | S-08 | ux-improvements               | see DnD 5enemy branding on the landing page and get visual feedback during page loads and form submits | —                | —                              | proposed         |
-| S-09 | battle-environment            | see AI-generated atmospheric and environmental details for a battle (terrain, hazards, ambiance)        | S-01             | —                              | proposed         |
+| S-09 | battle-environment            | see AI-generated atmospheric and environmental details for a battle (terrain, hazards, ambiance)        | S-01             | —                              | impl_reviewed    |
 | S-10 | main-enemy-profile            | if a battle has a main enemy, see its generated narrative description, unique characteristics, and 3 roleplay dialogue lines | S-02 | —               | proposed         |
 | S-11 | sentry-setup                  | server errors, unhandled exceptions, and AI generation failures surface in Sentry with environment context                  | —    | —               | proposed         |
 
@@ -165,9 +165,9 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Prerequisites:** S-01 (battle must exist before environment can be attached)
 - **Parallel with:** S-08 — no file overlap expected
 - **Blockers:** —
-- **Unknowns:** scope of "environment" (pure flavor text vs. D&D mechanical effects vs. both), generation trigger (auto on battle creation vs. on-demand button), whether to allow regeneration, where it lives in the battle UI — to be resolved during `/10x-plan`.
+- **Unknowns:** scope of "environment" (pure flavor text vs. D&D mechanical effects vs. both), generation trigger (auto on battle creation vs. on-demand button), whether to allow regeneration, where it lives in the battle UI — resolved in `/10x-plan` (flavor text only, on-demand button, regeneration allowed, between badges and enemies list).
 - **Risk:** low–medium. Core risk is prompt design: the AI must produce concise, GM-usable content rather than walls of text. UI placement and DB storage shape need a plan decision before implementation.
-- **Status:** proposed
+- **Status:** impl_reviewed
 
 ### S-10: Main enemy profile
 
