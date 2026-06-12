@@ -310,26 +310,26 @@ The new `environment JSONB` column is nullable with no default. Existing battles
 
 #### Automated
 
-- [x] 3.1 `npm run typecheck` passes — `generateEnemies` call sites updated
-- [x] 3.2 Existing enemy generation tests pass — `npm test`
+- [x] 3.1 `npm run typecheck` passes — `generateEnemies` call sites updated — effee12
+- [x] 3.2 Existing enemy generation tests pass — `npm test` — effee12
 
 #### Manual
 
-- [x] 3.3 Generate enemies on battle with environment — response is thematically consistent with terrain/atmosphere
-- [x] 3.4 Generate enemies on battle with no environment — no regression from previous behaviour
+- [x] 3.3 Generate enemies on battle with environment — response is thematically consistent with terrain/atmosphere — effee12
+- [x] 3.4 Generate enemies on battle with no environment — no regression from previous behaviour — effee12
 
 ### Phase 4: UI — EnvironmentSection Component + Battle Page Integration
 
 #### Automated
 
-- [ ] 4.1 `npm run typecheck` passes — props types align
-- [ ] 4.2 `npm run lint` passes
+- [x] 4.1 `npm run typecheck` passes — props types align
+- [x] 4.2 `npm run lint` passes
 
 #### Manual
 
-- [ ] 4.3 Battle with location: Generate Environment button is enabled; clicking shows loading then 5-field grid
-- [ ] 4.4 Battle without location: button visible but disabled with tooltip
-- [ ] 4.5 Clicking Generate a second time overwrites previous environment
-- [ ] 4.6 API error: error message appears below button; previous environment remains
-- [ ] 4.7 Environment persists across page refreshes
-- [ ] 4.8 Existing enemy generation flow unaffected
+- [x] 4.3 Battle with location: Generate Environment button is enabled; clicking shows loading then 5-field grid
+- [x] 4.4 Battle without location: button visible but disabled with tooltip
+- [x] 4.5 Clicking Generate a second time overwrites previous environment
+- [x] 4.6 API error: error message appears below button; previous environment remains
+- [x] 4.7 Environment persists across page refreshes
+- [x] 4.8 Existing enemy generation flow unaffected

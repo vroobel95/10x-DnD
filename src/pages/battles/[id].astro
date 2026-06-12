@@ -2,6 +2,7 @@
 import Layout from "@/layouts/Layout.astro";
 import { createClient } from "@/lib/supabase";
 import EnemiesSection from "@/components/battles/EnemiesSection";
+import EnvironmentSection from "@/components/battles/EnvironmentSection";
 import type { Battle, Enemy } from "@/types";
 
 const { id } = Astro.params;
@@ -74,6 +75,8 @@ const createdDate = new Date(b.created_at).toLocaleDateString("en-US", {
           Created {createdDate}
         </span>
       </div>
+
+      <EnvironmentSection battleId={b.id} location={b.location} initialEnvironment={b.environment} client:load />
 
       <EnemiesSection battleId={b.id} initialPending={initialPending} initialConfirmed={initialConfirmed} client:load />
     </div>
