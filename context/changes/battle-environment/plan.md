@@ -296,27 +296,27 @@ The new `environment JSONB` column is nullable with no default. Existing battles
 
 #### Automated
 
-- [x] 2.1 `npm run typecheck` passes with new function and route
-- [x] 2.2 POST /api/battles/:id/environment returns 200 with all 5 fields for a valid battle with location
+- [x] 2.1 `npm run typecheck` passes with new function and route — a6c2f4e
+- [x] 2.2 POST /api/battles/:id/environment returns 200 with all 5 fields for a valid battle with location — a6c2f4e
 
 #### Manual
 
-- [x] 2.3 Valid battle with location → 200 with `{ environment: { terrain, lighting, hazards, ambiance, trivia } }`
-- [x] 2.4 Battle from different user → 404
-- [x] 2.5 Null Supabase client → 500 (not silent success)
-- [x] 2.6 After success, `battles` row shows JSONB data in `environment` column
+- [x] 2.3 Valid battle with location → 200 with `{ environment: { terrain, lighting, hazards, ambiance, trivia } }` — a6c2f4e
+- [x] 2.4 Battle from different user → 404 — a6c2f4e
+- [x] 2.5 Null Supabase client → 500 (not silent success) — a6c2f4e
+- [x] 2.6 After success, `battles` row shows JSONB data in `environment` column — a6c2f4e
 
 ### Phase 3: Inject Environment into Enemy Generation
 
 #### Automated
 
-- [ ] 3.1 `npm run typecheck` passes — `generateEnemies` call sites updated
-- [ ] 3.2 Existing enemy generation tests pass — `npm test`
+- [x] 3.1 `npm run typecheck` passes — `generateEnemies` call sites updated
+- [x] 3.2 Existing enemy generation tests pass — `npm test`
 
 #### Manual
 
-- [ ] 3.3 Generate enemies on battle with environment — response is thematically consistent with terrain/atmosphere
-- [ ] 3.4 Generate enemies on battle with no environment — no regression from previous behaviour
+- [x] 3.3 Generate enemies on battle with environment — response is thematically consistent with terrain/atmosphere
+- [x] 3.4 Generate enemies on battle with no environment — no regression from previous behaviour
 
 ### Phase 4: UI — EnvironmentSection Component + Battle Page Integration
 

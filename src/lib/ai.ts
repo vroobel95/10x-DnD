@@ -25,7 +25,7 @@ Rules:
 Output JSON only.`;
 
 export async function generateEnemies(
-  battle: Pick<Battle, "party_level" | "location">,
+  battle: Pick<Battle, "party_level" | "location"> & { environment: BattleEnvironment | null },
   prompt: string,
 ): Promise<EnemyGroup> {
   if (!ANTHROPIC_API_KEY) {
@@ -35,6 +35,7 @@ export async function generateEnemies(
   const contextParts = [
     battle.party_level != null ? `Party level: ${battle.party_level}` : null,
     battle.location ? `Location: ${battle.location}` : null,
+    battle.environment ? `Environment: ${battle.environment.terrain}. ${battle.environment.hazards}.` : null,
   ].filter(Boolean);
   const fullPrompt = contextParts.length > 0 ? `${contextParts.join(". ")}. ${prompt}` : prompt;
 

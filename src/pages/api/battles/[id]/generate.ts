@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { createClient } from "@/lib/supabase";
 import { generateEnemies } from "@/lib/ai";
+import type { BattleEnvironment } from "@/lib/schemas/environment";
 
 export const prerender = false;
 
@@ -35,7 +36,7 @@ export const POST: APIRoute = async (context) => {
 
   const battleResult = await supabase
     .from("battles")
-    .select("id, party_level, location, campaign_id")
+    .select("id, party_level, location, campaign_id, environment")
     .eq("id", battleId)
     .single();
 
@@ -64,7 +65,10 @@ export const POST: APIRoute = async (context) => {
 
   let enemyGroup: Awaited<ReturnType<typeof generateEnemies>>;
   try {
-    enemyGroup = await generateEnemies(battle, prompt);
+    enemyGroup = await generateEnemies(
+      { ...battle, environment: battle.environment as BattleEnvironment | null },
+      prompt,
+    );
   } catch {
     return Response.json({ error: "Generation failed. Please try again." }, { status: 500 });
   }
