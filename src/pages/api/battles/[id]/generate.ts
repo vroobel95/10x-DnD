@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { createClient } from "@/lib/supabase";
 import { generateEnemies } from "@/lib/ai";
-import type { BattleEnvironment } from "@/lib/schemas/environment";
+import type { BattleEnvironment } from "@/types";
 
 export const prerender = false;
 

@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 
+// Callers using native method="POST" forms must pass isLoading explicitly —
+// useFormStatus only works with React 19 form actions, not native form submissions.
 interface SubmitButtonProps {
   pendingText: string;
   icon: ReactNode;

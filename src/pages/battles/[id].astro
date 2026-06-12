@@ -14,10 +14,17 @@ if (!supabase || !user) {
   return Astro.redirect("/campaigns");
 }
 
-const { data: battle } = (await supabase.from("battles").select("*").eq("id", id).single()) as {
+const { data: battle, error: battleError } = (await supabase.from("battles").select("*").eq("id", id).single()) as {
   data: Battle | null;
-  error: unknown;
+  error: { code: string } | null;
 };
+
+if (battleError) {
+  if (battleError.code !== "PGRST116") {
+    return new Response(null, { status: 500 });
+  }
+  return Astro.redirect("/campaigns");
+}
 
 if (!battle) {
   return Astro.redirect("/campaigns");

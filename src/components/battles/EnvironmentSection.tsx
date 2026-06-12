@@ -30,8 +30,13 @@ export default function EnvironmentSection({ battleId, location, initialEnvironm
       const data = (await res.json()) as { error?: string; environment?: BattleEnvironment };
       if (!res.ok) {
         setError(data.error ?? "Generation failed. Please try again.");
+        if (data.environment) setEnvironment(data.environment);
       } else {
-        setEnvironment(data.environment ?? null);
+        if (!data.environment) {
+          setError("Generation failed. Please try again.");
+          return;
+        }
+        setEnvironment(data.environment);
       }
     } catch {
       setError("Generation failed. Please try again.");

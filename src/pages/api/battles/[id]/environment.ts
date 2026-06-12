@@ -61,10 +61,12 @@ export const POST: APIRoute = async (context) => {
     .single();
 
   if (updateResult.error) {
+    // PGRST116 here means the battle was deleted between the ownership check and this write (race).
     if (updateResult.error.code === "PGRST116") {
       return Response.json({ error: "Battle not found" }, { status: 404 });
     }
-    return Response.json({ error: "Could not save environment. Please try again." }, { status: 500 });
+    // Return the generated content even on save failure so the client can still display it.
+    return Response.json({ error: "Could not save environment. Please try again.", environment }, { status: 500 });
   }
 
   return Response.json({ environment });
