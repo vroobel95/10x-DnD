@@ -322,14 +322,14 @@ The new `environment JSONB` column is nullable with no default. Existing battles
 
 #### Automated
 
-- [x] 4.1 `npm run typecheck` passes — props types align
-- [x] 4.2 `npm run lint` passes
+- [x] 4.1 `npm run typecheck` passes — props types align — 7f845d6
+- [x] 4.2 `npm run lint` passes — 7f845d6
 
 #### Manual
 
-- [x] 4.3 Battle with location: Generate Environment button is enabled; clicking shows loading then 5-field grid
-- [x] 4.4 Battle without location: button visible but disabled with tooltip
-- [x] 4.5 Clicking Generate a second time overwrites previous environment
-- [x] 4.6 API error: error message appears below button; previous environment remains
-- [x] 4.7 Environment persists across page refreshes
-- [x] 4.8 Existing enemy generation flow unaffected
+- [x] 4.3 Battle with location: Generate Environment button is enabled; clicking shows loading then 5-field grid — 7f845d6
+- [x] 4.4 Battle without location: button visible but disabled with tooltip — 7f845d6
+- [x] 4.5 Clicking Generate a second time overwrites previous environment — 7f845d6
+- [x] 4.6 API error: error message appears below button; previous environment remains — 7f845d6
+- [x] 4.7 Environment persists across page refreshes — 7f845d6
+- [x] 4.8 Existing enemy generation flow unaffected — 7f845d6
