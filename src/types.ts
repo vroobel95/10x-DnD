@@ -2,6 +2,10 @@
 // These types mirror the Supabase database schema defined in supabase/migrations/.
 // All UUID and timestamp fields are typed as string (Supabase JS client serialisation).
 
+import type { BattleEnvironment } from "@/lib/schemas/environment";
+
+export type { BattleEnvironment };
+
 export type EnemyStatus = "pending" | "confirmed";
 
 export interface Campaign {
@@ -19,6 +23,7 @@ export interface Battle {
   name: string;
   party_level: number | null;
   location: string | null;
+  environment: BattleEnvironment | null;
   created_at: string;
   updated_at: string;
 }

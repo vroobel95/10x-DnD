@@ -1,9 +1,9 @@
 ---
 change_id: battle-environment
 title: Battle Environmental Effects
-status: proposed
+status: implementing
 created: 2026-06-04
-updated: 2026-06-04
+updated: 2026-06-11
 archived_at: null
 ---
 
