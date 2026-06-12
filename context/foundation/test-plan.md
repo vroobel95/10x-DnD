@@ -93,13 +93,13 @@ orchestrator updates Status as artifacts appear on disk.
 
 ## 4. Stack
 
-The classic test base for this project. No test runner is installed yet; Phase 1 bootstraps the stack. AI-native tool references carry a `checked:` date.
+The test base for this project. AI-native tool references carry a `checked:` date.
 
 | Layer | Tool | Version | Notes |
 |---|---|---|---|
-| unit + integration | Vitest | none yet — see §3 Phase 1 | Vite-native; compatible with Astro's Vite pipeline; handles TS without extra config |
-| Supabase mocking | `vi.mock()` / Vitest module mocks | none yet — see §3 Phase 1 | Mock Supabase client at module boundary; do not mock individual queries |
-| e2e | Playwright | none yet — optional; see §7 | Only if auth callback has no integration-testable seam |
+| unit + integration | Vitest | ^4.1.8 | Vite-native; compatible with Astro's Vite pipeline; handles TS without extra config |
+| Supabase mocking | `vi.mock()` / Vitest module mocks | (Vitest built-in) | Mock Supabase client at module boundary; do not mock individual queries |
+| e2e | Playwright | none — optional; see §7 | Only if auth callback has no integration-testable seam |
 | accessibility | none | — | Out of scope for this rollout |
 
 **Stack grounding tools (current session):**
@@ -182,11 +182,57 @@ the relevant rollout phase ships; before that, the sub-section reads
 
 ### 6.5 Adding a test for a new API route (general rule)
 
-TBD — see §3 Phase 1 + Phase 3. Pattern: integration preferred; check response status for all three Supabase outcomes (error → 500, no row → 404, row changed → 200 + data); assert error body is user-safe.
+When a new API route is added to `src/pages/api/`, add a corresponding `tests/integration/api/<route>.test.ts` file before or alongside the implementation.
+
+**Minimum required cases** (derive from §6.2 and §6.3 patterns):
+
+| Case | Mock setup | Assert |
+|---|---|---|
+| Null Supabase client | `createClient` returns `null` | `status === 500` |
+| Unauthenticated request | `locals.user = null` | `status === 401` |
+| Supabase error on primary query | `{ data: null, error: { message: "…" } }` | `status === 500` + safe body |
+| Row not found | `{ data: null, error: null }` (or `{ data: [], … }` for array returns) | `status === 404` |
+| Happy path | Valid mock data | `status === 200` + expected shape |
+
+**If the route mutates data** (POST/PATCH/DELETE), also add:
+- A case asserting the safe error message (no raw `error.message` forwarded — Risk #6).
+- If the route touches a resource owned by a user, an IDOR case per §6.4.
+
+**Checklist before committing a new route's tests:**
+
+1. `vi.mock('@/lib/supabase')` at the top — never mock query internals.
+2. `makeSupabaseMock(tableResults)` from `tests/helpers/supabase.ts` for all `from()` calls.
+3. `makeContext(options?)` helper defined per-file — only fields the handler actually reads.
+4. Error body assertions use exact safe strings, not `.not.toContain(error.message)` alone.
+5. `npm run test` passes locally before committing.
 
 ### 6.6 Per-rollout-phase notes
 
-(Appended by `/10x-implement` after each phase ships.)
+**Phase 1 — Test runner bootstrap + critical contracts** (complete, 2026-06-04)
+- Vitest bootstrapped with `vitest.config.ts`; path alias `@/` wired via `vite-tsconfig-paths`.
+- `tests/helpers/supabase.ts` — `makeSupabaseMock(tableResults)` helper: keyed by table name, returns the same result for every chained call on that table. The `from` field is a `vi.fn()` so call assertions work.
+- Fixed a confirmed bug: `GET /api/battles` ignored Supabase errors and returned `[]` with 200. Correct pattern: check `error` first (→ 500), then `!data` (→ 404), then return data.
+- Test files added: `battles.test.ts`, `battles-id.test.ts`, `battles-generate.test.ts`, `enemy.test.ts` (unit schema boundary tests).
+
+**Phase 2 — Auth flow integrity** (complete, 2026-06-05)
+- `tests/helpers/auth.ts` — `makeAuthClientMock(results?)` helper for `supabase.auth.*` methods.
+- Auth callback open-redirect guard confirmed: `next` values not starting with `/` are silently replaced with `"/"` — tested for `https://external.com` and `//evil.com` bypass.
+- Email-enumeration-safe fallthrough in `forgot-password.ts` documented as intentional behavior, not a bug (non-429/non-500 Supabase errors redirect to success page).
+- Test files added: `auth-callback.test.ts`, `auth-recovery-callback.test.ts`, `auth-forgot-password.test.ts`, `auth-reset-password.test.ts`, `enemies-id.test.ts` (enemy persist-after-confirm).
+- Exclusion recorded in §7: `auth/signout.ts` null-client fall-through — blast radius minimal, signal-to-cost ratio too low.
+
+**Phase 3 — Ownership boundary** (complete, 2026-06-09)
+- App-level ownership guards added to `enemies/[id].ts` (3-query chain: campaigns → battles → enemy) and `battles/[id]/generate.ts` (campaign ownership via `campaign_id`). RLS remains defense-in-depth only.
+- `makeSupabaseMock` limitation noted: returns the same result for ALL chained calls on a table — the mock cannot distinguish between the ownership lookup and the final mutation on the same table. Worked around by splitting mock configuration per test.
+- Auth routes (`signin.ts`, `signup.ts`) hardened: `form.get()` null guards added; raw `error.message` replaced with safe strings.
+- IDOR tests use `battles: { data: [], error: null }` as the cross-user sentinel (empty battle set → 404 before the enemy query fires). See §6.4 for the documented pattern.
+- Test files added/updated: `enemies-id.test.ts` (IDOR), `battles-generate.test.ts` (IDOR), `battles-id.test.ts` (IDOR), `auth-signin.test.ts`, `auth-signup.test.ts`.
+
+**Phase 4 — CI quality gates** (complete, 2026-06-11)
+- `typecheck` and `test` steps added to `.github/workflows/ci.yml`; both block merge on every PR.
+- `astro check` runs as typecheck; `npm run test` runs vitest with `--run` (non-watch mode).
+- Branch protection enabled on `main`: status checks `typecheck` and `test` are required before merge.
+- Confirmed `auth/signout.ts` null-client case excluded (§7) — test count held at 96 rather than inflated with low-signal cases.
 
 ---
 
