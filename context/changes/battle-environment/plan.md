@@ -284,27 +284,27 @@ The new `environment JSONB` column is nullable with no default. Existing battles
 
 #### Automated
 
-- [x] 1.1 Migration applies cleanly — `npx supabase db push` without errors
-- [x] 1.2 TypeScript compilation passes — `npm run typecheck`
+- [x] 1.1 Migration applies cleanly — `npx supabase db push` without errors — bafef65
+- [x] 1.2 TypeScript compilation passes — `npm run typecheck` — bafef65
 
 #### Manual
 
-- [x] 1.3 `battles` table shows new `environment` column (JSONB, nullable) in Supabase Studio
-- [x] 1.4 Existing battle records are unaffected (column is NULL for pre-existing rows)
+- [x] 1.3 `battles` table shows new `environment` column (JSONB, nullable) in Supabase Studio — bafef65
+- [x] 1.4 Existing battle records are unaffected (column is NULL for pre-existing rows) — bafef65
 
 ### Phase 2: Environment Generation — AI Function + API Endpoint
 
 #### Automated
 
-- [ ] 2.1 `npm run typecheck` passes with new function and route
-- [ ] 2.2 POST /api/battles/:id/environment returns 200 with all 5 fields for a valid battle with location
+- [x] 2.1 `npm run typecheck` passes with new function and route
+- [x] 2.2 POST /api/battles/:id/environment returns 200 with all 5 fields for a valid battle with location
 
 #### Manual
 
-- [ ] 2.3 Valid battle with location → 200 with `{ environment: { terrain, lighting, hazards, ambiance, trivia } }`
-- [ ] 2.4 Battle from different user → 404
-- [ ] 2.5 Null Supabase client → 500 (not silent success)
-- [ ] 2.6 After success, `battles` row shows JSONB data in `environment` column
+- [x] 2.3 Valid battle with location → 200 with `{ environment: { terrain, lighting, hazards, ambiance, trivia } }`
+- [x] 2.4 Battle from different user → 404
+- [x] 2.5 Null Supabase client → 500 (not silent success)
+- [x] 2.6 After success, `battles` row shows JSONB data in `environment` column
 
 ### Phase 3: Inject Environment into Enemy Generation
 
