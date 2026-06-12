@@ -3,7 +3,7 @@ project: "DnD 5enemy"
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-06-12 (S-03, S-04, S-05 → impl_reviewed; S-09 → impl_reviewed)
+updated: 2026-06-12 (S-03, S-04, S-05 → impl_reviewed; S-09 → impl_reviewed; S-12, S-13 added)
 prd_version: 1
 main_goal: speed
 top_blocker: external
@@ -37,10 +37,12 @@ D&D 5e Game Masters lose preparation time hunting stat blocks and manually adjus
 | S-05 | campaign-management           | see a list of campaigns, choose one, create or delete; battle delete folded in (FR-011)                | F-01, S-01       | FR-001, FR-011                 | impl_reviewed    |
 | S-06 | delete-battle                 | _(folded into S-05)_                                                                                   | S-05             | FR-011                         | folded into S-05 |
 | S-07 | pdf-export                    | export a battle's confirmed enemy cards as a printable PDF                                             | S-02, S-03, S-05 | FR-012                         | proposed         |
-| S-08 | ux-improvements               | see DnD 5enemy branding on the landing page and get visual feedback during page loads and form submits | —                | —                              | proposed         |
+| S-08 | ux-improvements               | see DnD 5enemy branding, visual loading feedback, and a persistent top navbar with sign-out on every authenticated page | S-05             | —                              | proposed         |
 | S-09 | battle-environment            | see AI-generated atmospheric and environmental details for a battle (terrain, hazards, ambiance)        | S-01             | —                              | impl_reviewed    |
 | S-10 | main-enemy-profile            | if a battle has a main enemy, see its generated narrative description, unique characteristics, and 3 roleplay dialogue lines | S-02 | —               | proposed         |
 | S-11 | sentry-setup                  | server errors, unhandled exceptions, and AI generation failures surface in Sentry with environment context                  | —    | —               | proposed         |
+| S-12 | edit-battle                   | edit a battle's name and description after it has been created                                                              | S-01 | —               | proposed         |
+| S-13 | campaign-new-page             | create a new campaign via a dedicated `/campaigns/new` page (matching the `/battles/new` pattern) instead of an inline form | S-05 | —               | proposed         |
 
 ## Baseline
 
@@ -183,14 +185,14 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 ### S-08: UX improvements
 
-- **Outcome:** the landing page shows DnD 5enemy's product identity; users see visual loading feedback when navigating to a battle or submitting the create-battle form.
+- **Outcome:** the landing page shows DnD 5enemy's product identity; users see visual loading feedback when navigating to a battle or submitting the create-battle form; a persistent top navbar is visible on every authenticated page (campaigns, battles, battle detail) containing the sign-out action; the redundant "sign out" button currently rendered at the bottom of the campaigns and battles pages is removed.
 - **Change ID:** ux-improvements
 - **PRD refs:** —
-- **Prerequisites:** —
-- **Parallel with:** S-03, S-04, S-05 — writes only `Welcome.astro`, `BattleCard.astro`, and `CreateBattleForm.tsx`; none of these files are touched by any Wave 1 slice
+- **Prerequisites:** S-05 (navbar must cover the campaigns page, which S-05 creates; without S-05 the campaigns page does not exist in main)
+- **Parallel with:** S-03, S-04 — no file overlap with either
 - **Blockers:** —
 - **Unknowns:** —
-- **Risk:** low. Two distinct sub-tasks: (1) text replacement in `Welcome.astro`; (2) loading feedback in `BattleCard.astro` (inline script on link click) and `CreateBattleForm.tsx` (set `isSubmitting` flag before native form submit proceeds — `SubmitButton` already accepts `pendingText`, the flag is just never set on a valid submit today).
+- **Risk:** low–medium. Four distinct sub-tasks: (1) text replacement in `Welcome.astro`; (2) loading feedback in `BattleCard.astro` (inline script on link click) and `CreateBattleForm.tsx` (set `isSubmitting` flag before native form submit proceeds — `SubmitButton` already accepts `pendingText`, the flag is just never set on a valid submit today); (3) a new persistent `Navbar` component rendered in the shared layout (or injected per authenticated page) — contains the app logo/name and a sign-out button, always fixed/sticky at the top; (4) removal of the standalone sign-out button from the bottom of `campaigns/index.astro` and `battles/index.astro` (and any other authenticated page that renders one). The navbar sub-task adds a file (`Navbar` component) and touches every authenticated layout — wider blast radius than the original scope but still low risk because the changes are purely presentational.
 - **Status:** proposed
 
 ### S-11: Sentry error tracking
@@ -206,6 +208,30 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Risk:** low–medium. Core risk is workerd runtime compatibility: Sentry's standard SDK uses Node APIs unavailable in workerd; using the wrong package silently no-ops at runtime. Additional consideration: Sentry's DSN and environment config must be stored as Wrangler secrets, not committed. Once the right SDK is confirmed the implementation is straightforward — wrap the server entrypoint, instrument catch blocks that currently swallow errors silently, and add a source-map upload step to CI.
 - **Status:** proposed
 
+### S-12: Edit battle
+
+- **Outcome:** GM can edit a battle's name and description after it has been created — changes are persisted immediately and reflected across the campaign's battle list.
+- **Change ID:** edit-battle
+- **PRD refs:** —
+- **Prerequisites:** S-01 (battle must exist before it can be edited)
+- **Parallel with:** S-13 — no file overlap expected
+- **Blockers:** —
+- **Unknowns:** —
+- **Risk:** low. Scope is one edit form (inline or modal on `battles/[id].astro`), one `PATCH /api/battles/[id]` endpoint, and a Supabase update call. The main decision is whether editing is inline on the battle page or a dedicated `battles/[id]/edit` route; the inline approach is simpler and avoids a new page.
+- **Status:** proposed
+
+### S-13: Campaign creation page
+
+- **Outcome:** GM creates a new campaign via a dedicated `/campaigns/new` page — matching the `/battles/new` pattern — instead of an inline form embedded in the campaign list view; the campaign list shows only a "New campaign" button that navigates to the new page.
+- **Change ID:** campaign-new-page
+- **PRD refs:** —
+- **Prerequisites:** S-05 (campaign management page must exist; this replaces its inline create form)
+- **Parallel with:** S-12 — no file overlap expected
+- **Blockers:** —
+- **Unknowns:** —
+- **Risk:** low. Scope is one new `campaigns/new.astro` page with a `CreateCampaignForm` component (mirrors `CreateBattleForm`), one route link from the campaign list, and removal of the inline form from `campaigns/index.astro`. No API changes — the same `POST /api/campaigns` endpoint is reused.
+- **Status:** proposed
+
 ## Backlog Handoff
 
 | Roadmap ID | Change ID                     | Suggested issue title                                   | Ready for `/10x-plan` | Notes                                                              |
@@ -218,8 +244,10 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-05       | campaign-management           | Campaign list, create, delete (FR-011 folded in)        | yes                   | Revamps nav architecture; fold S-06 in; widest PR in roadmap       |
 | S-06       | delete-battle                 | _(folded into S-05)_                                    | —                     | One button + DELETE endpoint; not worth a separate PR              |
 | S-07       | pdf-export                    | Export battle enemy cards as PDF                        | no                    | Needs S-03 + S-05 done; Workers PDF spike required before planning |
-| S-08       | ux-improvements               | Landing page rebrand + loading spinners                 | yes                   | No deps; parallel with S-03, S-04, S-05                            |
+| S-08       | ux-improvements               | Landing page rebrand, loading spinners, persistent navbar | no                  | Needs S-05 (navbar covers campaigns page); parallel with S-03, S-04 |
 | S-11       | sentry-setup                  | Configure Sentry error tracking on Cloudflare Workers   | no                    | No deps; parallel with any slice; requires `@sentry/cloudflare` spike before planning |
+| S-12       | edit-battle                   | Edit a battle's name and description                    | yes                   | Needs S-01 implemented; low complexity — PATCH endpoint + form    |
+| S-13       | campaign-new-page             | Dedicated /campaigns/new creation page                  | yes                   | Needs S-05 implemented; replaces inline form with a routed page   |
 
 ## Open Roadmap Questions
 
