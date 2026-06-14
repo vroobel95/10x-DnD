@@ -188,23 +188,23 @@ Replace the static header block in the battle detail page with the new `BattleHe
 
 #### Automated
 
-- [x] 1.1 TypeScript build passes: `npm run build`
-- [x] 1.2 Lint passes: `npm run lint`
+- [x] 1.1 TypeScript build passes: `npm run build` — bd37149
+- [x] 1.2 Lint passes: `npm run lint` — bd37149
 
 #### Manual
 
-- [x] 1.3 PATCH with valid body returns 200 and updated battle object
-- [x] 1.4 PATCH with missing name returns 400
-- [x] 1.5 PATCH with out-of-range party_level returns 422
-- [x] 1.6 PATCH for another user's battle returns 403 or 404
-- [x] 1.7 PATCH for nonexistent battle returns 404
+- [x] 1.3 PATCH with valid body returns 200 and updated battle object — bd37149
+- [x] 1.4 PATCH with missing name returns 400 — bd37149
+- [x] 1.5 PATCH with out-of-range party_level returns 422 — bd37149
+- [x] 1.6 PATCH for another user's battle returns 403 or 404 — bd37149
+- [x] 1.7 PATCH for nonexistent battle returns 404 — bd37149
 
 ### Phase 2: BattleHeader React Island
 
 #### Automated
 
-- [ ] 2.1 TypeScript build passes: `npm run build`
-- [ ] 2.2 Lint passes: `npm run lint`
+- [x] 2.1 TypeScript build passes: `npm run build`
+- [x] 2.2 Lint passes: `npm run lint`
 
 #### Manual
 
