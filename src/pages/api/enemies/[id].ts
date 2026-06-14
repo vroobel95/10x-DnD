@@ -146,6 +146,14 @@ export const DELETE: APIRoute = async (context) => {
     return Response.json({ error: "Enemy not found" }, { status: 404 });
   }
 
+  const profileClearResult = await supabase
+    .from("battles")
+    .update({ main_enemy_id: null, main_enemy_profile: null, updated_at: new Date().toISOString() })
+    .eq("main_enemy_id", context.params.id)
+    .select("id");
+
+  const mainEnemyCleared = !profileClearResult.error && profileClearResult.data.length > 0;
+
   const deleteResult = await supabase
     .from("enemies")
     .delete()
@@ -161,5 +169,5 @@ export const DELETE: APIRoute = async (context) => {
     return Response.json({ error: "Enemy not found" }, { status: 404 });
   }
 
-  return Response.json({ success: true });
+  return Response.json({ success: true, main_enemy_cleared: mainEnemyCleared });
 };

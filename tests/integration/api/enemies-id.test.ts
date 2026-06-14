@@ -150,7 +150,7 @@ describe("DELETE /api/enemies/[id]", () => {
     const res = await DELETE(makeDeleteContext());
     expect(res.status).toBe(200);
     const body = await res.json();
-    expect(body).toEqual({ success: true });
+    expect(body).toEqual({ success: true, main_enemy_cleared: true });
   });
 
   it("returns 404 when enemy does not belong to the authenticated user (IDOR)", async () => {

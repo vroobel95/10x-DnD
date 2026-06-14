@@ -359,33 +359,33 @@ Migration `20260614000001_add_battle_main_enemy.sql` adds two nullable columns t
 #### Manual
 
 - [x] 1.4 `battles` table shows the two new nullable columns in Supabase dashboard — bb0eab1
-- [x] 1.5 `generateEnemies` with a boss prompt returns `main_enemy` populated; with "3 goblins" returns `main_enemy: null`
+- [x] 1.5 `generateEnemies` with a boss prompt returns `main_enemy` populated; with "3 goblins" returns `main_enemy: null` — 2d2720d
 
 ### Phase 2: Generate Endpoint Extension
 
 #### Automated
 
-- [x] 2.1 `npm run check` passes on updated generate route
-- [x] 2.2 `npm run lint` passes
+- [x] 2.1 `npm run check` passes on updated generate route — 2d2720d
+- [x] 2.2 `npm run lint` passes — 2d2720d
 
 #### Manual
 
-- [x] 2.3 POST with boss prompt returns `main_enemy_id` + `main_enemy_profile` in response; battle row updated in Supabase
-- [x] 2.4 POST with "3 goblins" returns `main_enemy_id: null` and `main_enemy_profile: null`
-- [x] 2.5 Existing error cases unchanged (401, 400, 404)
+- [x] 2.3 POST with boss prompt returns `main_enemy_id` + `main_enemy_profile` in response; battle row updated in Supabase — 2d2720d
+- [x] 2.4 POST with "3 goblins" returns `main_enemy_id: null` and `main_enemy_profile: null` — 2d2720d
+- [x] 2.5 Existing error cases unchanged (401, 400, 404) — 2d2720d
 
 ### Phase 3: Delete Endpoint Extension
 
 #### Automated
 
-- [ ] 3.1 `npm run check` passes
-- [ ] 3.2 `npm run lint` passes
+- [x] 3.1 `npm run check` passes
+- [x] 3.2 `npm run lint` passes
 
 #### Manual
 
-- [ ] 3.3 DELETE on main enemy returns `main_enemy_cleared: true`; battle profile fields cleared in Supabase
-- [ ] 3.4 DELETE on non-main enemy returns `main_enemy_cleared: false`; battle profile untouched
-- [ ] 3.5 Existing error cases unchanged (401, 404)
+- [x] 3.3 DELETE on main enemy returns `main_enemy_cleared: true`; battle profile fields cleared in Supabase
+- [x] 3.4 DELETE on non-main enemy returns `main_enemy_cleared: false`; battle profile untouched
+- [x] 3.5 Existing error cases unchanged (401, 404)
 
 ### Phase 4: Battle Detail Page + EnemiesSection + EnemyCard UI
 
