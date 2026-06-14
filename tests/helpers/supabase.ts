@@ -38,10 +38,17 @@ function makeTableBuilder(result: QueryResult): any {
   return builder;
 }
 
-export function makeSupabaseMock(tableResults: Record<string, QueryResult>): any {
+export function makeSupabaseMock(tableResults: Record<string, QueryResult | QueryResult[]>): any {
+  const callCounts: Record<string, number> = {};
   return {
-    from: vi
-      .fn()
-      .mockImplementation((table: string) => makeTableBuilder(tableResults[table] ?? { data: null, error: null })),
+    from: vi.fn().mockImplementation((table: string) => {
+      const entry = tableResults[table] as QueryResult | QueryResult[] | undefined;
+      if (Array.isArray(entry)) {
+        const idx = callCounts[table] ?? 0;
+        callCounts[table] = idx + 1;
+        return makeTableBuilder(entry[idx] ?? entry[entry.length - 1]);
+      }
+      return makeTableBuilder(entry ?? { data: null, error: null });
+    }),
   };
 }

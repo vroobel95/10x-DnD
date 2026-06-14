@@ -1,7 +1,7 @@
 import { generateText, Output } from "ai";
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { ANTHROPIC_API_KEY } from "astro:env/server";
-import { EnemyGroupSchema, type EnemyGroup } from "@/lib/schemas/enemy";
+import { GenerateResultSchema, type GenerateResult } from "@/lib/schemas/enemy";
 import { BattleEnvironmentSchema, type BattleEnvironment } from "@/lib/schemas/environment";
 import type { Battle } from "@/types";
 
@@ -11,6 +11,12 @@ Rules:
 - CR must be appropriate for the given party level.
 - Each ability must include a name and a one-line description with mechanics (e.g. damage dice, save DC).
 - Return exactly as many enemies as requested.
+Main villain rules:
+- Only populate main_enemy when the prompt contains a distinctly named or uniquely typed creature that clearly stands apart as a boss or leader (e.g. "a vampire lord and 2 guards", "a bandit captain and bandits", "the necromancer"). The villain must be a different creature type or explicitly named — do NOT pick a "leader" from a group of identical creatures.
+- description: 2–3 sentences on the villain's appearance and a backstory hook.
+- tactics: 1–2 sentences on unique combat behavior and signature moves (flavor, not mechanics).
+- dialogue: exactly 3 short, evocative in-character lines for GM use at the table.
+- Set main_enemy to null when all creatures are of the same type or there is no clearly distinct boss (e.g. "3 goblins", "4 wolves", "2 bandits and 1 bandit"). Same creature type = no main villain, regardless of quantity.
 Output JSON only.`;
 
 const ENVIRONMENT_SYSTEM_PROMPT = `You are a D&D 5th Edition dungeon master. Generate vivid, atmospheric environment descriptions for a battle location.
@@ -27,7 +33,7 @@ Output JSON only.`;
 export async function generateEnemies(
   battle: Pick<Battle, "party_level" | "location"> & { environment: BattleEnvironment | null },
   prompt: string,
-): Promise<EnemyGroup> {
+): Promise<GenerateResult> {
   if (!ANTHROPIC_API_KEY) {
     throw new Error("ANTHROPIC_API_KEY is not configured");
   }
@@ -41,7 +47,7 @@ export async function generateEnemies(
 
   const { output } = await generateText({
     model: anthropic("claude-sonnet-4-6"),
-    output: Output.object({ schema: EnemyGroupSchema }),
+    output: Output.object({ schema: GenerateResultSchema }),
     system: ENEMY_SYSTEM_PROMPT,
     prompt: fullPrompt,
   });

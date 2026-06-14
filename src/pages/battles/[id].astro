@@ -71,7 +71,14 @@ const createdDate = new Date(b.created_at).toLocaleDateString("en-US", {
 
       <EnvironmentSection battleId={b.id} location={b.location} initialEnvironment={b.environment} client:load />
 
-      <EnemiesSection battleId={b.id} initialPending={initialPending} initialConfirmed={initialConfirmed} client:load />
+      <EnemiesSection
+        battleId={b.id}
+        initialPending={initialPending}
+        initialConfirmed={initialConfirmed}
+        initialMainEnemyId={b.main_enemy_id}
+        initialMainEnemyProfile={b.main_enemy_profile}
+        client:load
+      />
     </div>
   </div>
 </Layout>

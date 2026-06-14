@@ -2,17 +2,27 @@ import { useState } from "react";
 import { Wand2 } from "lucide-react";
 import { EnemyCard } from "@/components/battles/EnemyCard";
 import type { Enemy } from "@/types";
-import type { EnemyStats } from "@/lib/schemas/enemy";
+import type { EnemyStats, MainEnemyProfile } from "@/lib/schemas/enemy";
 
 interface Props {
   battleId: string;
   initialPending: Enemy[];
   initialConfirmed: Enemy[];
+  initialMainEnemyId: string | null;
+  initialMainEnemyProfile: MainEnemyProfile | null;
 }
 
-export default function EnemiesSection({ battleId, initialPending, initialConfirmed }: Props) {
+export default function EnemiesSection({
+  battleId,
+  initialPending,
+  initialConfirmed,
+  initialMainEnemyId,
+  initialMainEnemyProfile,
+}: Props) {
   const [pending, setPending] = useState<Enemy[]>(initialPending);
   const [confirmed, setConfirmed] = useState<Enemy[]>(initialConfirmed);
+  const [mainEnemyId, setMainEnemyId] = useState<string | null>(initialMainEnemyId);
+  const [mainEnemyProfile, setMainEnemyProfile] = useState<MainEnemyProfile | null>(initialMainEnemyProfile);
   const [prompt, setPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [generateError, setGenerateError] = useState<string | null>(null);
@@ -32,12 +42,21 @@ export default function EnemiesSection({ battleId, initialPending, initialConfir
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt: prompt.trim() }),
       });
-      const data = (await res.json()) as { error?: string; enemies?: Enemy[] };
+      const data = (await res.json()) as {
+        error?: string;
+        enemies?: Enemy[];
+        main_enemy_id?: string | null;
+        main_enemy_profile?: MainEnemyProfile | null;
+      };
       if (!res.ok) {
         setGenerateError(data.error ?? "Generation failed. Please try again.");
       } else {
         setPending((prev) => [...(data.enemies ?? []), ...prev]);
         setPrompt("");
+        if (data.main_enemy_id) {
+          setMainEnemyId(data.main_enemy_id);
+          setMainEnemyProfile(data.main_enemy_profile ?? null);
+        }
       }
     } catch {
       setGenerateError("Generation failed. Please try again.");
@@ -71,7 +90,12 @@ export default function EnemiesSection({ battleId, initialPending, initialConfir
     try {
       const res = await fetch(`/api/enemies/${enemy.id}`, { method: "DELETE" });
       if (res.ok) {
+        const data = (await res.json()) as { main_enemy_cleared?: boolean };
         setPending((prev) => prev.filter((e) => e.id !== enemy.id));
+        if (data.main_enemy_cleared) {
+          setMainEnemyId(null);
+          setMainEnemyProfile(null);
+        }
       } else {
         setActionError("Could not remove enemy. Please try again.");
       }
@@ -126,8 +150,13 @@ export default function EnemiesSection({ battleId, initialPending, initialConfir
     try {
       const res = await fetch(`/api/enemies/${enemy.id}`, { method: "DELETE" });
       if (res.ok) {
+        const data = (await res.json()) as { main_enemy_cleared?: boolean };
         setConfirmed((prev) => prev.filter((e) => e.id !== enemy.id));
         setRemovingId(null);
+        if (data.main_enemy_cleared) {
+          setMainEnemyId(null);
+          setMainEnemyProfile(null);
+        }
       } else {
         const data = (await res.json()) as { error?: string };
         setActionError(data.error ?? "Could not remove enemy. Please try again.");
@@ -199,6 +228,8 @@ export default function EnemiesSection({ battleId, initialPending, initialConfir
                 onConfirm={() => handleConfirm(enemy)}
                 onDeny={() => handleDeny(enemy)}
                 isLoading={loadingId === enemy.id}
+                isMain={mainEnemyId === enemy.id}
+                mainEnemyProfile={mainEnemyId === enemy.id ? mainEnemyProfile : null}
               />
             ))}
           </div>
@@ -214,29 +245,33 @@ export default function EnemiesSection({ battleId, initialPending, initialConfir
             </p>
           )}
           <div className="space-y-4">
-            {confirmed.map((enemy) => (
-              <EnemyCard
-                key={enemy.id}
-                enemy={enemy}
-                onEditStart={() => {
-                  handleEditStart(enemy);
-                }}
-                onEditSave={(stats) => {
-                  void handleEditSave(enemy, stats);
-                }}
-                onEditCancel={handleEditCancel}
-                onRemoveStart={() => {
-                  handleRemoveStart(enemy);
-                }}
-                onRemoveConfirm={() => {
-                  void handleRemoveConfirm(enemy);
-                }}
-                onRemoveCancel={handleRemoveCancel}
-                isEditing={editingId === enemy.id}
-                isRemoving={removingId === enemy.id}
-                isLoading={loadingId === enemy.id}
-              />
-            ))}
+            {[...confirmed]
+              .sort((a, b) => (a.id === mainEnemyId ? -1 : b.id === mainEnemyId ? 1 : 0))
+              .map((enemy) => (
+                <EnemyCard
+                  key={enemy.id}
+                  enemy={enemy}
+                  onEditStart={() => {
+                    handleEditStart(enemy);
+                  }}
+                  onEditSave={(stats) => {
+                    void handleEditSave(enemy, stats);
+                  }}
+                  onEditCancel={handleEditCancel}
+                  onRemoveStart={() => {
+                    handleRemoveStart(enemy);
+                  }}
+                  onRemoveConfirm={() => {
+                    void handleRemoveConfirm(enemy);
+                  }}
+                  onRemoveCancel={handleRemoveCancel}
+                  isEditing={editingId === enemy.id}
+                  isRemoving={removingId === enemy.id}
+                  isLoading={loadingId === enemy.id}
+                  isMain={mainEnemyId === enemy.id}
+                  mainEnemyProfile={mainEnemyId === enemy.id ? mainEnemyProfile : null}
+                />
+              ))}
           </div>
         </section>
       )}
