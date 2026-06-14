@@ -4,12 +4,15 @@ import { FormField } from "@/components/auth/FormField";
 import { SubmitButton } from "@/components/auth/SubmitButton";
 import { ServerError } from "@/components/auth/ServerError";
 
-export default function CreateCampaignForm() {
+interface Props {
+  serverError?: string | null;
+}
+
+export default function CreateCampaignForm({ serverError }: Props) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState<{ name?: string }>({});
-  const [serverError, setServerError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   function validate() {
     const next: typeof errors = {};
@@ -24,32 +27,16 @@ export default function CreateCampaignForm() {
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: undefined }));
   }
 
-  async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (!validate()) return;
-    setLoading(true);
-    setServerError(null);
-    try {
-      const res = await fetch("/api/campaigns", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim(), description: description.trim() || undefined }),
-      });
-      const data = (await res.json()) as { campaign?: { id: string }; error?: string };
-      if (!res.ok || !data.campaign) {
-        setServerError(data.error ?? "Could not create campaign. Please try again.");
-        return;
-      }
-      window.location.href = `/campaigns/${data.campaign.id}`;
-    } catch {
-      setServerError("Could not create campaign. Please try again.");
-    } finally {
-      setLoading(false);
+  function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
+    if (!validate()) {
+      e.preventDefault();
+      return;
     }
+    setIsSubmitting(true);
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+    <form method="POST" action="/api/campaigns" className="space-y-4" onSubmit={handleSubmit} noValidate>
       <ServerError message={serverError} />
 
       <FormField
@@ -74,7 +61,7 @@ export default function CreateCampaignForm() {
         icon={<FileText className="size-4" />}
       />
 
-      <SubmitButton pendingText="Creating..." icon={<BookOpen className="size-4" />} isLoading={loading}>
+      <SubmitButton pendingText="Creating..." icon={<BookOpen className="size-4" />} isLoading={isSubmitting}>
         Create Campaign
       </SubmitButton>
     </form>

@@ -26,33 +26,31 @@ export const GET: APIRoute = async (context) => {
 export const POST: APIRoute = async (context) => {
   const supabase = createClient(context.request.headers, context.cookies);
   if (!supabase) {
-    return Response.json({ error: "Supabase is not configured" }, { status: 500 });
+    return context.redirect(`/campaigns/new?error=${encodeURIComponent("Supabase is not configured")}`);
   }
 
   const user = context.locals.user;
   if (!user) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
+    return context.redirect("/auth/signin");
   }
 
-  let name: string;
-  let description: string | null;
-
-  try {
-    const body = (await context.request.json()) as { name?: string; description?: string };
-    name = body.name?.trim() ?? "";
-    description = body.description?.trim() ?? null;
-  } catch {
-    return Response.json({ error: "Invalid request body" }, { status: 400 });
-  }
+  const form = await context.request.formData();
+  const name = (form.get("name") as string | null)?.trim() ?? "";
+  const descriptionRaw = (form.get("description") as string | null)?.trim() ?? "";
+  const description = descriptionRaw !== "" ? descriptionRaw : null;
 
   if (!name) {
-    return Response.json({ error: "Campaign name is required" }, { status: 400 });
+    return context.redirect(`/campaigns/new?error=${encodeURIComponent("Campaign name is required")}`);
   }
   if (name.length > 200) {
-    return Response.json({ error: "Campaign name must be 200 characters or fewer" }, { status: 400 });
+    return context.redirect(
+      `/campaigns/new?error=${encodeURIComponent("Campaign name must be 200 characters or fewer")}`,
+    );
   }
   if (description && description.length > 500) {
-    return Response.json({ error: "Description must be 500 characters or fewer" }, { status: 400 });
+    return context.redirect(
+      `/campaigns/new?error=${encodeURIComponent("Description must be 500 characters or fewer")}`,
+    );
   }
 
   const { data: campaign } = (await supabase
@@ -62,8 +60,10 @@ export const POST: APIRoute = async (context) => {
     .single()) as { data: Campaign | null };
 
   if (!campaign) {
-    return Response.json({ error: "Could not create campaign. Please try again." }, { status: 500 });
+    return context.redirect(
+      `/campaigns/new?error=${encodeURIComponent("Could not create campaign. Please try again.")}`,
+    );
   }
 
-  return Response.json({ campaign });
+  return context.redirect(`/campaigns/${campaign.id}`);
 };

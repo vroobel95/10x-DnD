@@ -164,27 +164,27 @@ Remove the inline `CreateCampaignForm` from `campaigns/index.astro`, replace it 
 
 #### Automated
 
-- [x] 1.1 TypeScript compilation passes: `npm run typecheck`
-- [x] 1.2 Linting passes: `npm run lint`
+- [x] 1.1 TypeScript compilation passes: `npm run typecheck` — 15eb5f0
+- [x] 1.2 Linting passes: `npm run lint` — 15eb5f0
 
 #### Manual
 
-- [x] 1.3 `/campaigns/new` renders the centered card with title "New Campaign"
-- [x] 1.4 Submitting with empty name shows a client-side error on the name field
-- [x] 1.5 Submitting a valid name creates the campaign and redirects to `/campaigns/<new-id>`
-- [x] 1.6 Server-side rejection shows inline error message
-- [x] 1.7 "Back to campaigns" link navigates to `/campaigns`
+- [x] 1.3 `/campaigns/new` renders the centered card with title "New Campaign" — 15eb5f0
+- [x] 1.4 Submitting with empty name shows a client-side error on the name field — 15eb5f0
+- [x] 1.5 Submitting a valid name creates the campaign and redirects to `/campaigns/<new-id>` — 15eb5f0
+- [x] 1.6 Server-side rejection shows inline error message — 15eb5f0
+- [x] 1.7 "Back to campaigns" link navigates to `/campaigns` — 15eb5f0
 
 ### Phase 2: Index page wiring and empty state fix
 
 #### Automated
 
-- [ ] 2.1 TypeScript compilation passes: `npm run typecheck`
-- [ ] 2.2 Linting passes: `npm run lint`
+- [x] 2.1 TypeScript compilation passes: `npm run typecheck` — (pending sha)
+- [x] 2.2 Linting passes: `npm run lint` — (pending sha)
 
 #### Manual
 
-- [ ] 2.3 `+ New Campaign` button on `/campaigns` navigates to `/campaigns/new`
-- [ ] 2.4 No inline form or toggle button remains on campaigns index
-- [ ] 2.5 Empty state link points to `/campaigns/new` (no stale "above" copy)
-- [ ] 2.6 No regressions: rename and delete on existing campaigns still work
+- [x] 2.3 `+ New Campaign` button on `/campaigns` navigates to `/campaigns/new`
+- [x] 2.4 No inline form or toggle button remains on campaigns index
+- [x] 2.5 Empty state link points to `/campaigns/new` (no stale "above" copy)
+- [x] 2.6 No regressions: rename and delete on existing campaigns still work

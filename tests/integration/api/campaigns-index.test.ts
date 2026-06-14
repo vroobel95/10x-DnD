@@ -13,26 +13,23 @@ function makeGetContext(user: { id: string } | null = { id: "user-1" }) {
     locals: { user },
     url: new URL("http://localhost/api/campaigns"),
     params: {},
+    redirect: (url: string) => new Response(null, { status: 302, headers: { Location: url } }),
   } as unknown as APIContext;
 }
 
-function makePostContext(user: { id: string } | null = { id: "user-1" }, bodyArg?: Record<string, unknown> | string) {
-  const rawBody =
-    bodyArg === undefined
-      ? JSON.stringify({ name: "Test Campaign" })
-      : typeof bodyArg === "string"
-        ? bodyArg
-        : JSON.stringify(bodyArg);
+function makePostContext(user: { id: string } | null = { id: "user-1" }, fields?: Record<string, string>) {
+  const form = new URLSearchParams(fields ?? { name: "Test Campaign" });
   return {
     request: new Request("http://localhost/api/campaigns", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: rawBody,
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: form.toString(),
     }),
     cookies: { set: vi.fn() },
     locals: { user },
     url: new URL("http://localhost/api/campaigns"),
     params: {},
+    redirect: (url: string) => new Response(null, { status: 302, headers: { Location: url } }),
   } as unknown as APIContext;
 }
 
@@ -78,86 +75,77 @@ describe("GET /api/campaigns", () => {
 describe("POST /api/campaigns", () => {
   beforeEach(() => vi.resetAllMocks());
 
-  it("returns 500 when supabase client is null", async () => {
+  it("redirects with error when supabase client is null", async () => {
     vi.mocked(createClient).mockReturnValue(null);
     const res = await POST(makePostContext());
-    expect(res.status).toBe(500);
-    const body = await res.json();
-    expect(body.error).toBe("Supabase is not configured");
+    expect(res.status).toBe(302);
+    expect(res.headers.get("Location")).toBe(
+      `/campaigns/new?error=${encodeURIComponent("Supabase is not configured")}`,
+    );
   });
 
-  it("returns 401 when user is not authenticated", async () => {
+  it("redirects to sign-in when user is not authenticated", async () => {
     vi.mocked(createClient).mockReturnValue(makeSupabaseMock({}));
     const res = await POST(makePostContext(null));
-    expect(res.status).toBe(401);
-    const body = await res.json();
-    expect(body.error).toBe("Unauthorized");
+    expect(res.status).toBe(302);
+    expect(res.headers.get("Location")).toBe("/auth/signin");
   });
 
-  it("returns 400 when body is not valid JSON", async () => {
-    vi.mocked(createClient).mockReturnValue(makeSupabaseMock({}));
-    const res = await POST(makePostContext({ id: "user-1" }, "not-valid-json"));
-    expect(res.status).toBe(400);
-    const body = await res.json();
-    expect(body.error).toBe("Invalid request body");
-  });
-
-  it("returns 400 when name is empty", async () => {
+  it("redirects with error when name is empty", async () => {
     vi.mocked(createClient).mockReturnValue(makeSupabaseMock({}));
     const res = await POST(makePostContext({ id: "user-1" }, { name: "" }));
-    expect(res.status).toBe(400);
-    const body = await res.json();
-    expect(body.error).toBe("Campaign name is required");
+    expect(res.status).toBe(302);
+    expect(res.headers.get("Location")).toBe(`/campaigns/new?error=${encodeURIComponent("Campaign name is required")}`);
   });
 
-  it("returns 400 when name is whitespace only", async () => {
+  it("redirects with error when name is whitespace only", async () => {
     vi.mocked(createClient).mockReturnValue(makeSupabaseMock({}));
     const res = await POST(makePostContext({ id: "user-1" }, { name: "   " }));
-    expect(res.status).toBe(400);
-    const body = await res.json();
-    expect(body.error).toBe("Campaign name is required");
+    expect(res.status).toBe(302);
+    expect(res.headers.get("Location")).toBe(`/campaigns/new?error=${encodeURIComponent("Campaign name is required")}`);
   });
 
-  it("returns 400 when name is missing from body", async () => {
+  it("redirects with error when name is missing from body", async () => {
     vi.mocked(createClient).mockReturnValue(makeSupabaseMock({}));
     const res = await POST(makePostContext({ id: "user-1" }, {}));
-    expect(res.status).toBe(400);
-    const body = await res.json();
-    expect(body.error).toBe("Campaign name is required");
+    expect(res.status).toBe(302);
+    expect(res.headers.get("Location")).toBe(`/campaigns/new?error=${encodeURIComponent("Campaign name is required")}`);
   });
 
-  it("returns 400 when name exceeds 200 characters", async () => {
+  it("redirects with error when name exceeds 200 characters", async () => {
     vi.mocked(createClient).mockReturnValue(makeSupabaseMock({}));
     const res = await POST(makePostContext({ id: "user-1" }, { name: "a".repeat(201) }));
-    expect(res.status).toBe(400);
-    const body = await res.json();
-    expect(body.error).toBe("Campaign name must be 200 characters or fewer");
+    expect(res.status).toBe(302);
+    expect(res.headers.get("Location")).toBe(
+      `/campaigns/new?error=${encodeURIComponent("Campaign name must be 200 characters or fewer")}`,
+    );
   });
 
-  it("returns 400 when description exceeds 500 characters", async () => {
+  it("redirects with error when description exceeds 500 characters", async () => {
     vi.mocked(createClient).mockReturnValue(makeSupabaseMock({}));
     const res = await POST(makePostContext({ id: "user-1" }, { name: "Valid Name", description: "x".repeat(501) }));
-    expect(res.status).toBe(400);
-    const body = await res.json();
-    expect(body.error).toBe("Description must be 500 characters or fewer");
+    expect(res.status).toBe(302);
+    expect(res.headers.get("Location")).toBe(
+      `/campaigns/new?error=${encodeURIComponent("Description must be 500 characters or fewer")}`,
+    );
   });
 
-  it("returns 500 when campaigns insert fails", async () => {
+  it("redirects with error when campaigns insert fails", async () => {
     vi.mocked(createClient).mockReturnValue(
       makeSupabaseMock({ campaigns: { data: null, error: { message: "insert error" } } }),
     );
     const res = await POST(makePostContext());
-    expect(res.status).toBe(500);
-    const body = await res.json();
-    expect(body.error).toBe("Could not create campaign. Please try again.");
+    expect(res.status).toBe(302);
+    expect(res.headers.get("Location")).toBe(
+      `/campaigns/new?error=${encodeURIComponent("Could not create campaign. Please try again.")}`,
+    );
   });
 
-  it("returns 200 with campaign on success", async () => {
+  it("redirects to campaign page on success", async () => {
     const campaign = { id: "c-1", name: "Test Campaign", user_id: "user-1" };
     vi.mocked(createClient).mockReturnValue(makeSupabaseMock({ campaigns: { data: campaign, error: null } }));
     const res = await POST(makePostContext());
-    expect(res.status).toBe(200);
-    const body = (await res.json()) as { campaign: typeof campaign };
-    expect(body.campaign).toEqual(campaign);
+    expect(res.status).toBe(302);
+    expect(res.headers.get("Location")).toBe("/campaigns/c-1");
   });
 });
