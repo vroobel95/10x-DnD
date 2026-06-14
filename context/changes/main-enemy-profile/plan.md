@@ -378,29 +378,29 @@ Migration `20260614000001_add_battle_main_enemy.sql` adds two nullable columns t
 
 #### Automated
 
-- [x] 3.1 `npm run check` passes
-- [x] 3.2 `npm run lint` passes
+- [x] 3.1 `npm run check` passes — 5c96040
+- [x] 3.2 `npm run lint` passes — 5c96040
 
 #### Manual
 
-- [x] 3.3 DELETE on main enemy returns `main_enemy_cleared: true`; battle profile fields cleared in Supabase
-- [x] 3.4 DELETE on non-main enemy returns `main_enemy_cleared: false`; battle profile untouched
-- [x] 3.5 Existing error cases unchanged (401, 404)
+- [x] 3.3 DELETE on main enemy returns `main_enemy_cleared: true`; battle profile fields cleared in Supabase — 5c96040
+- [x] 3.4 DELETE on non-main enemy returns `main_enemy_cleared: false`; battle profile untouched — 5c96040
+- [x] 3.5 Existing error cases unchanged (401, 404) — 5c96040
 
 ### Phase 4: Battle Detail Page + EnemiesSection + EnemyCard UI
 
 #### Automated
 
-- [ ] 4.1 `npm run check` passes on all modified files
-- [ ] 4.2 `npm run build` passes
-- [ ] 4.3 `npm run lint` passes
+- [x] 4.1 `npm run check` passes on all modified files — 03d0434
+- [x] 4.2 `npm run build` passes — 03d0434
+- [x] 4.3 `npm run lint` passes — 03d0434
 
 #### Manual
 
-- [ ] 4.4 Boss prompt: confirmed boss card appears first with amber border + profile section
-- [ ] 4.5 Non-boss prompt: no amber accent, no profile section
-- [ ] 4.6 Denying the pending main enemy clears the profile from the page
-- [ ] 4.7 Removing confirmed main enemy clears the profile from the page
-- [ ] 4.8 Second generation run with new boss overwrites profile; run with no boss preserves existing profile
-- [ ] 4.9 All existing Edit/Remove actions work correctly on main and non-main cards
-- [ ] 4.10 Full end-to-end flow tested (generate boss → confirm → profile visible → remove → profile gone)
+- [x] 4.4 Boss prompt: confirmed boss card appears first with amber border + profile section — 03d0434
+- [x] 4.5 Non-boss prompt: no amber accent, no profile section — 03d0434
+- [x] 4.6 Denying the pending main enemy clears the profile from the page — 03d0434
+- [x] 4.7 Removing confirmed main enemy clears the profile from the page — 03d0434
+- [x] 4.8 Second generation run with new boss overwrites profile; run with no boss preserves existing profile — 03d0434
+- [x] 4.9 All existing Edit/Remove actions work correctly on main and non-main cards — 03d0434
+- [x] 4.10 Full end-to-end flow tested (generate boss → confirm → profile visible → remove → profile gone) — 03d0434
