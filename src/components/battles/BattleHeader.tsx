@@ -73,6 +73,8 @@ export default function BattleHeader({
           location: data.battle.location,
         });
         setIsEditing(false);
+      } else {
+        setError("Unexpected response. Please refresh and try again.");
       }
     } catch {
       setError("Could not save changes. Please try again.");

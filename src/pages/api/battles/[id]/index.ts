@@ -40,11 +40,10 @@ export const PATCH: APIRoute = async (context) => {
 
   let partyLevel: number | null = null;
   if (party_level !== null && party_level !== undefined && party_level !== "") {
-    const parsed = Number(party_level);
-    if (!Number.isInteger(parsed) || parsed < 1 || parsed > 30) {
+    if (typeof party_level !== "number" || !Number.isInteger(party_level) || party_level < 1 || party_level > 30) {
       return Response.json({ error: "Party level must be between 1 and 30" }, { status: 422 });
     }
-    partyLevel = parsed;
+    partyLevel = party_level;
   }
 
   let trimmedLocation: string | null = null;
@@ -84,23 +83,22 @@ export const PATCH: APIRoute = async (context) => {
     })
     .eq("id", id)
     .in("campaign_id", campaignIds)
-    .select()
-    .single();
+    .select();
 
   if (result.error) {
     return Response.json({ error: "Could not update battle. Please try again." }, { status: 500 });
   }
-  if (!result.data) {
+  if (result.data.length === 0) {
     return Response.json({ error: "Battle not found" }, { status: 404 });
   }
 
-  return Response.json({ battle: result.data as Battle });
+  return Response.json({ battle: result.data[0] as Battle });
 };
 
 export const DELETE: APIRoute = async (context) => {
   const supabase = createClient(context.request.headers, context.cookies);
   if (!supabase) {
-    return Response.json({ error: "Supabase is not configured" }, { status: 500 });
+    return Response.json({ error: "Service unavailable" }, { status: 500 });
   }
 
   const user = context.locals.user;
