@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { EnemySchema, type EnemyStats } from "@/lib/schemas/enemy";
+import { EnemySchema, type EnemyStats, type MainEnemyProfile } from "@/lib/schemas/enemy";
 import type { Enemy } from "@/types";
 
 interface Props {
@@ -15,6 +15,8 @@ interface Props {
   isLoading?: boolean;
   isEditing?: boolean;
   isRemoving?: boolean;
+  isMain?: boolean;
+  mainEnemyProfile?: MainEnemyProfile | null;
 }
 
 interface EditFormProps {
@@ -247,6 +249,8 @@ export function EnemyCard({
   isLoading = false,
   isEditing = false,
   isRemoving = false,
+  isMain = false,
+  mainEnemyProfile = null,
 }: Props) {
   const parseResult = EnemySchema.safeParse(enemy.stats);
 
@@ -267,7 +271,9 @@ export function EnemyCard({
   }
 
   return (
-    <div className="rounded-xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
+    <div
+      className={`rounded-xl border bg-white/5 p-5 backdrop-blur-xl ${isMain ? "border-l-2 border-white/10 border-l-amber-400/60" : "border-white/10"}`}
+    >
       <div className="mb-3 flex items-start justify-between gap-2">
         <h3 className="text-lg font-bold text-white">{stats.name}</h3>
         <div className="flex shrink-0 gap-2 text-xs text-blue-100/60">
@@ -320,6 +326,21 @@ export function EnemyCard({
             </li>
           ))}
         </ul>
+      )}
+
+      {isMain && mainEnemyProfile && (
+        <div className="mt-3 border-t border-amber-400/30 pt-3">
+          <p className="mb-2 text-xs font-semibold tracking-wide text-amber-400 uppercase">Main Villain</p>
+          <p className="mb-2 text-sm text-blue-100/80">{mainEnemyProfile.description}</p>
+          <p className="mb-2 text-sm text-blue-100/60 italic">{mainEnemyProfile.tactics}</p>
+          <div className="space-y-1">
+            {mainEnemyProfile.dialogue.map((line, i) => (
+              <p key={i} className="text-sm text-blue-100/70">
+                {line}
+              </p>
+            ))}
+          </div>
+        </div>
       )}
 
       {isPending && (
