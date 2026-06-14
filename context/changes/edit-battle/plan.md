@@ -203,27 +203,27 @@ Replace the static header block in the battle detail page with the new `BattleHe
 
 #### Automated
 
-- [x] 2.1 TypeScript build passes: `npm run build`
-- [x] 2.2 Lint passes: `npm run lint`
+- [x] 2.1 TypeScript build passes: `npm run build` — 1358a97
+- [x] 2.2 Lint passes: `npm run lint` — 1358a97
 
 #### Manual
 
-- [ ] 2.3 Edit button visible in battle header read view
-- [ ] 2.4 Clicking Edit shows inline form pre-populated with current values
-- [ ] 2.5 Cancel restores original values without saving
-- [ ] 2.6 Saving blank name shows server error message
-- [ ] 2.7 Saving valid changes updates h1 and badges in-place
+- [x] 2.3 Edit button visible in battle header read view
+- [x] 2.4 Clicking Edit shows inline form pre-populated with current values
+- [x] 2.5 Cancel restores original values without saving
+- [x] 2.6 Saving blank name shows server error message
+- [x] 2.7 Saving valid changes updates h1 and badges in-place
 
 ### Phase 3: Battle Detail Page Wiring
 
 #### Automated
 
-- [ ] 3.1 TypeScript build passes: `npm run build`
-- [ ] 3.2 Lint passes: `npm run lint`
+- [x] 3.1 TypeScript build passes: `npm run build`
+- [x] 3.2 Lint passes: `npm run lint`
 
 #### Manual
 
-- [ ] 3.3 Battle detail page renders with no visual regression
-- [ ] 3.4 Full edit flow works end-to-end (edit → save → in-place update → back to campaign → updated name in list)
-- [ ] 3.5 Saved values persist across page reload
-- [ ] 3.6 EnvironmentSection and EnemiesSection unaffected
+- [x] 3.3 Battle detail page renders with no visual regression
+- [x] 3.4 Full edit flow works end-to-end (edit → save → in-place update → back to campaign → updated name in list)
+- [x] 3.5 Saved values persist across page reload
+- [x] 3.6 EnvironmentSection and EnemiesSection unaffected
