@@ -3,8 +3,10 @@
 // All UUID and timestamp fields are typed as string (Supabase JS client serialisation).
 
 import type { BattleEnvironment } from "@/lib/schemas/environment";
+import type { MainEnemyProfile } from "@/lib/schemas/enemy";
 
 export type { BattleEnvironment };
+export type { MainEnemyProfile };
 
 export type EnemyStatus = "pending" | "confirmed";
 
@@ -24,6 +26,8 @@ export interface Battle {
   party_level: number | null;
   location: string | null;
   environment: BattleEnvironment | null;
+  main_enemy_id: string | null;
+  main_enemy_profile: MainEnemyProfile | null;
   created_at: string;
   updated_at: string;
 }

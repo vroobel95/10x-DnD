@@ -28,3 +28,23 @@ export const EnemyGroupSchema = z.object({
 
 export type EnemyStats = z.infer<typeof EnemySchema>;
 export type EnemyGroup = z.infer<typeof EnemyGroupSchema>;
+
+export const MainEnemyProfileSchema = z.object({
+  description: z.string().min(1),
+  tactics: z.string().min(1),
+  dialogue: z.array(z.string().min(1)).length(3),
+});
+
+export const GenerateResultSchema = z.object({
+  enemies: z.array(EnemySchema).min(1).max(10),
+  main_enemy: z
+    .object({
+      enemy_name: z.string().min(1),
+      profile: MainEnemyProfileSchema,
+    })
+    .nullable()
+    .optional(),
+});
+
+export type MainEnemyProfile = z.infer<typeof MainEnemyProfileSchema>;
+export type GenerateResult = z.infer<typeof GenerateResultSchema>;
