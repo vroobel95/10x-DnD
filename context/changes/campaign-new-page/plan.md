@@ -26,10 +26,8 @@ GM sees a `+ New Campaign` link-button on `/campaigns` that navigates to `/campa
 
 ## What We're NOT Doing
 
-- Changing `POST /api/campaigns` — it stays JSON; no form-POST redirect pattern
-- Adding a `serverError` query-param flow (campaigns API is fetch/JSON, not redirect-based)
-- Updating any page beyond `campaigns/index.astro` and `CampaignList.tsx`
 - Adding a redirect from any other source to `/campaigns/new`
+- Updating any page beyond `campaigns/index.astro` and `CampaignList.tsx` (other than the form component and API endpoint)
 
 ## Implementation Approach
 
@@ -37,7 +35,12 @@ Phase 1 creates the new page and cleans up the form component. Phase 2 wires the
 
 ## Critical Implementation Details
 
-**No serverError prop on campaigns/new.astro.** The campaign form submits via fetch (JSON API), so errors never arrive via query string — they stay in component state. The Astro page does not read an error query param or pass it down to the form.
+**Architectural pivot from fetch/JSON to native form POST.** The original plan called for a fetch/JSON island pattern (form submits to API via fetch, errors stay in component state). During implementation a hydration-gap bug was discovered: with `client:load`, users can interact with the SSR HTML before React hydrates, and when React hydrates it resets controlled-input state to initial values (empty). To fix this, the implementation adopted the same native form POST pattern used by `battles/new.astro`:
+
+- `POST /api/campaigns` was changed from a JSON API to a formData + redirect API.
+- `campaigns/new.astro` reads `?error` from the URL and passes it as `serverError` prop.
+- `CreateCampaignForm` uses `method="POST" action="/api/campaigns"` (no fetch); validation errors prevent submission client-side, server errors arrive via redirect query param.
+- On success the API redirects to `/campaigns/${campaign.id}`; on error it redirects to `/campaigns/new?error=...`.
 
 ---
 

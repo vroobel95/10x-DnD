@@ -53,11 +53,11 @@ export const POST: APIRoute = async (context) => {
     );
   }
 
-  const { data: campaign } = (await supabase
+  const { data: campaign } = await supabase
     .from("campaigns")
     .insert({ user_id: user.id, name, description, updated_at: new Date().toISOString() })
     .select("*")
-    .single()) as { data: Campaign | null };
+    .single<Campaign>();
 
   if (!campaign) {
     return context.redirect(

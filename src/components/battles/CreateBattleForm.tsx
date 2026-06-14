@@ -14,6 +14,7 @@ export default function CreateBattleForm({ campaignId, serverError }: Props) {
   const [partyLevel, setPartyLevel] = useState("");
   const [location, setLocation] = useState("");
   const [errors, setErrors] = useState<{ name?: string }>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   function validate() {
     const next: typeof errors = {};
@@ -31,7 +32,9 @@ export default function CreateBattleForm({ campaignId, serverError }: Props) {
   function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     if (!validate()) {
       e.preventDefault();
+      return;
     }
+    setIsSubmitting(true);
   }
 
   return (
@@ -71,7 +74,7 @@ export default function CreateBattleForm({ campaignId, serverError }: Props) {
         icon={<MapPin className="size-4" />}
       />
 
-      <SubmitButton pendingText="Creating..." icon={<Swords className="size-4" />}>
+      <SubmitButton pendingText="Creating..." icon={<Swords className="size-4" />} isLoading={isSubmitting}>
         Create Battle
       </SubmitButton>
     </form>
