@@ -3,7 +3,7 @@ project: "DnD 5enemy"
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-06-14 (S-03, S-04, S-05 → impl_reviewed; S-09 → impl_reviewed; S-12, S-13 added; S-12 → impl_reviewed)
+updated: 2026-06-14 (S-03, S-04, S-05 → impl_reviewed; S-09 → impl_reviewed; S-12, S-13 added; S-12 → impl_reviewed; S-13 → impl_reviewed)
 prd_version: 1
 main_goal: speed
 top_blocker: external
@@ -42,7 +42,7 @@ D&D 5e Game Masters lose preparation time hunting stat blocks and manually adjus
 | S-10 | main-enemy-profile            | if a battle has a main enemy, see its generated narrative description, unique characteristics, and 3 roleplay dialogue lines | S-02 | —               | proposed         |
 | S-11 | sentry-setup                  | server errors, unhandled exceptions, and AI generation failures surface in Sentry with environment context                  | —    | —               | proposed         |
 | S-12 | edit-battle                   | edit a battle's name and description after it has been created                                                              | S-01 | —               | impl_reviewed    |
-| S-13 | campaign-new-page             | create a new campaign via a dedicated `/campaigns/new` page (matching the `/battles/new` pattern) instead of an inline form | S-05 | —               | proposed         |
+| S-13 | campaign-new-page             | create a new campaign via a dedicated `/campaigns/new` page (matching the `/battles/new` pattern) instead of an inline form | S-05 | —               | impl_reviewed    |
 
 ## Baseline
 
@@ -229,8 +229,8 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Parallel with:** S-12 — no file overlap expected
 - **Blockers:** —
 - **Unknowns:** —
-- **Risk:** low. Scope is one new `campaigns/new.astro` page with a `CreateCampaignForm` component (mirrors `CreateBattleForm`), one route link from the campaign list, and removal of the inline form from `campaigns/index.astro`. No API changes — the same `POST /api/campaigns` endpoint is reused.
-- **Status:** proposed
+- **Risk:** low. Scope is one new `campaigns/new.astro` page with a `CreateCampaignForm` component, one route link from the campaign list, and removal of the inline form from `campaigns/index.astro`. During implementation the API was changed from JSON to formData + redirect (to fix a hydration-gap bug with the fetch/JSON + `client:load` pattern); the form adopted the native POST pattern matching `battles/new.astro`.
+- **Status:** impl_reviewed
 
 ## Backlog Handoff
 
@@ -247,7 +247,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-08       | ux-improvements               | Landing page rebrand, loading spinners, persistent navbar | no                  | Needs S-05 (navbar covers campaigns page); parallel with S-03, S-04 |
 | S-11       | sentry-setup                  | Configure Sentry error tracking on Cloudflare Workers   | no                    | No deps; parallel with any slice; requires `@sentry/cloudflare` spike before planning |
 | S-12       | edit-battle                   | Edit a battle's name and description                    | yes                   | Needs S-01 implemented; low complexity — PATCH endpoint + form    |
-| S-13       | campaign-new-page             | Dedicated /campaigns/new creation page                  | yes                   | Needs S-05 implemented; replaces inline form with a routed page   |
+| S-13       | campaign-new-page             | Dedicated /campaigns/new creation page                  | —                     | impl_reviewed — complete                                          |
 
 ## Open Roadmap Questions
 

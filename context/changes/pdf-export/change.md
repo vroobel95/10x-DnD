@@ -2,7 +2,7 @@
 change_id: pdf-export
 status: proposed
 created: 2026-06-01
-updated: 2026-06-01
+updated: 2026-06-14
 roadmap_id: S-07
 prd_refs: FR-012
 ---

@@ -26,10 +26,8 @@ GM sees a `+ New Campaign` link-button on `/campaigns` that navigates to `/campa
 
 ## What We're NOT Doing
 
-- Changing `POST /api/campaigns` — it stays JSON; no form-POST redirect pattern
-- Adding a `serverError` query-param flow (campaigns API is fetch/JSON, not redirect-based)
-- Updating any page beyond `campaigns/index.astro` and `CampaignList.tsx`
 - Adding a redirect from any other source to `/campaigns/new`
+- Updating any page beyond `campaigns/index.astro` and `CampaignList.tsx` (other than the form component and API endpoint)
 
 ## Implementation Approach
 
@@ -37,7 +35,12 @@ Phase 1 creates the new page and cleans up the form component. Phase 2 wires the
 
 ## Critical Implementation Details
 
-**No serverError prop on campaigns/new.astro.** The campaign form submits via fetch (JSON API), so errors never arrive via query string — they stay in component state. The Astro page does not read an error query param or pass it down to the form.
+**Architectural pivot from fetch/JSON to native form POST.** The original plan called for a fetch/JSON island pattern (form submits to API via fetch, errors stay in component state). During implementation a hydration-gap bug was discovered: with `client:load`, users can interact with the SSR HTML before React hydrates, and when React hydrates it resets controlled-input state to initial values (empty). To fix this, the implementation adopted the same native form POST pattern used by `battles/new.astro`:
+
+- `POST /api/campaigns` was changed from a JSON API to a formData + redirect API.
+- `campaigns/new.astro` reads `?error` from the URL and passes it as `serverError` prop.
+- `CreateCampaignForm` uses `method="POST" action="/api/campaigns"` (no fetch); validation errors prevent submission client-side, server errors arrive via redirect query param.
+- On success the API redirects to `/campaigns/${campaign.id}`; on error it redirects to `/campaigns/new?error=...`.
 
 ---
 
@@ -164,27 +167,27 @@ Remove the inline `CreateCampaignForm` from `campaigns/index.astro`, replace it 
 
 #### Automated
 
-- [x] 1.1 TypeScript compilation passes: `npm run typecheck`
-- [x] 1.2 Linting passes: `npm run lint`
+- [x] 1.1 TypeScript compilation passes: `npm run typecheck` — 15eb5f0
+- [x] 1.2 Linting passes: `npm run lint` — 15eb5f0
 
 #### Manual
 
-- [x] 1.3 `/campaigns/new` renders the centered card with title "New Campaign"
-- [x] 1.4 Submitting with empty name shows a client-side error on the name field
-- [x] 1.5 Submitting a valid name creates the campaign and redirects to `/campaigns/<new-id>`
-- [x] 1.6 Server-side rejection shows inline error message
-- [x] 1.7 "Back to campaigns" link navigates to `/campaigns`
+- [x] 1.3 `/campaigns/new` renders the centered card with title "New Campaign" — 15eb5f0
+- [x] 1.4 Submitting with empty name shows a client-side error on the name field — 15eb5f0
+- [x] 1.5 Submitting a valid name creates the campaign and redirects to `/campaigns/<new-id>` — 15eb5f0
+- [x] 1.6 Server-side rejection shows inline error message — 15eb5f0
+- [x] 1.7 "Back to campaigns" link navigates to `/campaigns` — 15eb5f0
 
 ### Phase 2: Index page wiring and empty state fix
 
 #### Automated
 
-- [ ] 2.1 TypeScript compilation passes: `npm run typecheck`
-- [ ] 2.2 Linting passes: `npm run lint`
+- [x] 2.1 TypeScript compilation passes: `npm run typecheck` — 0f59839
+- [x] 2.2 Linting passes: `npm run lint` — 0f59839
 
 #### Manual
 
-- [ ] 2.3 `+ New Campaign` button on `/campaigns` navigates to `/campaigns/new`
-- [ ] 2.4 No inline form or toggle button remains on campaigns index
-- [ ] 2.5 Empty state link points to `/campaigns/new` (no stale "above" copy)
-- [ ] 2.6 No regressions: rename and delete on existing campaigns still work
+- [x] 2.3 `+ New Campaign` button on `/campaigns` navigates to `/campaigns/new` — 0f59839
+- [x] 2.4 No inline form or toggle button remains on campaigns index — 0f59839
+- [x] 2.5 Empty state link points to `/campaigns/new` (no stale "above" copy) — 0f59839
+- [x] 2.6 No regressions: rename and delete on existing campaigns still work — 0f59839

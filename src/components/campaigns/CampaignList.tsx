@@ -83,7 +83,9 @@ export default function CampaignList({ campaigns: initial }: Props) {
     return (
       <div className="rounded-xl border border-white/10 bg-white/5 p-10 text-center backdrop-blur-xl">
         <p className="mb-2 text-lg font-semibold text-white">No campaigns yet</p>
-        <p className="text-sm text-blue-100/60">Create your first campaign above to get started.</p>
+        <a href="/campaigns/new" className="text-sm text-purple-300 hover:underline">
+          Create your first campaign
+        </a>
       </div>
     );
   }
