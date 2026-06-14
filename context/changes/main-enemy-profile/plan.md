@@ -352,27 +352,27 @@ Migration `20260614000001_add_battle_main_enemy.sql` adds two nullable columns t
 
 #### Automated
 
-- [x] 1.1 Migration applies cleanly
-- [x] 1.2 `npm run check` passes — GenerateResult, MainEnemyProfile, updated Battle type all typecheck
-- [x] 1.3 `npm run lint` passes
+- [x] 1.1 Migration applies cleanly — bb0eab1
+- [x] 1.2 `npm run check` passes — GenerateResult, MainEnemyProfile, updated Battle type all typecheck — bb0eab1
+- [x] 1.3 `npm run lint` passes — bb0eab1
 
 #### Manual
 
-- [x] 1.4 `battles` table shows the two new nullable columns in Supabase dashboard
-- [ ] 1.5 `generateEnemies` with a boss prompt returns `main_enemy` populated; with "3 goblins" returns `main_enemy: null`
+- [x] 1.4 `battles` table shows the two new nullable columns in Supabase dashboard — bb0eab1
+- [x] 1.5 `generateEnemies` with a boss prompt returns `main_enemy` populated; with "3 goblins" returns `main_enemy: null`
 
 ### Phase 2: Generate Endpoint Extension
 
 #### Automated
 
-- [ ] 2.1 `npm run check` passes on updated generate route
-- [ ] 2.2 `npm run lint` passes
+- [x] 2.1 `npm run check` passes on updated generate route
+- [x] 2.2 `npm run lint` passes
 
 #### Manual
 
-- [ ] 2.3 POST with boss prompt returns `main_enemy_id` + `main_enemy_profile` in response; battle row updated in Supabase
-- [ ] 2.4 POST with "3 goblins" returns `main_enemy_id: null` and `main_enemy_profile: null`
-- [ ] 2.5 Existing error cases unchanged (401, 400, 404)
+- [x] 2.3 POST with boss prompt returns `main_enemy_id` + `main_enemy_profile` in response; battle row updated in Supabase
+- [x] 2.4 POST with "3 goblins" returns `main_enemy_id: null` and `main_enemy_profile: null`
+- [x] 2.5 Existing error cases unchanged (401, 400, 404)
 
 ### Phase 3: Delete Endpoint Extension
 

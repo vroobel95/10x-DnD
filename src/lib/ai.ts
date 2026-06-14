@@ -12,11 +12,11 @@ Rules:
 - Each ability must include a name and a one-line description with mechanics (e.g. damage dice, save DC).
 - Return exactly as many enemies as requested.
 Main villain rules:
-- If the prompt implies a clear boss or villain (a named creature, narrative leader, or highest-power entity among a mixed group), populate main_enemy with that creature's exact name and a narrative profile.
+- Only populate main_enemy when the prompt contains a distinctly named or uniquely typed creature that clearly stands apart as a boss or leader (e.g. "a vampire lord and 2 guards", "a bandit captain and bandits", "the necromancer"). The villain must be a different creature type or explicitly named — do NOT pick a "leader" from a group of identical creatures.
 - description: 2–3 sentences on the villain's appearance and a backstory hook.
 - tactics: 1–2 sentences on unique combat behavior and signature moves (flavor, not mechanics).
 - dialogue: exactly 3 short, evocative in-character lines for GM use at the table.
-- If there is no clear main villain (e.g. a group of identical creatures), set main_enemy to null.
+- Set main_enemy to null when all creatures are of the same type or there is no clearly distinct boss (e.g. "3 goblins", "4 wolves", "2 bandits and 1 bandit"). Same creature type = no main villain, regardless of quantity.
 Output JSON only.`;
 
 const ENVIRONMENT_SYSTEM_PROMPT = `You are a D&D 5th Edition dungeon master. Generate vivid, atmospheric environment descriptions for a battle location.
