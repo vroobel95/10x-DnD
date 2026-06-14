@@ -179,12 +179,12 @@ Remove the inline `CreateCampaignForm` from `campaigns/index.astro`, replace it 
 
 #### Automated
 
-- [x] 2.1 TypeScript compilation passes: `npm run typecheck` — (pending sha)
-- [x] 2.2 Linting passes: `npm run lint` — (pending sha)
+- [x] 2.1 TypeScript compilation passes: `npm run typecheck` — 0f59839
+- [x] 2.2 Linting passes: `npm run lint` — 0f59839
 
 #### Manual
 
-- [x] 2.3 `+ New Campaign` button on `/campaigns` navigates to `/campaigns/new`
-- [x] 2.4 No inline form or toggle button remains on campaigns index
-- [x] 2.5 Empty state link points to `/campaigns/new` (no stale "above" copy)
-- [x] 2.6 No regressions: rename and delete on existing campaigns still work
+- [x] 2.3 `+ New Campaign` button on `/campaigns` navigates to `/campaigns/new` — 0f59839
+- [x] 2.4 No inline form or toggle button remains on campaigns index — 0f59839
+- [x] 2.5 Empty state link points to `/campaigns/new` (no stale "above" copy) — 0f59839
+- [x] 2.6 No regressions: rename and delete on existing campaigns still work — 0f59839
