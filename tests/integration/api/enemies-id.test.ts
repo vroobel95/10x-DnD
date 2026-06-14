@@ -153,6 +153,23 @@ describe("DELETE /api/enemies/[id]", () => {
     expect(body).toEqual({ success: true, main_enemy_cleared: true });
   });
 
+  it("returns 200 with main_enemy_cleared: false when deleting a non-main enemy", async () => {
+    vi.mocked(createClient).mockReturnValue(
+      makeSupabaseMock({
+        campaigns: { data: [{ id: "camp-1" }], error: null },
+        battles: [
+          { data: [{ id: "b-1" }], error: null }, // user-battles auth check
+          { data: [], error: null }, // profile-clear: this enemy is not the main enemy
+        ],
+        enemies: { data: [{ id: "e-1" }], error: null },
+      }),
+    );
+    const res = await DELETE(makeDeleteContext());
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body).toEqual({ success: true, main_enemy_cleared: false });
+  });
+
   it("returns 404 when enemy does not belong to the authenticated user (IDOR)", async () => {
     vi.mocked(createClient).mockReturnValue(
       makeSupabaseMock({

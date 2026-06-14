@@ -93,11 +93,9 @@ export const POST: APIRoute = async (context) => {
   if (enemyGroup.main_enemy) {
     const mainEnemy = enemyGroup.main_enemy;
     const insertedRows = insertResult.data as { id: string; name: string }[];
-    const mainRow = insertedRows.find((r) => r.name === mainEnemy.enemy_name);
+    const mainRow = insertedRows.find((r) => r.name.trim().toLowerCase() === mainEnemy.enemy_name.trim().toLowerCase());
     if (mainRow) {
-      mainEnemyId = mainRow.id;
-      mainEnemyProfile = mainEnemy.profile;
-      await supabase
+      const profileUpdateResult = await supabase
         .from("battles")
         .update({
           main_enemy_id: mainRow.id,
@@ -105,6 +103,10 @@ export const POST: APIRoute = async (context) => {
           updated_at: new Date().toISOString(),
         })
         .eq("id", battleId);
+      if (!profileUpdateResult.error) {
+        mainEnemyId = mainRow.id;
+        mainEnemyProfile = mainEnemy.profile;
+      }
     }
   }
 

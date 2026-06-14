@@ -57,3 +57,10 @@
 - **Problem**: When `createClient` returns null (Supabase misconfigured), the `if (supabase) { ... }` pattern silently skips the Supabase call and falls through to a success redirect. On the forgot-password route this shows "check your email" when no email was sent; on the reset-password route this shows "Password updated" when nothing changed — locking the user out.
 - **Rule**: Treat a null return from `createClient` as a fatal misconfiguration — return a 500 error immediately rather than silently skipping the Supabase call and falling through to a success response
 - **Applies to**: All API routes that call `createClient()` before performing any Supabase operation
+
+## Pre-delete cleanup of non-FK companion columns is inherently non-atomic
+
+- **Context**: src/pages/api/enemies/[id].ts:149–155
+- **Problem**: The DELETE handler clears `main_enemy_profile` (JSONB) before deleting the enemy row, because the FK cascade only clears `main_enemy_id` — not arbitrary JSONB columns. This order is the only viable approach, but if the cleanup succeeds and the delete then fails, the battle loses its villain reference while the enemy still exists. If the cleanup fails but the delete is not blocked, `main_enemy_profile` can remain orphaned after the cascade clears `main_enemy_id`. Both are edge cases but neither is detectable at the API layer.
+- **Rule**: When a non-blocking pre-delete cleanup targets a non-FK companion field, add a comment documenting the orphan-data risk and why the delete order was chosen. If atomicity matters, escalate to a DB-level trigger or RPC transaction.
+- **Applies to**: All DELETE handlers that must clear non-FK JSONB or text columns alongside a FK-constrained column before the main delete.

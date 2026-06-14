@@ -1,7 +1,7 @@
 ---
 change_id: main-enemy-profile
 title: Main Enemy Profile
-status: implementing
+status: impl_reviewed
 created: 2026-06-04
 updated: 2026-06-14
 archived_at: null
