@@ -3,7 +3,7 @@ project: "DnD 5enemy"
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-06-14 (S-03, S-04, S-05 → impl_reviewed; S-09 → impl_reviewed; S-12, S-13 added; S-12 → impl_reviewed; S-13 → impl_reviewed)
+updated: 2026-06-18 (S-07 → impl_reviewed)
 prd_version: 1
 main_goal: speed
 top_blocker: external
@@ -36,7 +36,7 @@ D&D 5e Game Masters lose preparation time hunting stat blocks and manually adjus
 | S-04 | password-reset                | reset a forgotten password via email link and regain access to the app                                 | —                | FR-010                         | impl_reviewed    |
 | S-05 | campaign-management           | see a list of campaigns, choose one, create or delete; battle delete folded in (FR-011)                | F-01, S-01       | FR-001, FR-011                 | impl_reviewed    |
 | S-06 | delete-battle                 | _(folded into S-05)_                                                                                   | S-05             | FR-011                         | folded into S-05 |
-| S-07 | pdf-export                    | export a battle's confirmed enemy cards as a printable PDF                                             | S-02, S-03, S-05 | FR-012                         | proposed         |
+| S-07 | pdf-export                    | export a battle's confirmed enemy cards as a printable PDF                                             | S-02, S-03, S-05 | FR-012                         | impl_reviewed    |
 | S-08 | ux-improvements               | see DnD 5enemy branding, visual loading feedback, and a persistent top navbar with sign-out on every authenticated page | S-05             | —                              | proposed         |
 | S-09 | battle-environment            | see AI-generated atmospheric and environmental details for a battle (terrain, hazards, ambiance)        | S-01             | —                              | impl_reviewed    |
 | S-10 | main-enemy-profile            | if a battle has a main enemy, see its generated narrative description, unique characteristics, and 3 roleplay dialogue lines | S-02 | —               | proposed         |
@@ -157,7 +157,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:**
   - Which PDF generation approach is compatible with Cloudflare Workers (workerd runtime)? Puppeteer/Chromium is unavailable; candidates are `pdf-lib` (pure JS), an external HTML-to-PDF API, or Cloudflare Browser Rendering (beta/paid). Requires a spike to confirm bundle size and runtime compatibility. — Owner: developer. Block: soft (implementation can't start until approach is picked).
 - **Risk:** two sources of risk. (1) PDF generation on Cloudflare Workers — the workerd runtime prohibits most node-native and browser-headless approaches; spike required before planning. (2) `battles/[id].astro` write conflict with S-05 — both slices modify this file; S-07 must be based on S-05's version. Adding S-05 as an explicit prerequisite closes this risk: by the time S-07 starts, `battles/[id].astro` is settled. Sequenced last because the enemy data model must be stable (S-03) and the navigation architecture must be in place (S-05).
-- **Status:** proposed
+- **Status:** impl_reviewed
 
 ### S-09: Battle environment
 
@@ -243,7 +243,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-04       | password-reset                | Reset forgotten password via email link                 | yes                   | Fully independent; parallel with S-03 + S-05                       |
 | S-05       | campaign-management           | Campaign list, create, delete (FR-011 folded in)        | yes                   | Revamps nav architecture; fold S-06 in; widest PR in roadmap       |
 | S-06       | delete-battle                 | _(folded into S-05)_                                    | —                     | One button + DELETE endpoint; not worth a separate PR              |
-| S-07       | pdf-export                    | Export battle enemy cards as PDF                        | no                    | Needs S-03 + S-05 done; Workers PDF spike required before planning |
+| S-07       | pdf-export                    | Export battle enemy cards as PDF                        | —                     | impl_reviewed — complete                                           |
 | S-08       | ux-improvements               | Landing page rebrand, loading spinners, persistent navbar | no                  | Needs S-05 (navbar covers campaigns page); parallel with S-03, S-04 |
 | S-11       | sentry-setup                  | Configure Sentry error tracking on Cloudflare Workers   | no                    | No deps; parallel with any slice; requires `@sentry/cloudflare` spike before planning |
 | S-12       | edit-battle                   | Edit a battle's name and description                    | yes                   | Needs S-01 implemented; low complexity — PATCH endpoint + form    |
