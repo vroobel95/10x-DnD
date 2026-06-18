@@ -3,7 +3,7 @@ project: "DnD 5enemy"
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-06-18 (S-07 → impl_reviewed; S-10 → impl_reviewed)
+updated: 2026-06-18 (S-07 → impl_reviewed; S-10 → impl_reviewed; S-08 scope expanded)
 prd_version: 1
 main_goal: speed
 top_blocker: external
@@ -37,12 +37,13 @@ D&D 5e Game Masters lose preparation time hunting stat blocks and manually adjus
 | S-05 | campaign-management           | see a list of campaigns, choose one, create or delete; battle delete folded in (FR-011)                | F-01, S-01       | FR-001, FR-011                 | impl_reviewed    |
 | S-06 | delete-battle                 | _(folded into S-05)_                                                                                   | S-05             | FR-011                         | folded into S-05 |
 | S-07 | pdf-export                    | export a battle's confirmed enemy cards as a printable PDF                                             | S-02, S-03, S-05 | FR-012                         | impl_reviewed    |
-| S-08 | ux-improvements               | see DnD 5enemy branding, visual loading feedback, and a persistent top navbar with sign-out on every authenticated page | S-05             | —                              | proposed         |
+| S-08 | ux-improvements               | maroon color rebrand, GM hero image on auth pages, visual loading feedback, persistent navbar, post-login dashboard with CTA + top-3 recent battles | S-05             | —                              | proposed         |
 | S-09 | battle-environment            | see AI-generated atmospheric and environmental details for a battle (terrain, hazards, ambiance)        | S-01             | —                              | impl_reviewed    |
 | S-10 | main-enemy-profile            | if a battle has a main enemy, see its generated narrative description, unique characteristics, and 3 roleplay dialogue lines | S-02 | —               | impl_reviewed    |
 | S-11 | sentry-setup                  | server errors, unhandled exceptions, and AI generation failures surface in Sentry with environment context                  | —    | —               | proposed         |
 | S-12 | edit-battle                   | edit a battle's name and description after it has been created                                                              | S-01 | —               | impl_reviewed    |
 | S-13 | campaign-new-page             | create a new campaign via a dedicated `/campaigns/new` page (matching the `/battles/new` pattern) instead of an inline form | S-05 | —               | impl_reviewed    |
+| S-14 | readme-update                 | README accurately reflects current tech stack, local setup, Supabase config, Cloudflare deployment, and env vars                   | —    | —               | proposed         |
 
 ## Baseline
 
@@ -185,14 +186,16 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 ### S-08: UX improvements
 
-- **Outcome:** the landing page shows DnD 5enemy's product identity; users see visual loading feedback when navigating to a battle or submitting the create-battle form; a persistent top navbar is visible on every authenticated page (campaigns, battles, battle detail) containing the sign-out action; the redundant "sign out" button currently rendered at the bottom of the campaigns and battles pages is removed.
+- **Outcome:** (1) global color palette shifts from purple to maroon — all buttons, accents, and brand-colored UI elements updated in Tailwind config and component classes; (2) the sign-in / sign-up pages display a DnD-themed square hero image (GM generating creatures) alongside the auth form; (3) the landing page shows DnD 5enemy's product identity; (4) users see visual loading feedback when navigating to a battle or submitting the create-battle form; (5) a persistent top navbar is visible on every authenticated page containing the sign-out action; the redundant "sign out" button is removed from the bottom of authenticated pages; (6) after login the user lands on a dashboard that shows an encouraging call-to-action ("Start a new battle or manage your existing ones") and a "Recent battles" panel listing the top 3 battles sorted by `updated_at` descending across all their campaigns.
 - **Change ID:** ux-improvements
 - **PRD refs:** —
 - **Prerequisites:** S-05 (navbar must cover the campaigns page, which S-05 creates; without S-05 the campaigns page does not exist in main)
 - **Parallel with:** S-03, S-04 — no file overlap with either
 - **Blockers:** —
-- **Unknowns:** —
-- **Risk:** low–medium. Four distinct sub-tasks: (1) text replacement in `Welcome.astro`; (2) loading feedback in `BattleCard.astro` (inline script on link click) and `CreateBattleForm.tsx` (set `isSubmitting` flag before native form submit proceeds — `SubmitButton` already accepts `pendingText`, the flag is just never set on a valid submit today); (3) a new persistent `Navbar` component rendered in the shared layout (or injected per authenticated page) — contains the app logo/name and a sign-out button, always fixed/sticky at the top; (4) removal of the standalone sign-out button from the bottom of `campaigns/index.astro` and `battles/index.astro` (and any other authenticated page that renders one). The navbar sub-task adds a file (`Navbar` component) and touches every authenticated layout — wider blast radius than the original scope but still low risk because the changes are purely presentational.
+- **Unknowns:**
+  - Where does the GM hero image asset live? — the user has a square image ready; needs to be placed at a stable path (e.g. `public/images/gm-hero.webp`) before implementation. — Owner: user.
+  - What page does the user land on after login? Currently middleware redirects to `/campaigns`; the dashboard call-to-action and top-3 list could live on `/campaigns` (enriched) or a new `/dashboard` route — decide in `/10x-plan`.
+- **Risk:** low–medium. Eight distinct sub-tasks: (1) update Tailwind theme in `tailwind.config.*` to replace purple tokens with maroon; audit all components that hard-code purple class names (`bg-purple-*`, `text-purple-*`, `border-purple-*`, etc.) and replace; (2) add GM hero image to `public/` and render it in the auth layout / sign-in + sign-up pages; (3) text replacement in `Welcome.astro`; (4) loading feedback in `BattleCard.astro` and `CreateBattleForm.tsx`; (5) new persistent `Navbar` component in the shared layout; (6) removal of standalone sign-out buttons; (7) dashboard CTA text on the post-login landing page; (8) "Recent battles" panel — one Supabase query (`select * from battles where campaign_id in (...) order by updated_at desc limit 3`) rendered as a short list with a link to each battle. The color rebrand (sub-task 1) has the widest blast radius but all changes are purely presentational with no logic risk.
 - **Status:** proposed
 
 ### S-11: Sentry error tracking
@@ -232,6 +235,18 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Risk:** low. Scope is one new `campaigns/new.astro` page with a `CreateCampaignForm` component, one route link from the campaign list, and removal of the inline form from `campaigns/index.astro`. During implementation the API was changed from JSON to formData + redirect (to fix a hydration-gap bug with the fetch/JSON + `client:load` pattern); the form adopted the native POST pattern matching `battles/new.astro`.
 - **Status:** impl_reviewed
 
+### S-14: Update README
+
+- **Outcome:** README.md accurately describes the project — what it does, the current tech stack (Astro 6 + React 19 + Tailwind 4 + shadcn/ui + Supabase + Cloudflare Workers), local development setup, required environment variables, Supabase migration steps, and Cloudflare deployment instructions — so a new contributor can clone and run the app without needing to ask.
+- **Change ID:** readme-update
+- **PRD refs:** —
+- **Prerequisites:** — (fully independent; can be done at any point)
+- **Parallel with:** any slice — touches only `README.md`
+- **Blockers:** —
+- **Unknowns:** —
+- **Risk:** none. Documentation-only change; no code modified.
+- **Status:** proposed
+
 ## Backlog Handoff
 
 | Roadmap ID | Change ID                     | Suggested issue title                                   | Ready for `/10x-plan` | Notes                                                              |
@@ -244,10 +259,11 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-05       | campaign-management           | Campaign list, create, delete (FR-011 folded in)        | yes                   | Revamps nav architecture; fold S-06 in; widest PR in roadmap       |
 | S-06       | delete-battle                 | _(folded into S-05)_                                    | —                     | One button + DELETE endpoint; not worth a separate PR              |
 | S-07       | pdf-export                    | Export battle enemy cards as PDF                        | —                     | impl_reviewed — complete                                           |
-| S-08       | ux-improvements               | Landing page rebrand, loading spinners, persistent navbar | no                  | Needs S-05 (navbar covers campaigns page); parallel with S-03, S-04 |
+| S-08       | ux-improvements               | Maroon rebrand, GM hero image, loading spinners, persistent navbar, post-login dashboard + top-3 battles | no                  | Needs S-05; parallel with S-03, S-04; GM image asset must be ready before implementation |
 | S-11       | sentry-setup                  | Configure Sentry error tracking on Cloudflare Workers   | no                    | No deps; parallel with any slice; requires `@sentry/cloudflare` spike before planning |
 | S-12       | edit-battle                   | Edit a battle's name and description                    | yes                   | Needs S-01 implemented; low complexity — PATCH endpoint + form    |
 | S-13       | campaign-new-page             | Dedicated /campaigns/new creation page                  | —                     | impl_reviewed — complete                                          |
+| S-14       | readme-update                 | Update README with current stack, setup, env vars, and deployment | yes             | No deps; purely documentation; parallel with any slice            |
 
 ## Open Roadmap Questions
 
