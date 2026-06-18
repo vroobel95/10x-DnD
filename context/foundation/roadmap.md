@@ -3,7 +3,7 @@ project: "DnD 5enemy"
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-06-18 (S-07 → impl_reviewed)
+updated: 2026-06-18 (S-07 → impl_reviewed; S-10 → impl_reviewed)
 prd_version: 1
 main_goal: speed
 top_blocker: external
@@ -39,7 +39,7 @@ D&D 5e Game Masters lose preparation time hunting stat blocks and manually adjus
 | S-07 | pdf-export                    | export a battle's confirmed enemy cards as a printable PDF                                             | S-02, S-03, S-05 | FR-012                         | impl_reviewed    |
 | S-08 | ux-improvements               | see DnD 5enemy branding, visual loading feedback, and a persistent top navbar with sign-out on every authenticated page | S-05             | —                              | proposed         |
 | S-09 | battle-environment            | see AI-generated atmospheric and environmental details for a battle (terrain, hazards, ambiance)        | S-01             | —                              | impl_reviewed    |
-| S-10 | main-enemy-profile            | if a battle has a main enemy, see its generated narrative description, unique characteristics, and 3 roleplay dialogue lines | S-02 | —               | proposed         |
+| S-10 | main-enemy-profile            | if a battle has a main enemy, see its generated narrative description, unique characteristics, and 3 roleplay dialogue lines | S-02 | —               | impl_reviewed    |
 | S-11 | sentry-setup                  | server errors, unhandled exceptions, and AI generation failures surface in Sentry with environment context                  | —    | —               | proposed         |
 | S-12 | edit-battle                   | edit a battle's name and description after it has been created                                                              | S-01 | —               | impl_reviewed    |
 | S-13 | campaign-new-page             | create a new campaign via a dedicated `/campaigns/new` page (matching the `/battles/new` pattern) instead of an inline form | S-05 | —               | impl_reviewed    |
@@ -181,7 +181,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** how the GM designates a main enemy (toggle on enemy card? field on battle creation? auto-inferred from CR?), where the profile is stored (new `main_enemy_profile` JSONB column on `battles`, or extended `stats` on the enemy?), whether the profile is generated on designation or on demand.
 - **Risk:** low. Scope is well-defined: one AI call → one structured output → one UI card. Main decision is the designation UX and the data model placement.
-- **Status:** proposed
+- **Status:** impl_reviewed
 
 ### S-08: UX improvements
 
