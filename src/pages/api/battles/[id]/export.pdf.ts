@@ -46,7 +46,7 @@ export const GET: APIRoute = async (context) => {
 
   const enemiesResult = await supabase
     .from("enemies")
-    .select("*")
+    .select("id, name, stats, created_at, updated_at")
     .eq("battle_id", battleId)
     .eq("status", "confirmed")
     .order("created_at");
@@ -74,7 +74,7 @@ export const GET: APIRoute = async (context) => {
     status: 200,
     headers: {
       "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename="${filename}"`,
+      "Content-Disposition": `attachment; filename*=UTF-8''${encodeURIComponent(filename)}`,
     },
   });
 };

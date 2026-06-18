@@ -237,6 +237,7 @@ export async function buildBattlePdf(battle: Pick<Battle, "name">, enemies: Enem
       if (hasSavesOrSkills) y -= 4;
 
       for (const ability of s.abilities) {
+        if (y < MARGIN) break;
         const abilityNameSz = 10;
         const descSz = 9;
         const lineH = descSz + 3;

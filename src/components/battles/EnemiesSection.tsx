@@ -51,6 +51,7 @@ export default function EnemiesSection({ battleId, initialPending, initialConfir
   async function handleConfirm(enemy: Enemy) {
     setLoadingId(enemy.id);
     setActionError(null);
+    setExportError(null);
     try {
       const res = await fetch(`/api/enemies/${enemy.id}`, { method: "PATCH" });
       if (res.ok) {
@@ -70,6 +71,7 @@ export default function EnemiesSection({ battleId, initialPending, initialConfir
   async function handleDeny(enemy: Enemy) {
     setLoadingId(enemy.id);
     setActionError(null);
+    setExportError(null);
     try {
       const res = await fetch(`/api/enemies/${enemy.id}`, { method: "DELETE" });
       if (res.ok) {
@@ -87,6 +89,7 @@ export default function EnemiesSection({ battleId, initialPending, initialConfir
   async function handleEditSave(enemy: Enemy, stats: EnemyStats): Promise<void> {
     setLoadingId(enemy.id);
     setActionError(null);
+    setExportError(null);
     try {
       const res = await fetch(`/api/enemies/${enemy.id}`, {
         method: "PATCH",
@@ -125,6 +128,7 @@ export default function EnemiesSection({ battleId, initialPending, initialConfir
   async function handleRemoveConfirm(enemy: Enemy): Promise<void> {
     setLoadingId(enemy.id);
     setActionError(null);
+    setExportError(null);
     try {
       const res = await fetch(`/api/enemies/${enemy.id}`, { method: "DELETE" });
       if (res.ok) {
@@ -149,6 +153,7 @@ export default function EnemiesSection({ battleId, initialPending, initialConfir
     if (isExporting) return;
     setIsExporting(true);
     setExportError(null);
+    setActionError(null);
     try {
       const res = await fetch(`/api/battles/${battleId}/export.pdf`);
       if (!res.ok) {
@@ -159,8 +164,9 @@ export default function EnemiesSection({ battleId, initialPending, initialConfir
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const disposition = res.headers.get("Content-Disposition") ?? "";
-      const match = /filename="([^"]+)"/.exec(disposition);
-      const filename = match?.[1] ?? "battle.pdf";
+      const rfc5987 = /filename\*=UTF-8''([^\s;]+)/i.exec(disposition);
+      const legacy = /filename="([^"]+)"/i.exec(disposition);
+      const filename = rfc5987 ? decodeURIComponent(rfc5987[1]) : (legacy?.[1] ?? "battle.pdf");
       const a = document.createElement("a");
       a.href = url;
       a.download = filename;

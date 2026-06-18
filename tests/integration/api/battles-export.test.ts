@@ -1,6 +1,7 @@
 import type { APIContext } from "astro";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import * as battlePdf from "@/lib/pdf/battle-pdf";
 import { createClient } from "@/lib/supabase";
 import { GET } from "@/pages/api/battles/[id]/export.pdf";
 import { makeSupabaseMock } from "../../helpers/supabase";
@@ -89,6 +90,17 @@ describe("GET /api/battles/[id]/export.pdf", () => {
     expect(res.status).toBe(404);
   });
 
+  it("returns 500 on a non-not-found campaign SELECT error", async () => {
+    vi.mocked(createClient).mockReturnValue(
+      makeSupabaseMock({
+        battles: { data: battleData, error: null },
+        campaigns: { data: null, error: { code: "23505", message: "DB error" } },
+      }),
+    );
+    const res = await GET(makeContext());
+    expect(res.status).toBe(500);
+  });
+
   it("returns 404 when there are no confirmed enemies", async () => {
     vi.mocked(createClient).mockReturnValue(
       makeSupabaseMock({
@@ -103,6 +115,20 @@ describe("GET /api/battles/[id]/export.pdf", () => {
     expect(body.error).toBe("No confirmed enemies to export");
   });
 
+  it("returns 500 when buildBattlePdf throws internally", async () => {
+    const spy = vi.spyOn(battlePdf, "buildBattlePdf").mockRejectedValueOnce(new Error("PDF generation failed"));
+    vi.mocked(createClient).mockReturnValue(
+      makeSupabaseMock({
+        battles: { data: battleData, error: null },
+        campaigns: { data: { id: "camp-1" }, error: null },
+        enemies: { data: [validEnemyRow], error: null },
+      }),
+    );
+    const res = await GET(makeContext());
+    expect(res.status).toBe(500);
+    spy.mockRestore();
+  });
+
   it("returns 200 with PDF headers and %PDF- body on success", async () => {
     vi.mocked(createClient).mockReturnValue(
       makeSupabaseMock({
@@ -114,7 +140,7 @@ describe("GET /api/battles/[id]/export.pdf", () => {
     const res = await GET(makeContext());
     expect(res.status).toBe(200);
     expect(res.headers.get("Content-Type")).toBe("application/pdf");
-    expect(res.headers.get("Content-Disposition")).toMatch(/attachment;\s*filename=/);
+    expect(res.headers.get("Content-Disposition")).toMatch(/attachment;\s*filename\*?=/);
     const bytes = new Uint8Array(await res.arrayBuffer());
     expect(new TextDecoder().decode(bytes.slice(0, 5))).toBe("%PDF-");
   });
