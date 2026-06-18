@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Wand2 } from "lucide-react";
+import { Download, Wand2 } from "lucide-react";
 import { EnemyCard } from "@/components/battles/EnemyCard";
 import type { Enemy } from "@/types";
 import type { EnemyStats } from "@/lib/schemas/enemy";
@@ -20,6 +20,8 @@ export default function EnemiesSection({ battleId, initialPending, initialConfir
   const [actionError, setActionError] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [removingId, setRemovingId] = useState<string | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
 
   async function handleGenerate(e: React.SyntheticEvent) {
     e.preventDefault();
@@ -143,6 +145,34 @@ export default function EnemiesSection({ battleId, initialPending, initialConfir
     setRemovingId(null);
   }
 
+  async function handleExport() {
+    if (isExporting) return;
+    setIsExporting(true);
+    setExportError(null);
+    try {
+      const res = await fetch(`/api/battles/${battleId}/export.pdf`);
+      if (!res.ok) {
+        const data = (await res.json()) as { error?: string };
+        setExportError(data.error ?? "Export failed. Please try again.");
+        return;
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const disposition = res.headers.get("Content-Disposition") ?? "";
+      const match = /filename="([^"]+)"/.exec(disposition);
+      const filename = match?.[1] ?? "battle.pdf";
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      setExportError("Export failed. Please try again.");
+    } finally {
+      setIsExporting(false);
+    }
+  }
+
   return (
     <div className="space-y-8">
       <section>
@@ -207,7 +237,34 @@ export default function EnemiesSection({ battleId, initialPending, initialConfir
 
       {confirmed.length > 0 && (
         <section>
-          <h2 className="mb-3 text-sm font-semibold tracking-wide text-blue-100/50 uppercase">Confirmed Enemies</h2>
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-sm font-semibold tracking-wide text-blue-100/50 uppercase">Confirmed Enemies</h2>
+            <button
+              type="button"
+              onClick={() => {
+                void handleExport();
+              }}
+              disabled={isExporting}
+              className="flex items-center gap-2 rounded-lg bg-purple-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-purple-500 disabled:opacity-50"
+            >
+              {isExporting ? (
+                <>
+                  <span className="size-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                  Exporting...
+                </>
+              ) : (
+                <>
+                  <Download className="size-4" />
+                  Export PDF
+                </>
+              )}
+            </button>
+          </div>
+          {exportError && (
+            <p className="mb-3 flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-900/30 px-3 py-2 text-sm text-red-300">
+              {exportError}
+            </p>
+          )}
           {actionError && (
             <p className="mb-3 flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-900/30 px-3 py-2 text-sm text-red-300">
               {actionError}
