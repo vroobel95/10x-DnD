@@ -1,8 +1,8 @@
 ---
 change_id: pdf-export
-status: implementing
+status: implemented
 created: 2026-06-01
-updated: 2026-06-16
+updated: 2026-06-18
 roadmap_id: S-07
 prd_refs: FR-012
 ---

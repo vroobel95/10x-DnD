@@ -339,13 +339,13 @@ None — no schema or data changes. Purely additive (one dependency, two new fil
 
 #### Automated
 
-- [x] 3.1 Type checking passes: `npm run typecheck`
-- [x] 3.2 Linting passes: `npm run lint`
-- [x] 3.3 Existing tests still pass: `npm run test`
+- [x] 3.1 Type checking passes: `npm run typecheck` — 699c283
+- [x] 3.2 Linting passes: `npm run lint` — 699c283
+- [x] 3.3 Existing tests still pass: `npm run test` — 699c283
 
 #### Manual
 
-- [x] 3.4 Button hidden/disabled with no confirmed enemies, appears when ≥1 exists
-- [x] 3.5 Clicking downloads the PDF without leaving the page; loading state shows
-- [x] 3.6 Failed request shows inline error, no navigation, no raw error exposed
-- [x] 3.7 Downloaded file name reflects the battle name
+- [x] 3.4 Button hidden/disabled with no confirmed enemies, appears when ≥1 exists — 699c283
+- [x] 3.5 Clicking downloads the PDF without leaving the page; loading state shows — 699c283
+- [x] 3.6 Failed request shows inline error, no navigation, no raw error exposed — 699c283
+- [x] 3.7 Downloaded file name reflects the battle name — 699c283
