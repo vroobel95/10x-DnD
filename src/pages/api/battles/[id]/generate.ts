@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { createClient } from "@/lib/supabase";
 import { generateEnemies } from "@/lib/ai";
-import type { BattleEnvironment } from "@/types";
+import type { BattleEnvironment, MainEnemyProfile } from "@/types";
 
 export const prerender = false;
 
@@ -87,5 +87,32 @@ export const POST: APIRoute = async (context) => {
     return Response.json({ error: "Could not save enemies. Please try again." }, { status: 500 });
   }
 
-  return Response.json({ enemies: insertResult.data as unknown[] });
+  let mainEnemyId: string | null = null;
+  let mainEnemyProfile: MainEnemyProfile | null = null;
+
+  if (enemyGroup.main_enemy) {
+    const mainEnemy = enemyGroup.main_enemy;
+    const insertedRows = insertResult.data as { id: string; name: string }[];
+    const mainRow = insertedRows.find((r) => r.name.trim().toLowerCase() === mainEnemy.enemy_name.trim().toLowerCase());
+    if (mainRow) {
+      const profileUpdateResult = await supabase
+        .from("battles")
+        .update({
+          main_enemy_id: mainRow.id,
+          main_enemy_profile: mainEnemy.profile,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", battleId);
+      if (!profileUpdateResult.error) {
+        mainEnemyId = mainRow.id;
+        mainEnemyProfile = mainEnemy.profile;
+      }
+    }
+  }
+
+  return Response.json({
+    enemies: insertResult.data as unknown[],
+    main_enemy_id: mainEnemyId,
+    main_enemy_profile: mainEnemyProfile,
+  });
 };
