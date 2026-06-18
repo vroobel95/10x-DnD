@@ -5,8 +5,18 @@ import type { Battle, Enemy } from "@/types";
 
 const PAGE_W = 595.28;
 const PAGE_H = 841.89;
-const MARGIN = 40;
+const MARGIN = 50;
 const CONTENT_W = PAGE_W - 2 * MARGIN;
+
+// Ability score table layout constants
+// Row 1 (stat name, 7pt): ~7pt pad top/bottom → height 22
+// Row 2 (score 12pt + 4pt gap + modifier 9pt): ~6.5pt pad top/bottom → height 38
+const STAT_ROW1_H = 22;
+const STAT_ROW2_H = 38;
+const STAT_TABLE_H = STAT_ROW1_H + STAT_ROW2_H; // 60
+
+const STAT_NAMES = ["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"] as const;
+const STAT_KEYS = ["str", "dex", "con", "int", "wis", "cha"] as const;
 
 function abilityMod(score: number): string {
   const m = Math.floor((score - 10) / 2);
@@ -43,7 +53,7 @@ export async function buildBattlePdf(battle: Pick<Battle, "name">, enemies: Enem
       font,
       color: rgb(0.5, 0.5, 0.5),
     });
-    y -= headerSz + 6;
+    y -= headerSz + 8;
 
     page.drawLine({
       start: { x: MARGIN, y },
@@ -51,7 +61,8 @@ export async function buildBattlePdf(battle: Pick<Battle, "name">, enemies: Enem
       thickness: 0.5,
       color: rgb(0.75, 0.75, 0.75),
     });
-    y -= 14;
+    // Extra gap so the 20pt creature name clears the rule
+    y -= 22;
 
     // Enemy name + CR
     const nameSz = 20;
@@ -83,7 +94,7 @@ export async function buildBattlePdf(battle: Pick<Battle, "name">, enemies: Enem
       font,
       color: rgb(0.2, 0.2, 0.2),
     });
-    y -= statLineSz + 12;
+    y -= statLineSz + 14;
 
     page.drawLine({
       start: { x: MARGIN, y },
@@ -93,50 +104,85 @@ export async function buildBattlePdf(battle: Pick<Battle, "name">, enemies: Enem
     });
     y -= 14;
 
-    // Ability score grid (6 columns)
-    const attrs = ["str", "dex", "con", "int", "wis", "cha"] as const;
-    const labelSz = 8;
-    const valSz = 11;
-    const modSz = 8;
+    // Ability score table
     const colW = CONTENT_W / 6;
+    const tableTop = y;
 
-    for (let i = 0; i < attrs.length; i++) {
-      const attr = attrs[i];
+    // Outer border
+    page.drawRectangle({
+      x: MARGIN,
+      y: tableTop - STAT_TABLE_H,
+      width: CONTENT_W,
+      height: STAT_TABLE_H,
+      borderWidth: 0.75,
+      borderColor: rgb(0.65, 0.65, 0.65),
+    });
+
+    // Horizontal divider between stat name row and score row
+    page.drawLine({
+      start: { x: MARGIN, y: tableTop - STAT_ROW1_H },
+      end: { x: PAGE_W - MARGIN, y: tableTop - STAT_ROW1_H },
+      thickness: 0.5,
+      color: rgb(0.65, 0.65, 0.65),
+    });
+
+    // Vertical dividers between columns
+    for (let i = 1; i < 6; i++) {
+      const vx = MARGIN + i * colW;
+      page.drawLine({
+        start: { x: vx, y: tableTop },
+        end: { x: vx, y: tableTop - STAT_TABLE_H },
+        thickness: 0.5,
+        color: rgb(0.65, 0.65, 0.65),
+      });
+    }
+
+    // Cell content
+    for (let i = 0; i < STAT_KEYS.length; i++) {
       const cx = MARGIN + i * colW + colW / 2;
-      const label = attr.toUpperCase();
-      const val = s[attr];
+      const val = s[STAT_KEYS[i]];
       const modStr = abilityMod(val);
+      const fullName = STAT_NAMES[i];
 
-      const lw = fontBold.widthOfTextAtSize(label, labelSz);
-      page.drawText(label, {
-        x: cx - lw / 2,
-        y,
-        size: labelSz,
+      // Stat full name — row 1 (22pt tall), 7pt text, ~7pt pad top & bottom
+      // baseline = tableTop - pad_top - cap_height = tableTop - 7.5 - 5 ≈ tableTop - 13
+      const nameTextSz = 7;
+      const nw = fontBold.widthOfTextAtSize(fullName, nameTextSz);
+      page.drawText(fullName, {
+        x: cx - nw / 2,
+        y: tableTop - 13,
+        size: nameTextSz,
         font: fontBold,
-        color: rgb(0.4, 0.4, 0.4),
+        color: rgb(0.35, 0.35, 0.35),
       });
 
+      // Score — row 2 (38pt tall, top at tableTop - STAT_ROW1_H = tableTop - 22)
+      // ~6.5pt pad top → cap top at tableTop - 28.5 → baseline ≈ tableTop - 37
+      const scoreSz = 12;
       const vs = String(val);
-      const vw = fontBold.widthOfTextAtSize(vs, valSz);
+      const vw = fontBold.widthOfTextAtSize(vs, scoreSz);
       page.drawText(vs, {
         x: cx - vw / 2,
-        y: y - labelSz - 3,
-        size: valSz,
+        y: tableTop - STAT_ROW1_H - 15,
+        size: scoreSz,
         font: fontBold,
         color: rgb(0, 0, 0),
       });
 
+      // Modifier — below score with 4pt gap
+      // score descender ≈ tableTop - 39.4; +4pt gap → mod baseline ≈ tableTop - 50
+      const modSz = 9;
       const mw = font.widthOfTextAtSize(modStr, modSz);
       page.drawText(modStr, {
         x: cx - mw / 2,
-        y: y - labelSz - 3 - valSz - 3,
+        y: tableTop - STAT_ROW1_H - 15 - scoreSz - 4,
         size: modSz,
         font,
         color: rgb(0.35, 0.35, 0.35),
       });
     }
 
-    y -= labelSz + 3 + valSz + 3 + modSz + 14;
+    y -= STAT_TABLE_H + 14;
 
     page.drawLine({
       start: { x: MARGIN, y },
