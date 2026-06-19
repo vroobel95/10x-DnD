@@ -1,8 +1,8 @@
 ---
 change_id: ux-improvements
-status: proposed
+status: implementing
 created: 2026-06-01
-updated: 2026-06-01
+updated: 2026-06-19
 roadmap_id: S-08
 prd_refs: —
 ---

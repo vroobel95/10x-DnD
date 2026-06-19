@@ -1,8 +1,26 @@
 ---
 import Welcome from "@/components/Welcome.astro";
 import Layout from "@/layouts/Layout.astro";
+import { createClient } from "@/lib/supabase";
+
+const user = Astro.locals.user;
+
+let recentCampaigns: { id: string; name: string; updated_at: string }[] = [];
+
+if (user) {
+  const supabase = createClient(Astro.request.headers, Astro.cookies);
+  if (supabase) {
+    const { data } = await supabase
+      .from("campaigns")
+      .select("id, name, updated_at")
+      .eq("user_id", user.id)
+      .order("updated_at", { ascending: false })
+      .limit(3);
+    recentCampaigns = data ?? [];
+  }
+}
 ---
 
-<Layout>
-  <Welcome />
+<Layout title="DnD 5enemy">
+  <Welcome user={user} recentCampaigns={recentCampaigns} />
 </Layout>
