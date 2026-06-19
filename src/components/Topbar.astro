@@ -2,36 +2,35 @@
 const { user } = Astro.locals;
 ---
 
-<div
-  class="mb-4 flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/80"
->
-  {
-    user ? (
-      <>
-        <span class="text-blue-100/70">{user.email}</span>
-        <div class="flex items-center gap-3">
-          <a href="/campaigns" class="text-purple-300 transition-colors hover:text-purple-100 hover:underline">
-            Campaigns
+{
+  user && (
+    <div class="px-4 pt-4 pb-2 sm:px-8">
+      <div class="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/80 backdrop-blur-xl">
+        <span class="truncate text-blue-100/70">{user.email}</span>
+        <div class="flex shrink-0 items-center gap-3">
+          <a href="/" class="text-white/60 transition-colors hover:text-white" aria-label="Home">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+              <path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            </svg>
           </a>
           <form method="POST" action="/api/auth/signout">
-            <button type="submit" class="text-purple-300 transition-colors hover:text-purple-100 hover:underline">
+            <button type="submit" class="text-rose-300 transition-colors hover:text-rose-100">
               Sign out
             </button>
           </form>
         </div>
-      </>
-    ) : (
-      <>
-        <span class="text-blue-100/70">Not signed in</span>
-        <div class="flex gap-3">
-          <a href="/auth/signin" class="text-purple-300 transition-colors hover:text-purple-100 hover:underline">
-            Sign in
-          </a>
-          <a href="/auth/signup" class="text-purple-300 transition-colors hover:text-purple-100 hover:underline">
-            Sign up
-          </a>
-        </div>
-      </>
-    )
-  }
-</div>
+      </div>
+    </div>
+  )
+}

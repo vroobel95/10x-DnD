@@ -69,7 +69,7 @@ export default function EnvironmentSection({ battleId, location, initialEnvironm
         }}
         disabled={isGenerating || !canGenerate}
         title={!canGenerate ? "Set a location on this battle to generate an environment" : undefined}
-        className="flex items-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-purple-500 disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex items-center gap-2 rounded-lg bg-[#701c3b] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#9f1239] disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isGenerating ? (
           <>

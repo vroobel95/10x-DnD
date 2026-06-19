@@ -221,7 +221,7 @@ export default function EnemiesSection({
             placeholder="e.g. 2 ice wolves and a frost troll"
             rows={3}
             disabled={isGenerating}
-            className="w-full resize-none rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-blue-100/30 focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 focus:outline-none disabled:opacity-50"
+            className="w-full resize-none rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-blue-100/30 focus:border-rose-500/50 focus:ring-1 focus:ring-rose-500/50 focus:outline-none disabled:opacity-50"
           />
           {generateError && (
             <p className="flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-900/30 px-3 py-2 text-sm text-red-300">
@@ -231,7 +231,7 @@ export default function EnemiesSection({
           <button
             type="submit"
             disabled={isGenerating || !prompt.trim()}
-            className="flex items-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-purple-500 disabled:opacity-50"
+            className="flex items-center gap-2 rounded-lg bg-[#701c3b] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#9f1239] disabled:opacity-50"
           >
             {isGenerating ? (
               <>
@@ -282,7 +282,7 @@ export default function EnemiesSection({
                 void handleExport();
               }}
               disabled={isExporting}
-              className="flex items-center gap-2 rounded-lg bg-purple-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-purple-500 disabled:opacity-50"
+              className="flex items-center gap-2 rounded-lg bg-[#701c3b] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-[#9f1239] disabled:opacity-50"
             >
               {isExporting ? (
                 <>

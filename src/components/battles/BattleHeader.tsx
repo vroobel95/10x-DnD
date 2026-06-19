@@ -122,7 +122,7 @@ export default function BattleHeader({
             <Button
               type="submit"
               disabled={isLoading}
-              className="rounded-lg bg-purple-600 px-4 py-2 font-medium text-white transition-colors hover:bg-purple-500"
+              className="rounded-lg bg-[#701c3b] px-4 py-2 font-medium text-white transition-colors hover:bg-[#9f1239]"
             >
               {isLoading ? (
                 <>
@@ -153,7 +153,7 @@ export default function BattleHeader({
   return (
     <>
       <div className="group relative mb-6 flex items-start gap-3">
-        <h1 className="bg-linear-to-r from-blue-200 to-purple-200 bg-clip-text text-3xl font-bold text-transparent">
+        <h1 className="bg-linear-to-r from-blue-200 to-rose-200 bg-clip-text text-3xl font-bold text-transparent">
           {committed.name}
         </h1>
         <button

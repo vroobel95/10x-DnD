@@ -27,7 +27,7 @@ interface EditFormProps {
 }
 
 const inputCls =
-  "rounded border border-white/10 bg-white/5 px-2 py-1 text-sm text-white focus:border-purple-500/50 focus:outline-none";
+  "rounded border border-white/10 bg-white/5 px-2 py-1 text-sm text-white focus:border-rose-500/50 focus:outline-none";
 
 function modifier(score: number): string {
   const mod = Math.floor((score - 10) / 2);
@@ -60,7 +60,7 @@ function EnemyEditForm({ initialStats, onSave, onCancel, isLoading }: EditFormPr
           onChange={(e) => {
             setDraft((prev) => ({ ...prev, name: e.target.value }));
           }}
-          className="flex-1 rounded border border-white/10 bg-white/5 px-3 py-1.5 text-lg font-bold text-white focus:border-purple-500/50 focus:outline-none"
+          className="flex-1 rounded border border-white/10 bg-white/5 px-3 py-1.5 text-lg font-bold text-white focus:border-rose-500/50 focus:outline-none"
         />
         <div className="flex shrink-0 items-center gap-1">
           <span className="text-xs text-blue-100/50">CR</span>
@@ -129,7 +129,7 @@ function EnemyEditForm({ initialStats, onSave, onCancel, isLoading }: EditFormPr
               onChange={(e) => {
                 setDraft((prev) => ({ ...prev, [attr]: e.target.valueAsNumber }));
               }}
-              className="w-full rounded border border-white/10 bg-white/5 px-1 py-0.5 text-center text-sm text-white focus:border-purple-500/50 focus:outline-none"
+              className="w-full rounded border border-white/10 bg-white/5 px-1 py-0.5 text-center text-sm text-white focus:border-rose-500/50 focus:outline-none"
             />
           </div>
         ))}
@@ -151,7 +151,7 @@ function EnemyEditForm({ initialStats, onSave, onCancel, isLoading }: EditFormPr
                       saving_throws: { ...prev.saving_throws, [k]: e.target.valueAsNumber },
                     }));
                   }}
-                  className="w-12 rounded border border-white/10 bg-white/5 px-1 py-0.5 text-center text-xs text-white focus:border-purple-500/50 focus:outline-none"
+                  className="w-12 rounded border border-white/10 bg-white/5 px-1 py-0.5 text-center text-xs text-white focus:border-rose-500/50 focus:outline-none"
                 />
               </label>
             ))}
@@ -175,7 +175,7 @@ function EnemyEditForm({ initialStats, onSave, onCancel, isLoading }: EditFormPr
                       skill_modifiers: { ...prev.skill_modifiers, [k]: e.target.valueAsNumber },
                     }));
                   }}
-                  className="w-12 rounded border border-white/10 bg-white/5 px-1 py-0.5 text-center text-xs text-white focus:border-purple-500/50 focus:outline-none"
+                  className="w-12 rounded border border-white/10 bg-white/5 px-1 py-0.5 text-center text-xs text-white focus:border-rose-500/50 focus:outline-none"
                 />
               </label>
             ))}
@@ -220,7 +220,7 @@ function EnemyEditForm({ initialStats, onSave, onCancel, isLoading }: EditFormPr
             onSave(draft);
           }}
           disabled={isLoading}
-          className="flex-1 rounded-lg bg-purple-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-purple-500 disabled:opacity-50"
+          className="flex-1 rounded-lg bg-[#701c3b] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-[#9f1239] disabled:opacity-50"
         >
           {isLoading ? "..." : "Save"}
         </button>
@@ -348,7 +348,7 @@ export function EnemyCard({
           <button
             onClick={onConfirm}
             disabled={isLoading}
-            className="flex-1 rounded-lg bg-purple-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-purple-500 disabled:opacity-50"
+            className="flex-1 rounded-lg bg-[#701c3b] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-[#9f1239] disabled:opacity-50"
           >
             {isLoading ? "..." : "Confirm"}
           </button>

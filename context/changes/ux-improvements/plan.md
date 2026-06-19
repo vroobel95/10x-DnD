@@ -178,6 +178,164 @@ _(none)_
 
 ---
 
+## Phase 4: Topbar Redesign + Global Header
+
+### Overview
+
+Redesign the Topbar to be a sticky full-width header, move it into Layout.astro so it appears on every page, and remove inline sign-out buttons from page bodies.
+
+### Changes Required:
+
+#### 1. Redesign Topbar.astro
+
+**File**: `src/components/Topbar.astro`
+
+**Intent**: Replace the current pill-shaped Topbar with a sticky, full-width header. Logged-in: email on left, home icon link + sign-out button on right. Logged-out: "Not signed in" text only (no sign-in/sign-up links here — those live on the landing page).
+
+**Contract**: `sticky top-0 z-20`, `border-b border-white/10 bg-black/40 backdrop-blur-xl`. Use a `<header>` element. Home icon → inline SVG house (24×24 stroke), links to `/`. Sign-out button uses rose-300/rose-100 colors.
+
+#### 2. Move Topbar into Layout.astro
+
+**File**: `src/layouts/Layout.astro`
+
+**Intent**: Import Topbar and render it as the first child of `<body>`. Update the default page title.
+
+**Contract**: `<Topbar />` renders before the banner list and `<slot />`. Default `title` prop changes from `"10x Astro Starter"` to `"DnD 5enemy"`.
+
+#### 3. Remove Topbar from Welcome.astro
+
+**File**: `src/components/Welcome.astro`
+
+**Intent**: Topbar now comes from Layout, so the import and usage in Welcome.astro must be removed.
+
+**Contract**: No `import Topbar` line, no `<Topbar />` element.
+
+#### 4. Remove sign-out from campaigns/index.astro
+
+**File**: `src/pages/campaigns/index.astro`
+
+**Intent**: The inline sign-out form at the bottom is now redundant — the Topbar handles it.
+
+**Contract**: Remove the `<form method="POST" action="/api/auth/signout">` block entirely.
+
+#### 5. Remove sign-out from campaigns/[id].astro
+
+**File**: `src/pages/campaigns/[id].astro`
+
+**Intent**: Same — remove the inline sign-out form at the bottom.
+
+**Contract**: Remove the `<form method="POST" action="/api/auth/signout">` block entirely.
+
+### Success Criteria:
+
+#### Automated Verification:
+
+- Build passes: `npm run build`
+- Linting passes: `npm run lint`
+
+#### Manual Verification:
+
+- Topbar is visible on every page (landing, campaigns list, campaign detail, battle detail)
+- Topbar sticks to the top when scrolling
+- Logged-in: email on left, home icon + Sign out on right
+- Logged-out: "Not signed in" on left only, no links
+- Sign-out works and redirects to sign-in
+- Home icon navigates to `/`
+- Campaigns list and campaign detail no longer show inline sign-out button
+
+---
+
+## Phase 5: Rose-800 Color Theme
+
+### Overview
+
+Replace all interactive UI purple accents with rose-800 (dark maroon). Preserve decorative elements: cosmic orbs (`bg-purple-500/20`) and heading gradients (`from-blue-200 via-purple-200 to-pink-200`) stay purple.
+
+### Changes Required:
+
+#### 1. SubmitButton.tsx
+
+**File**: `src/components/auth/SubmitButton.tsx`
+
+**Contract**: `bg-purple-600 hover:bg-purple-500` → `bg-rose-800 hover:bg-rose-700`.
+
+#### 2. BattleHeader.tsx
+
+**File**: `src/components/battles/BattleHeader.tsx`
+
+**Contract**: Save Changes button: `bg-purple-600 hover:bg-purple-500` → `bg-rose-800 hover:bg-rose-700`.
+
+#### 3. EnemiesSection.tsx
+
+**File**: `src/components/battles/EnemiesSection.tsx`
+
+**Contract**: Generate and Export PDF buttons: `bg-purple-600 hover:bg-purple-500` → `bg-rose-800 hover:bg-rose-700`. Textarea focus ring: `focus:border-purple-500/50 focus:ring-purple-500/50` → `focus:border-rose-500/50 focus:ring-rose-500/50`.
+
+#### 4. EnemyCard.tsx
+
+**File**: `src/components/battles/EnemyCard.tsx`
+
+**Contract**: Confirm button and Edit form Save button: `bg-purple-600 hover:bg-purple-500` → `bg-rose-800 hover:bg-rose-700`. All input focus borders: `focus:border-purple-500/50` → `focus:border-rose-500/50`.
+
+#### 5. EnvironmentSection.tsx
+
+**File**: `src/components/battles/EnvironmentSection.tsx`
+
+**Contract**: `bg-purple-600 hover:bg-purple-500` → `bg-rose-800 hover:bg-rose-700`.
+
+#### 6. CampaignList.tsx
+
+**File**: `src/components/campaigns/CampaignList.tsx`
+
+**Contract**: Rename Save button: `bg-purple-600 hover:bg-purple-500` → `bg-rose-800 hover:bg-rose-700`. Campaign link hover: `hover:text-purple-300` → `hover:text-rose-300`. Rename input focus: `focus:border-purple-400/60` → `focus:border-rose-400/60`.
+
+#### 7. CampaignBattleList.tsx
+
+**File**: `src/components/campaigns/CampaignBattleList.tsx`
+
+**Contract**: Empty-state CTA: `bg-purple-600 hover:bg-purple-500` → `bg-rose-800 hover:bg-rose-700`. Battle link hover: `hover:text-purple-300` → `hover:text-rose-300`. Card hover border: `hover:border-purple-400/30` → `hover:border-rose-400/30`.
+
+#### 8. Welcome.astro
+
+**File**: `src/components/Welcome.astro`
+
+**Contract**: Hero CTA button: `bg-purple-600 hover:bg-purple-500` → `bg-rose-800 hover:bg-rose-700`. Campaign card hover border: `hover:border-purple-400/30` → `hover:border-rose-400/30`. Empty state link: `text-purple-300 hover:text-purple-200` → `text-rose-300 hover:text-rose-200`. Feature card SVG icons: `class="mb-4 text-purple-300"` → `class="mb-4 text-rose-300"` (×3). Do NOT touch `bg-purple-500/20` or heading gradients.
+
+#### 9. campaigns/index.astro
+
+**File**: `src/pages/campaigns/index.astro`
+
+**Contract**: New Campaign button: `bg-purple-600 hover:bg-purple-500` → `bg-rose-800 hover:bg-rose-700`.
+
+#### 10. campaigns/[id].astro
+
+**File**: `src/pages/campaigns/[id].astro`
+
+**Contract**: New Battle button: `bg-purple-600 hover:bg-purple-500` → `bg-rose-800 hover:bg-rose-700`.
+
+#### 11. BattleCard.astro
+
+**File**: `src/components/battles/BattleCard.astro`
+
+**Contract**: Card hover border: `hover:border-purple-400/30` → `hover:border-rose-400/30`.
+
+### Success Criteria:
+
+#### Automated Verification:
+
+- Build passes: `npm run build`
+- Linting passes: `npm run lint`
+
+#### Manual Verification:
+
+- All primary action buttons are dark maroon (rose-800), not purple
+- Card hover borders are rose-tinted, not purple
+- Form focus rings are rose-tinted, not purple
+- Heading gradients and cosmic orbs remain purple (unchanged)
+- No visual regression on auth pages (Sign In / Sign Up)
+
+---
+
 ## Testing Strategy
 
 ### Manual Testing Steps:
@@ -217,23 +375,55 @@ _(none)_
 
 #### Automated
 
-- [x] 2.1 Build passes: `npm run build`
-- [x] 2.2 Linting passes: `npm run lint`
+- [x] 2.1 Build passes: `npm run build` — 2b9fc93
+- [x] 2.2 Linting passes: `npm run lint` — 2b9fc93
 
 #### Manual
 
-- [x] 2.3 Clicking a battle card immediately shows opacity-fade and wait cursor
-- [x] 2.4 Loading state persists until the new page loads
-- [x] 2.5 Multiple cards each respond independently to their own click
-- [x] 2.6 Keyboard navigation (Enter on focused card) also triggers loading state
+- [x] 2.3 Clicking a battle card immediately shows opacity-fade and wait cursor — 2b9fc93
+- [x] 2.4 Loading state persists until the new page loads — 2b9fc93
+- [x] 2.5 Multiple cards each respond independently to their own click — 2b9fc93
+- [x] 2.6 Keyboard navigation (Enter on focused card) also triggers loading state — 2b9fc93
 
 ### Phase 3: Verify Form Submit Feedback
 
 #### Automated
 
-- [ ] 3.1 TypeScript check passes: `npm run typecheck`
+- [x] 3.1 TypeScript check passes: `npm run typecheck`
 
 #### Manual
 
-- [ ] 3.2 Submit with valid name: button disables and shows "Creating..."
-- [ ] 3.3 Submit with empty name: validation error shows, no loading state triggered
+- [x] 3.2 Submit with valid name: button disables and shows "Creating..."
+- [x] 3.3 Submit with empty name: validation error shows, no loading state triggered
+
+### Phase 4: Topbar Redesign + Global Header
+
+#### Automated
+
+- [x] 4.1 Build passes: `npm run build`
+- [x] 4.2 Linting passes: `npm run lint`
+
+#### Manual
+
+- [x] 4.3 Topbar visible on every page (landing, campaigns, campaign detail, battle detail)
+- [x] 4.4 Topbar sticks to top when scrolling
+- [x] 4.5 Logged-in: email left, home icon + Sign out right
+- [x] 4.6 Logged-out: navbar hidden entirely (revised from "Not signed in" text)
+- [x] 4.7 Sign-out works and redirects to sign-in
+- [x] 4.8 Home icon navigates to `/`
+- [x] 4.9 Campaigns list and campaign detail no longer show inline sign-out
+
+### Phase 5: Rose-800 Color Theme
+
+#### Automated
+
+- [x] 5.1 Build passes: `npm run build`
+- [x] 5.2 Linting passes: `npm run lint`
+
+#### Manual
+
+- [x] 5.3 Primary action buttons are dark maroon (rose-800), not purple
+- [x] 5.4 Card hover borders are rose-tinted, not purple
+- [x] 5.5 Form focus rings are rose-tinted, not purple
+- [x] 5.6 Heading gradients and cosmic orbs remain purple (unchanged)
+- [x] 5.7 No visual regression on auth pages (Sign In / Sign Up)

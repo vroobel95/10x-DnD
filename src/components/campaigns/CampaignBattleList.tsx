@@ -48,7 +48,7 @@ export default function CampaignBattleList({ battles: initial, campaignId }: Pro
         <p className="mb-6 text-sm text-blue-100/60">Create your first battle to get started.</p>
         <a
           href={`/battles/new?campaignId=${campaignId}`}
-          className="inline-flex items-center justify-center rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-purple-500"
+          className="inline-flex items-center justify-center rounded-lg bg-[#701c3b] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#9f1239]"
         >
           Create your first battle
         </a>
@@ -77,14 +77,14 @@ export default function CampaignBattleList({ battles: initial, campaignId }: Pro
         return (
           <div
             key={battle.id}
-            className={`rounded-xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl transition-colors hover:border-purple-400/30 ${isNavigating ? "pointer-events-none cursor-wait opacity-60" : ""}`}
+            className={`rounded-xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl transition-colors hover:border-rose-400/30 ${isNavigating ? "pointer-events-none cursor-wait opacity-60" : ""}`}
           >
             <a
               href={`/battles/${battle.id}`}
               onClick={() => {
                 setNavigatingId(battle.id);
               }}
-              className="mb-2 block text-base font-semibold text-white hover:text-purple-300"
+              className="mb-2 block text-base font-semibold text-white hover:text-rose-300"
             >
               {battle.name}
             </a>

@@ -83,7 +83,7 @@ export default function CampaignList({ campaigns: initial }: Props) {
     return (
       <div className="rounded-xl border border-white/10 bg-white/5 p-10 text-center backdrop-blur-xl">
         <p className="mb-2 text-lg font-semibold text-white">No campaigns yet</p>
-        <a href="/campaigns/new" className="text-sm text-purple-300 hover:underline">
+        <a href="/campaigns/new" className="text-sm text-rose-300 hover:underline">
           Create your first campaign
         </a>
       </div>
@@ -112,7 +112,7 @@ export default function CampaignList({ campaigns: initial }: Props) {
             {isEditing ? (
               <div className="mb-3 flex gap-2">
                 <input
-                  className="flex-1 rounded-lg border border-white/20 bg-white/10 px-3 py-1.5 text-sm text-white placeholder-blue-100/40 focus:border-purple-400/60 focus:outline-none"
+                  className="flex-1 rounded-lg border border-white/20 bg-white/10 px-3 py-1.5 text-sm text-white placeholder-blue-100/40 focus:border-rose-400/60 focus:outline-none"
                   value={renamingDraft}
                   onChange={(e) => {
                     setRenamingDraft(e.target.value);
@@ -127,7 +127,7 @@ export default function CampaignList({ campaigns: initial }: Props) {
                 <button
                   onClick={() => handleRenameSave(campaign.id)}
                   disabled={isLoading}
-                  className="rounded-lg bg-purple-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-purple-500 disabled:opacity-50"
+                  className="rounded-lg bg-[#701c3b] px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-[#9f1239] disabled:opacity-50"
                 >
                   Save
                 </button>
@@ -141,7 +141,7 @@ export default function CampaignList({ campaigns: initial }: Props) {
             ) : (
               <a
                 href={`/campaigns/${campaign.id}`}
-                className="mb-2 block text-base font-semibold text-white hover:text-purple-300"
+                className="mb-2 block text-base font-semibold text-white hover:text-rose-300"
               >
                 {campaign.name}
               </a>
