@@ -10,6 +10,7 @@ export default function CampaignBattleList({ battles: initial, campaignId }: Pro
   const [battles, setBattles] = useState(initial);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [navigatingId, setNavigatingId] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
 
   function handleDeleteStart(id: string) {
@@ -65,6 +66,7 @@ export default function CampaignBattleList({ battles: initial, campaignId }: Pro
       {battles.map((battle) => {
         const isDeleting = deletingId === battle.id;
         const isLoading = loadingId === battle.id;
+        const isNavigating = navigatingId === battle.id;
         const partyLevel = battle.party_level != null ? `Level ${battle.party_level}` : "—";
         const createdDate = new Date(battle.created_at).toLocaleDateString("en-US", {
           year: "numeric",
@@ -75,10 +77,13 @@ export default function CampaignBattleList({ battles: initial, campaignId }: Pro
         return (
           <div
             key={battle.id}
-            className="rounded-xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl transition-colors hover:border-purple-400/30"
+            className={`rounded-xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl transition-colors hover:border-purple-400/30 ${isNavigating ? "pointer-events-none cursor-wait opacity-60" : ""}`}
           >
             <a
               href={`/battles/${battle.id}`}
+              onClick={() => {
+                setNavigatingId(battle.id);
+              }}
               className="mb-2 block text-base font-semibold text-white hover:text-purple-300"
             >
               {battle.name}

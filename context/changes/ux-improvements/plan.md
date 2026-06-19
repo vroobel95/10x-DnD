@@ -203,29 +203,29 @@ _(none)_
 
 #### Automated
 
-- [x] 1.1 Build passes: `npm run build`
-- [x] 1.2 Linting passes: `npm run lint`
+- [x] 1.1 Build passes: `npm run build` — f1abda9
+- [x] 1.2 Linting passes: `npm run lint` — f1abda9
 
 #### Manual
 
-- [x] 1.3 Landing page shows "DnD 5enemy" as the heading
-- [x] 1.4 Subtitle reads the product pitch
-- [x] 1.5 Three feature cards show DnD 5enemy product benefits with appropriate icons
-- [x] 1.6 No regressions in other pages (Sign In, Sign Up, battles list)
+- [x] 1.3 Landing page shows "DnD 5enemy" as the heading — f1abda9
+- [x] 1.4 Subtitle reads the product pitch — f1abda9
+- [x] 1.5 Three feature cards show DnD 5enemy product benefits with appropriate icons — f1abda9
+- [x] 1.6 No regressions in other pages (Sign In, Sign Up, battles list) — f1abda9
 
 ### Phase 2: BattleCard Navigation Feedback
 
 #### Automated
 
-- [ ] 2.1 Build passes: `npm run build`
-- [ ] 2.2 Linting passes: `npm run lint`
+- [x] 2.1 Build passes: `npm run build`
+- [x] 2.2 Linting passes: `npm run lint`
 
 #### Manual
 
-- [ ] 2.3 Clicking a battle card immediately shows opacity-fade and wait cursor
-- [ ] 2.4 Loading state persists until the new page loads
-- [ ] 2.5 Multiple cards each respond independently to their own click
-- [ ] 2.6 Keyboard navigation (Enter on focused card) also triggers loading state
+- [x] 2.3 Clicking a battle card immediately shows opacity-fade and wait cursor
+- [x] 2.4 Loading state persists until the new page loads
+- [x] 2.5 Multiple cards each respond independently to their own click
+- [x] 2.6 Keyboard navigation (Enter on focused card) also triggers loading state
 
 ### Phase 3: Verify Form Submit Feedback
 
