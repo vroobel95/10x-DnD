@@ -6,7 +6,7 @@ import { POST } from "@/pages/api/auth/signup";
 vi.mock("@/lib/supabase", () => ({ createClient: vi.fn() }));
 
 function makeContext(
-  fields: Record<string, string> = { email: "test@example.com", password: "password123" },
+  fields: Record<string, string> = { email: "test@example.com", password: "Password123!" },
 ): APIContext {
   const body = new URLSearchParams(fields).toString();
   return {
@@ -51,6 +51,24 @@ describe("POST /api/auth/signup", () => {
     const location = res.headers.get("location") ?? "";
     expect(location).toContain(encodeURIComponent("Could not create account. Please try again."));
     expect(location).not.toContain("User already registered");
+  });
+
+  it("redirects with safe error message when password is too weak", async () => {
+    vi.mocked(createClient).mockReturnValue(
+      makeSignupMock({
+        error: {
+          message: "Password should contain at least one character of each: ...",
+          code: "weak_password",
+          status: 422,
+        },
+      }),
+    );
+    const res = await POST(makeContext({ email: "test@example.com", password: "password123" }));
+    expect(res.status).toBe(302);
+    const location = res.headers.get("location") ?? "";
+    expect(location).toContain(encodeURIComponent("Could not create account. Please try again."));
+    expect(location).not.toContain("weak_password");
+    expect(location).not.toContain("Password should contain");
   });
 
   it("redirects to /auth/confirm-email on successful sign-up", async () => {

@@ -6,6 +6,12 @@ import { SubmitButton } from "@/components/auth/SubmitButton";
 import { ServerError } from "@/components/auth/ServerError";
 
 const MIN_PASSWORD_LENGTH = 6;
+const PASSWORD_RULES = [
+  { re: /[a-z]/, label: "one lowercase letter" },
+  { re: /[A-Z]/, label: "one uppercase letter" },
+  { re: /[0-9]/, label: "one number" },
+  { re: /[!@#$%^&*()_+\-=[\]{};':"\\|<>?,./`~]/, label: "one special character" },
+];
 
 interface Props {
   serverError?: string | null;
@@ -32,6 +38,11 @@ export default function SignUpForm({ serverError }: Props) {
       next.password = "Password is required";
     } else if (password.length < MIN_PASSWORD_LENGTH) {
       next.password = `Password must be at least ${MIN_PASSWORD_LENGTH} characters`;
+    } else {
+      const failing = PASSWORD_RULES.filter((r) => !r.re.test(password));
+      if (failing.length > 0) {
+        next.password = `Password must contain at least ${failing.map((r) => r.label).join(", ")}`;
+      }
     }
 
     if (!confirmPassword) {
@@ -55,11 +66,8 @@ export default function SignUpForm({ serverError }: Props) {
   }
 
   const passwordHint =
-    !errors.password && password.length > 0 && password.length < MIN_PASSWORD_LENGTH ? (
-      <p className="mt-1 text-xs text-blue-100/50">
-        {MIN_PASSWORD_LENGTH - password.length} more character
-        {MIN_PASSWORD_LENGTH - password.length !== 1 ? "s" : ""} needed
-      </p>
+    !errors.password && password.length > 0 ? (
+      <p className="mt-1 text-xs text-blue-100/50">Use uppercase, lowercase, a number, and a special character</p>
     ) : undefined;
 
   return (
