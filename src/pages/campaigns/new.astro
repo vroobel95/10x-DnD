@@ -2,6 +2,10 @@
 import Layout from "@/layouts/Layout.astro";
 import CreateCampaignForm from "@/components/campaigns/CreateCampaignForm";
 
+if (!Astro.locals.user) {
+  return Astro.redirect("/auth/signin");
+}
+
 const error = Astro.url.searchParams.get("error");
 ---
 

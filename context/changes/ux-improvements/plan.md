@@ -385,6 +385,8 @@ Replace all interactive UI purple accents with rose-800 (dark maroon). Preserve 
 - [x] 2.5 Multiple cards each respond independently to their own click — 2b9fc93
 - [x] 2.6 Keyboard navigation (Enter on focused card) also triggers loading state — 2b9fc93
 
+> **Implementation note (impl-review F1):** Navigation feedback was implemented via `navigatingId` React state in `CampaignBattleList.tsx` (lines 13, 80-86), not via the planned `data-battle-card` / `.is-navigating` Astro script in `BattleCard.astro`. The plan's "No new React islands in BattleCard" constraint was respected (no new island), but the mechanism is React state on an existing island rather than an Astro bundled script. Deviation accepted — feature works, scoping to the list owner is cleaner, and the Astro scoped-style + class-toggle approach had a known CSS hash mismatch risk.
+
 ### Phase 3: Verify Form Submit Feedback
 
 #### Automated
@@ -427,3 +429,6 @@ Replace all interactive UI purple accents with rose-800 (dark maroon). Preserve 
 - [x] 5.5 Form focus rings are rose-tinted, not purple
 - [x] 5.6 Heading gradients and cosmic orbs remain purple (unchanged)
 - [x] 5.7 No visual regression on auth pages (Sign In / Sign Up)
+
+> **Implementation note (impl-review F9):** `src/components/auth/FormField.tsx` (`focus:ring-purple-400` → `focus:ring-rose-400`) was also changed as part of Phase 5 but was not listed in Changes Required. Change is correct and coherent with the rose theme.
+> **Implementation note (impl-review F6):** Cosmic orb in Welcome.astro was changed from `bg-purple-500/20` to `bg-rose-900/25` (user-approved). Phase 5's "do NOT touch" constraint was intentionally overridden.
