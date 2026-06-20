@@ -3,7 +3,7 @@ project: "DnD 5enemy"
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-06-18 (S-07 → impl_reviewed; S-10 → impl_reviewed; S-08 scope expanded)
+updated: 2026-06-20 (S-07 → impl_reviewed; S-10 → impl_reviewed; S-08 scope expanded; S-15 + S-16 added)
 prd_version: 1
 main_goal: speed
 top_blocker: external
@@ -44,6 +44,8 @@ D&D 5e Game Masters lose preparation time hunting stat blocks and manually adjus
 | S-12 | edit-battle                   | edit a battle's name and description after it has been created                                                              | S-01 | —               | impl_reviewed    |
 | S-13 | campaign-new-page             | create a new campaign via a dedicated `/campaigns/new` page (matching the `/battles/new` pattern) instead of an inline form | S-05 | —               | impl_reviewed    |
 | S-14 | readme-update                 | README accurately reflects current tech stack, local setup, Supabase config, Cloudflare deployment, and env vars                   | —    | —               | proposed         |
+| S-15 | pdf-export-environment        | export a battle's enemy cards **and** its environment block together as a single printable PDF                                      | S-07, S-09 | —          | proposed         |
+| S-16 | i18n-polish                   | switch the app between English and Polish; all UI strings, error messages, and AI-generated content language follow the chosen locale | S-08 | —             | proposed         |
 
 ## Baseline
 
@@ -235,6 +237,36 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Risk:** low. Scope is one new `campaigns/new.astro` page with a `CreateCampaignForm` component, one route link from the campaign list, and removal of the inline form from `campaigns/index.astro`. During implementation the API was changed from JSON to formData + redirect (to fix a hydration-gap bug with the fetch/JSON + `client:load` pattern); the form adopted the native POST pattern matching `battles/new.astro`.
 - **Status:** impl_reviewed
 
+### S-15: Export environment + enemies to PDF
+
+- **Outcome:** GM can export a single PDF that contains both the battle's atmospheric environment block (terrain, hazards, lighting, ambiance) and all confirmed enemy cards — giving a complete, print-ready session aid in one document.
+- **Change ID:** pdf-export-environment
+- **PRD refs:** —
+- **Prerequisites:** S-07 (PDF generation approach already proven and the export button exists), S-09 (environment data must be stored before it can appear in the PDF)
+- **Parallel with:** S-16 — no file overlap expected
+- **Blockers:** —
+- **Unknowns:**
+  - Layout of the combined PDF: does the environment section appear on its own first page, as a header section on the first enemy page, or as a sidebar? Decide in `/10x-plan` — this shapes the `pdf-lib` template structure.
+  - Does the environment block need a styled divider / section header to be legible when printed in black-and-white? — Owner: developer.
+- **Risk:** low–medium. The PDF generation infrastructure already exists from S-07; this slice extends the template, not the plumbing. Main risk is layout: fitting environment prose + multiple enemy stat blocks into a coherent print layout without orphaned sections requires careful page-break handling in `pdf-lib`. Sequenced after both S-07 and S-09 so neither the PDF approach nor the environment data model can change under this slice.
+- **Status:** proposed
+
+### S-16: Polish translation and two-language support
+
+- **Outcome:** GM can switch the app between English and Polish via a language toggle in the navbar; all UI strings, labels, error messages, and form placeholders reflect the chosen language; AI generation prompts are adapted so that generated enemy names, environment descriptions, and enemy profiles are returned in the active language; the chosen locale is persisted in a cookie so it survives page reloads.
+- **Change ID:** i18n-polish
+- **PRD refs:** —
+- **Prerequisites:** S-08 (navbar must exist as the home for the language toggle; app UI should be stable before internationalizing all strings)
+- **Parallel with:** S-15 — no file overlap expected; S-14 if README is written in English only and Polish notes are out of scope
+- **Blockers:** —
+- **Unknowns:**
+  - **i18n routing strategy:** Astro 6 has built-in i18n routing (`i18n.locales`, `i18n.defaultLocale`) with optional URL prefixes (`/pl/...`). Alternative: locale is stored in a cookie with no URL change, and a React context provides translated strings. Cookie-only is simpler but URL-based is more SEO-friendly and shareable. Decide in `/10x-plan`. — Owner: developer. Block: soft.
+  - **AI prompt language:** should the system prompt instruct the model to respond in the active locale, or should content always be generated in English and translated client-side? Generating directly in Polish avoids translation quality issues but requires prompt testing for D&D terminology correctness in Polish. — Owner: developer. Block: soft.
+  - **Translation file format:** `i18next` JSON, Astro's native `Content Collections`-based approach, or a simple flat TS object map? The choice affects bundle size and how server-side `.astro` pages access strings vs. client React components. — Owner: developer. Block: soft.
+  - **D&D terminology in Polish:** some D&D 5e terms have accepted Polish equivalents (e.g. "Klasa Pancerza" for AC, "Punkty Życia" for HP) but many are left in English by Polish players. The translation must choose a convention and apply it consistently across generated content and UI. — Owner: user/developer jointly.
+- **Risk:** medium. The blast radius is the entire app: every `.astro` page and every React component that renders a user-visible string must be migrated to use translation keys. Risk areas: (1) Astro SSR pages have no React context — server-side string access must go through Astro's `locals` or a utility that reads the locale cookie; (2) AI prompts are currently English-only strings in server-side API routes — each must branch on locale; (3) error messages from Supabase (e.g. auth errors) arrive in English and may need mapping to Polish equivalents; (4) the PDF export (S-07, S-15) must also render in the correct locale. Sequenced after S-08 so the navbar toggle has a stable home and all major UI surfaces are finalized before translation keys are assigned.
+- **Status:** proposed
+
 ### S-14: Update README
 
 - **Outcome:** README.md accurately describes the project — what it does, the current tech stack (Astro 6 + React 19 + Tailwind 4 + shadcn/ui + Supabase + Cloudflare Workers), local development setup, required environment variables, Supabase migration steps, and Cloudflare deployment instructions — so a new contributor can clone and run the app without needing to ask.
@@ -264,6 +296,8 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-12       | edit-battle                   | Edit a battle's name and description                    | yes                   | Needs S-01 implemented; low complexity — PATCH endpoint + form    |
 | S-13       | campaign-new-page             | Dedicated /campaigns/new creation page                  | —                     | impl_reviewed — complete                                          |
 | S-14       | readme-update                 | Update README with current stack, setup, env vars, and deployment | yes             | No deps; purely documentation; parallel with any slice            |
+| S-15       | pdf-export-environment        | Export environment block + enemy cards together as one PDF        | no              | Needs S-07 and S-09 implemented; low complexity — extends existing pdf-lib template |
+| S-16       | i18n-polish                   | Polish translation and two-language support (EN/PL)               | no              | Needs S-08 (navbar for toggle); i18n routing strategy and AI prompt language must be resolved in `/10x-plan` before implementation |
 
 ## Open Roadmap Questions
 
