@@ -1,9 +1,15 @@
-import { defineMiddleware } from "astro:middleware";
+import { defineMiddleware, sequence } from "astro:middleware";
 import { createClient } from "@/lib/supabase";
+import { paraglideMiddleware } from "@/paraglide/server.js";
 
 const PROTECTED_ROUTES = ["/battles", "/campaigns"];
 
-export const onRequest = defineMiddleware(async (context, next) => {
+// Resolve the active locale (cookie strategy) and run the rest of the request
+// inside Paraglide's AsyncLocalStorage scope so getLocale()/m.*() work in SSR.
+// No URL rewriting happens with the cookie strategy, so next() needs no request arg.
+const i18nMiddleware = defineMiddleware((context, next) => paraglideMiddleware(context.request, () => next()));
+
+const authMiddleware = defineMiddleware(async (context, next) => {
   const supabase = createClient(context.request.headers, context.cookies);
 
   if (supabase) {
@@ -34,3 +40,5 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   return next();
 });
+
+export const onRequest = sequence(i18nMiddleware, authMiddleware);

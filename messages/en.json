@@ -1,0 +1,6 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "nav_home": "Home",
+  "nav_sign_out": "Sign out",
+  "locale_switcher_label": "Language"
+}

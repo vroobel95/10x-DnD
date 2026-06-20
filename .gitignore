@@ -4,6 +4,9 @@ dist/
 # generated types
 .astro/
 
+# paraglide i18n (compiled by the vite plugin on dev/build)
+src/paraglide/
+
 # dependencies
 node_modules/
 
