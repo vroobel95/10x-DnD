@@ -55,7 +55,7 @@ export default function EnemiesSection({
       } else {
         setPending((prev) => [...(data.enemies ?? []), ...prev]);
         setPrompt("");
-        if (data.main_enemy_id) {
+        if (data.main_enemy_id && mainEnemyId === null) {
           setMainEnemyId(data.main_enemy_id);
           setMainEnemyProfile(data.main_enemy_profile ?? null);
         }

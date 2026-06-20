@@ -216,6 +216,7 @@ function EnemyEditForm({ initialStats, onSave, onCancel, isLoading }: EditFormPr
 
       <div className="flex gap-2 border-t border-white/10 pt-3">
         <button
+          type="button"
           onClick={() => {
             onSave(draft);
           }}
@@ -225,6 +226,7 @@ function EnemyEditForm({ initialStats, onSave, onCancel, isLoading }: EditFormPr
           {isLoading ? "..." : "Save"}
         </button>
         <button
+          type="button"
           onClick={onCancel}
           disabled={isLoading}
           className="flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium text-blue-100/70 transition-colors hover:bg-white/10 disabled:opacity-50"
@@ -346,6 +348,7 @@ export function EnemyCard({
       {isPending && (
         <div className="flex gap-2 border-t border-white/10 pt-3">
           <button
+            type="button"
             onClick={onConfirm}
             disabled={isLoading}
             className="flex-1 rounded-lg bg-[#701c3b] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-[#9f1239] disabled:opacity-50"
@@ -353,6 +356,7 @@ export function EnemyCard({
             {isLoading ? "..." : "Confirm"}
           </button>
           <button
+            type="button"
             onClick={onDeny}
             disabled={isLoading}
             className="flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium text-blue-100/70 transition-colors hover:bg-white/10 disabled:opacity-50"
@@ -368,6 +372,7 @@ export function EnemyCard({
             <>
               <span className="flex-1 text-sm text-blue-100/70">Remove this enemy?</span>
               <button
+                type="button"
                 onClick={onRemoveConfirm}
                 disabled={isLoading}
                 className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-red-500 disabled:opacity-50"
@@ -375,6 +380,7 @@ export function EnemyCard({
                 {isLoading ? "..." : "Yes"}
               </button>
               <button
+                type="button"
                 onClick={onRemoveCancel}
                 disabled={isLoading}
                 className="rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium text-blue-100/70 transition-colors hover:bg-white/10 disabled:opacity-50"
@@ -385,6 +391,7 @@ export function EnemyCard({
           ) : (
             <>
               <button
+                type="button"
                 onClick={onEditStart}
                 disabled={isLoading}
                 className="flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium text-blue-100/70 transition-colors hover:bg-white/10 disabled:opacity-50"
@@ -392,6 +399,7 @@ export function EnemyCard({
                 Edit
               </button>
               <button
+                type="button"
                 onClick={onRemoveStart}
                 disabled={isLoading}
                 className="flex-1 rounded-lg border border-red-500/30 bg-red-900/10 px-3 py-1.5 text-sm font-medium text-red-400 transition-colors hover:bg-red-900/20 disabled:opacity-50"

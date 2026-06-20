@@ -36,7 +36,7 @@ export const POST: APIRoute = async (context) => {
 
   const battleResult = await supabase
     .from("battles")
-    .select("id, party_level, location, campaign_id, environment")
+    .select("id, party_level, location, campaign_id, environment, main_enemy_id")
     .eq("id", battleId)
     .single();
 
@@ -90,7 +90,7 @@ export const POST: APIRoute = async (context) => {
   let mainEnemyId: string | null = null;
   let mainEnemyProfile: MainEnemyProfile | null = null;
 
-  if (enemyGroup.main_enemy) {
+  if (enemyGroup.main_enemy && !battle.main_enemy_id) {
     const mainEnemy = enemyGroup.main_enemy;
     const insertedRows = insertResult.data as { id: string; name: string }[];
     const mainRow = insertedRows.find((r) => r.name.trim().toLowerCase() === mainEnemy.enemy_name.trim().toLowerCase());
