@@ -477,14 +477,14 @@ the catalog and become locale-driven.
 
 #### Automated
 
-- [x] 3.1 Type checking passes: `npm run typecheck`
-- [x] 3.2 Linting passes: `npm run lint`
-- [x] 3.3 Build passes: `npm run build`
-- [x] 3.4 Existing tests pass: `npm run test` and `npm run test:e2e`
+- [x] 3.1 Type checking passes: `npm run typecheck` — 9dcd318
+- [x] 3.2 Linting passes: `npm run lint` — 9dcd318
+- [x] 3.3 Build passes: `npm run build` — 9dcd318
+- [x] 3.4 Existing tests pass: `npm run test` and `npm run test:e2e` — 9dcd318
 
 #### Manual
 
-- [x] 3.5 Polish enemy generation returns Polish prose with English core game terms
-- [x] 3.6 Polish environment generation returns Polish prose
-- [x] 3.7 English generation output unchanged from current behavior
-- [x] 3.8 Polish D&D terminology reads consistently (core terms in English)
+- [x] 3.5 Polish enemy generation returns Polish prose with English core game terms — 9dcd318
+- [x] 3.6 Polish environment generation returns Polish prose — 9dcd318
+- [x] 3.7 English generation output unchanged from current behavior — 9dcd318
+- [x] 3.8 Polish D&D terminology reads consistently (core terms in English) — 9dcd318
