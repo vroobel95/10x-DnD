@@ -30,9 +30,19 @@ Rules:
 - trivia: an interesting historical, magical, or lore detail about this location.
 Output JSON only.`;
 
+// Steers the language of generated prose. Core D&D 5e game terms stay in English so
+// Polish output keeps recognizable stat shorthand (AC/HP/STR…), matching the UI convention.
+function languageDirective(locale: string): string {
+  if (locale === "pl") {
+    return `\nLanguage: Write all generated prose — names, descriptions, tactics, dialogue, and environment text — in Polish. Keep core D&D 5e game terms and stat abbreviations in English: ability scores (STR, DEX, CON, INT, WIS, CHA), AC, HP, CR, condition names, and dice notation (e.g. 2d6).`;
+  }
+  return "";
+}
+
 export async function generateEnemies(
   battle: Pick<Battle, "party_level" | "location"> & { environment: BattleEnvironment | null },
   prompt: string,
+  locale: string,
 ): Promise<GenerateResult> {
   if (!ANTHROPIC_API_KEY) {
     throw new Error("ANTHROPIC_API_KEY is not configured");
@@ -48,7 +58,7 @@ export async function generateEnemies(
   const { output } = await generateText({
     model: anthropic("claude-sonnet-4-6"),
     output: Output.object({ schema: GenerateResultSchema }),
-    system: ENEMY_SYSTEM_PROMPT,
+    system: ENEMY_SYSTEM_PROMPT + languageDirective(locale),
     prompt: fullPrompt,
   });
 
@@ -57,6 +67,7 @@ export async function generateEnemies(
 
 export async function generateEnvironment(
   battle: Pick<Battle, "party_level" | "location">,
+  locale: string,
 ): Promise<BattleEnvironment> {
   if (!ANTHROPIC_API_KEY) {
     throw new Error("ANTHROPIC_API_KEY is not configured");
@@ -74,7 +85,7 @@ export async function generateEnvironment(
   const { output } = await generateText({
     model: anthropic("claude-sonnet-4-6"),
     output: Output.object({ schema: BattleEnvironmentSchema }),
-    system: ENVIRONMENT_SYSTEM_PROMPT,
+    system: ENVIRONMENT_SYSTEM_PROMPT + languageDirective(locale),
     prompt,
   });
 

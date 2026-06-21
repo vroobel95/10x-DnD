@@ -461,30 +461,30 @@ the catalog and become locale-driven.
 
 #### Automated
 
-- [x] 2.1 Type checking passes: `npm run typecheck`
-- [x] 2.2 Linting passes: `npm run lint`
-- [x] 2.3 Build passes (no missing keys): `npm run build`
-- [x] 2.4 Unit/E2E suites pass: `npm run test` and `npm run test:e2e`
+- [x] 2.1 Type checking passes: `npm run typecheck` — 3798544
+- [x] 2.2 Linting passes: `npm run lint` — 3798544
+- [x] 2.3 Build passes (no missing keys): `npm run build` — 3798544
+- [x] 2.4 Unit/E2E suites pass: `npm run test` and `npm run test:e2e` — 3798544
 
 #### Manual
 
-- [x] 2.5 Each major area (auth, dashboard, campaigns, battles) fully Polish, no leftover English/hardcoded-Polish chrome
-- [x] 2.6 Form placeholders and validation/error messages localized
-- [x] 2.7 An API error shows a localized message
-- [x] 2.8 `en.json` and `pl.json` key sets match
+- [x] 2.5 Each major area (auth, dashboard, campaigns, battles) fully Polish, no leftover English/hardcoded-Polish chrome — 3798544
+- [x] 2.6 Form placeholders and validation/error messages localized — 3798544
+- [x] 2.7 An API error shows a localized message — 3798544
+- [x] 2.8 `en.json` and `pl.json` key sets match — 3798544
 
 ### Phase 3: Localize AI-Generated Content
 
 #### Automated
 
-- [ ] 3.1 Type checking passes: `npm run typecheck`
-- [ ] 3.2 Linting passes: `npm run lint`
-- [ ] 3.3 Build passes: `npm run build`
-- [ ] 3.4 Existing tests pass: `npm run test` and `npm run test:e2e`
+- [x] 3.1 Type checking passes: `npm run typecheck`
+- [x] 3.2 Linting passes: `npm run lint`
+- [x] 3.3 Build passes: `npm run build`
+- [x] 3.4 Existing tests pass: `npm run test` and `npm run test:e2e`
 
 #### Manual
 
-- [ ] 3.5 Polish enemy generation returns Polish prose with English core game terms
-- [ ] 3.6 Polish environment generation returns Polish prose
-- [ ] 3.7 English generation output unchanged from current behavior
-- [ ] 3.8 Polish D&D terminology reads consistently (core terms in English)
+- [x] 3.5 Polish enemy generation returns Polish prose with English core game terms
+- [x] 3.6 Polish environment generation returns Polish prose
+- [x] 3.7 English generation output unchanged from current behavior
+- [x] 3.8 Polish D&D terminology reads consistently (core terms in English)

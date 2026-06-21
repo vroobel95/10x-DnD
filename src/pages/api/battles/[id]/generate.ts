@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";
 import { createClient } from "@/lib/supabase";
 import { generateEnemies } from "@/lib/ai";
 import { m } from "@/paraglide/messages.js";
+import { getLocale } from "@/paraglide/runtime.js";
 import type { BattleEnvironment, MainEnemyProfile } from "@/types";
 
 export const prerender = false;
@@ -69,6 +70,7 @@ export const POST: APIRoute = async (context) => {
     enemyGroup = await generateEnemies(
       { ...battle, environment: battle.environment as BattleEnvironment | null },
       prompt,
+      getLocale(),
     );
   } catch {
     return Response.json({ error: m.err_generation_failed() }, { status: 500 });

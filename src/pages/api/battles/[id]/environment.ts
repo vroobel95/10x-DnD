@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";
 import { createClient } from "@/lib/supabase";
 import { generateEnvironment } from "@/lib/ai";
 import { m } from "@/paraglide/messages.js";
+import { getLocale } from "@/paraglide/runtime.js";
 
 export const prerender = false;
 
@@ -49,7 +50,7 @@ export const POST: APIRoute = async (context) => {
 
   let environment: Awaited<ReturnType<typeof generateEnvironment>>;
   try {
-    environment = await generateEnvironment(battle);
+    environment = await generateEnvironment(battle, getLocale());
   } catch {
     return Response.json({ error: m.err_generation_failed() }, { status: 500 });
   }
