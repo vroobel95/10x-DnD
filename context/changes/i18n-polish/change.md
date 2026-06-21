@@ -1,7 +1,7 @@
 ---
 change_id: i18n-polish
 title: I18n polish
-status: implemented
+status: impl_reviewed
 created: 2026-06-20
 updated: 2026-06-21
 archived_at: null
