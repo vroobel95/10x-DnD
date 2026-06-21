@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { EnemySchema, type EnemyStats, type MainEnemyProfile } from "@/lib/schemas/enemy";
+import { m } from "@/paraglide/messages.js";
 import type { Enemy } from "@/types";
 
 interface Props {
@@ -223,7 +224,7 @@ function EnemyEditForm({ initialStats, onSave, onCancel, isLoading }: EditFormPr
           disabled={isLoading}
           className="flex-1 rounded-lg bg-[#701c3b] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-[#9f1239] disabled:opacity-50"
         >
-          {isLoading ? "..." : "Save"}
+          {isLoading ? m.common_loading_short() : m.common_save()}
         </button>
         <button
           type="button"
@@ -231,7 +232,7 @@ function EnemyEditForm({ initialStats, onSave, onCancel, isLoading }: EditFormPr
           disabled={isLoading}
           className="flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium text-blue-100/70 transition-colors hover:bg-white/10 disabled:opacity-50"
         >
-          Cancel
+          {m.common_cancel()}
         </button>
       </div>
     </div>
@@ -259,7 +260,7 @@ export function EnemyCard({
   if (!parseResult.success) {
     return (
       <div className="rounded-xl border border-red-500/30 bg-red-900/10 p-4 text-sm text-red-300">
-        Could not parse stat block for <strong>{enemy.name}</strong>.
+        {m.enemy_parse_error({ name: enemy.name })}
       </div>
     );
   }
@@ -332,7 +333,7 @@ export function EnemyCard({
 
       {isMain && mainEnemyProfile && (
         <div className="mt-3 border-t border-amber-400/30 pt-3">
-          <p className="mb-2 text-xs font-semibold tracking-wide text-amber-400 uppercase">Main Villain</p>
+          <p className="mb-2 text-xs font-semibold tracking-wide text-amber-400 uppercase">{m.enemy_main_villain()}</p>
           <p className="mb-2 text-sm text-blue-100/80">{mainEnemyProfile.description}</p>
           <p className="mb-2 text-sm text-blue-100/60 italic">{mainEnemyProfile.tactics}</p>
           <div className="space-y-1">
@@ -353,7 +354,7 @@ export function EnemyCard({
             disabled={isLoading}
             className="flex-1 rounded-lg bg-[#701c3b] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-[#9f1239] disabled:opacity-50"
           >
-            {isLoading ? "..." : "Confirm"}
+            {isLoading ? m.common_loading_short() : m.btn_confirm()}
           </button>
           <button
             type="button"
@@ -361,7 +362,7 @@ export function EnemyCard({
             disabled={isLoading}
             className="flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium text-blue-100/70 transition-colors hover:bg-white/10 disabled:opacity-50"
           >
-            {isLoading ? "..." : "Deny"}
+            {isLoading ? m.common_loading_short() : m.btn_deny()}
           </button>
         </div>
       )}
@@ -370,14 +371,14 @@ export function EnemyCard({
         <div className="flex items-center gap-2 border-t border-white/10 pt-3">
           {isRemoving ? (
             <>
-              <span className="flex-1 text-sm text-blue-100/70">Remove this enemy?</span>
+              <span className="flex-1 text-sm text-blue-100/70">{m.enemy_remove_confirm()}</span>
               <button
                 type="button"
                 onClick={onRemoveConfirm}
                 disabled={isLoading}
                 className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-red-500 disabled:opacity-50"
               >
-                {isLoading ? "..." : "Yes"}
+                {isLoading ? m.common_loading_short() : m.btn_yes()}
               </button>
               <button
                 type="button"
@@ -385,7 +386,7 @@ export function EnemyCard({
                 disabled={isLoading}
                 className="rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium text-blue-100/70 transition-colors hover:bg-white/10 disabled:opacity-50"
               >
-                Cancel
+                {m.common_cancel()}
               </button>
             </>
           ) : (
@@ -396,7 +397,7 @@ export function EnemyCard({
                 disabled={isLoading}
                 className="flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium text-blue-100/70 transition-colors hover:bg-white/10 disabled:opacity-50"
               >
-                Edit
+                {m.common_edit()}
               </button>
               <button
                 type="button"
@@ -404,7 +405,7 @@ export function EnemyCard({
                 disabled={isLoading}
                 className="flex-1 rounded-lg border border-red-500/30 bg-red-900/10 px-3 py-1.5 text-sm font-medium text-red-400 transition-colors hover:bg-red-900/20 disabled:opacity-50"
               >
-                Remove
+                {m.common_remove()}
               </button>
             </>
           )}

@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { createClient } from "@/lib/supabase";
+import { m } from "@/paraglide/messages.js";
 
 export const prerender = false;
 
@@ -12,20 +13,16 @@ export const POST: APIRoute = async (context) => {
 
   const supabase = createClient(context.request.headers, context.cookies);
   if (!supabase) {
-    return context.redirect(
-      `/auth/forgot-password?error=${encodeURIComponent("Service unavailable. Please try again later.")}`,
-    );
+    return context.redirect(`/auth/forgot-password?error=${encodeURIComponent(m.api_err_service_unavailable_retry())}`);
   }
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
   if (error) {
     if (error.status === 429) {
-      return context.redirect(`/auth/forgot-password?error=${encodeURIComponent("Please wait before trying again.")}`);
+      return context.redirect(`/auth/forgot-password?error=${encodeURIComponent(m.api_err_rate_limit())}`);
     }
     if (error.status && error.status >= 500) {
-      return context.redirect(
-        `/auth/forgot-password?error=${encodeURIComponent("Something went wrong. Please try again.")}`,
-      );
+      return context.redirect(`/auth/forgot-password?error=${encodeURIComponent(m.api_err_generic())}`);
     }
   }
 

@@ -6,8 +6,11 @@ const PROTECTED_ROUTES = ["/battles", "/campaigns"];
 
 // Resolve the active locale (cookie strategy) and run the rest of the request
 // inside Paraglide's AsyncLocalStorage scope so getLocale()/m.*() work in SSR.
-// No URL rewriting happens with the cookie strategy, so next() needs no request arg.
-const i18nMiddleware = defineMiddleware((context, next) => paraglideMiddleware(context.request, () => next()));
+// Pass Paraglide's (cloned) request to next() — using the original request instead
+// disturbs its body stream and breaks request.formData() in POST endpoints.
+const i18nMiddleware = defineMiddleware((context, next) =>
+  paraglideMiddleware(context.request, ({ request }) => next(request)),
+);
 
 const authMiddleware = defineMiddleware(async (context, next) => {
   const supabase = createClient(context.request.headers, context.cookies);

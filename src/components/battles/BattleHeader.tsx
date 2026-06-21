@@ -3,6 +3,7 @@ import { Pencil, Swords, Hash, MapPin } from "lucide-react";
 import { FormField } from "@/components/auth/FormField";
 import { Button } from "@/components/ui/button";
 import { ServerError } from "@/components/auth/ServerError";
+import { m } from "@/paraglide/messages.js";
 import type { Battle } from "@/types";
 
 interface Props {
@@ -65,7 +66,7 @@ export default function BattleHeader({
       });
       const data = (await res.json()) as { battle?: Battle; error?: string };
       if (!res.ok) {
-        setError(data.error ?? "Could not save changes. Please try again.");
+        setError(data.error ?? m.err_save_changes());
       } else if (data.battle) {
         setCommitted({
           name: data.battle.name,
@@ -74,10 +75,10 @@ export default function BattleHeader({
         });
         setIsEditing(false);
       } else {
-        setError("Unexpected response. Please refresh and try again.");
+        setError(m.err_unexpected_response());
       }
     } catch {
-      setError("Could not save changes. Please try again.");
+      setError(m.err_save_changes());
     } finally {
       setIsLoading(false);
     }
@@ -95,27 +96,27 @@ export default function BattleHeader({
         >
           <FormField
             id="battle-name"
-            label="Battle Name"
+            label={m.create_battle_name_label()}
             value={name}
             onChange={setName}
-            placeholder="e.g. Frozen Cave Ambush"
+            placeholder={m.create_battle_name_placeholder()}
             icon={<Swords className="size-4" />}
           />
           <FormField
             id="battle-party-level"
             type="number"
-            label="Party Level (optional)"
+            label={m.create_battle_level_label()}
             value={partyLevel}
             onChange={setPartyLevel}
-            placeholder="e.g. 5"
+            placeholder={m.create_battle_level_placeholder()}
             icon={<Hash className="size-4" />}
           />
           <FormField
             id="battle-location"
-            label="Location (optional)"
+            label={m.create_battle_location_label()}
             value={location}
             onChange={setLocation}
-            placeholder="e.g. Ice Cave"
+            placeholder={m.create_battle_location_placeholder()}
             icon={<MapPin className="size-4" />}
           />
           <div className="flex gap-3">
@@ -127,12 +128,12 @@ export default function BattleHeader({
               {isLoading ? (
                 <>
                   <span className="size-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                  Saving...
+                  {m.btn_save_changes_pending()}
                 </>
               ) : (
                 <>
                   <Pencil className="size-4" />
-                  Save Changes
+                  {m.btn_save_changes()}
                 </>
               )}
             </Button>
@@ -142,7 +143,7 @@ export default function BattleHeader({
               disabled={isLoading}
               className="rounded-lg border border-white/20 bg-transparent px-4 py-2 font-medium text-blue-100/80 transition-colors hover:bg-white/10"
             >
-              Cancel
+              {m.common_cancel()}
             </Button>
           </div>
         </form>
@@ -160,7 +161,7 @@ export default function BattleHeader({
           type="button"
           onClick={handleEdit}
           className="mt-1 rounded-md p-1.5 text-white/40 opacity-0 transition-all group-hover:opacity-100 hover:bg-white/10 hover:text-white/80 focus-visible:opacity-100"
-          aria-label="Edit battle"
+          aria-label={m.battle_edit_aria()}
         >
           <Pencil className="size-4" />
         </button>
@@ -168,7 +169,7 @@ export default function BattleHeader({
       <div className="mb-8 flex flex-wrap gap-3">
         {committed.partyLevelNum != null && (
           <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-sm text-blue-100/80">
-            Party Level {committed.partyLevelNum}
+            {m.battle_party_level_badge({ level: committed.partyLevelNum })}
           </span>
         )}
         {committed.location && (
@@ -177,7 +178,7 @@ export default function BattleHeader({
           </span>
         )}
         <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-sm text-blue-100/80">
-          Created {createdDate}
+          {m.battle_created({ date: createdDate })}
         </span>
       </div>
     </>

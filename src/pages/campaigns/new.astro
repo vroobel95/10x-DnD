@@ -1,6 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import CreateCampaignForm from "@/components/campaigns/CreateCampaignForm";
+import { m } from "@/paraglide/messages.js";
 
 if (!Astro.locals.user) {
   return Astro.redirect("/auth/signin");
@@ -9,17 +10,17 @@ if (!Astro.locals.user) {
 const error = Astro.url.searchParams.get("error");
 ---
 
-<Layout title="New Campaign">
+<Layout title={m.campaign_new_title()}>
   <div class="bg-cosmic flex h-full items-center justify-center p-4">
     <div class="w-full max-w-sm rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
       <h1
         class="mb-6 bg-linear-to-r from-blue-200 to-rose-200 bg-clip-text text-center text-2xl font-bold text-transparent"
       >
-        New Campaign
+        {m.campaign_new_title()}
       </h1>
       <CreateCampaignForm serverError={error} client:load />
       <p class="mt-4 text-center text-sm text-blue-100/60">
-        <a href="/campaigns" class="text-rose-300 hover:underline">Back to campaigns</a>
+        <a href="/campaigns" class="text-rose-300 hover:underline">{m.campaign_back()}</a>
       </p>
     </div>
   </div>

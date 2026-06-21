@@ -4,13 +4,14 @@ import { FormField } from "@/components/auth/FormField";
 import { PasswordToggle } from "@/components/auth/PasswordToggle";
 import { SubmitButton } from "@/components/auth/SubmitButton";
 import { ServerError } from "@/components/auth/ServerError";
+import { m } from "@/paraglide/messages.js";
 
 const MIN_PASSWORD_LENGTH = 6;
 const PASSWORD_RULES = [
-  { re: /[a-z]/, label: "one lowercase letter" },
-  { re: /[A-Z]/, label: "one uppercase letter" },
-  { re: /[0-9]/, label: "one number" },
-  { re: /[!@#$%^&*()_+\-=[\]{};':"\\|<>?,./`~]/, label: "one special character" },
+  { re: /[a-z]/, label: () => m.pwrule_lower() },
+  { re: /[A-Z]/, label: () => m.pwrule_upper() },
+  { re: /[0-9]/, label: () => m.pwrule_number() },
+  { re: /[!@#$%^&*()_+\-=[\]{};':"\\|<>?,./`~]/, label: () => m.pwrule_special() },
 ];
 
 interface Props {
@@ -29,26 +30,26 @@ export default function SignUpForm({ serverError }: Props) {
     const next: typeof errors = {};
 
     if (!email.trim()) {
-      next.email = "Email is required";
+      next.email = m.validation_email_required();
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      next.email = "Enter a valid email address";
+      next.email = m.validation_email_invalid();
     }
 
     if (!password) {
-      next.password = "Password is required";
+      next.password = m.validation_password_required();
     } else if (password.length < MIN_PASSWORD_LENGTH) {
-      next.password = `Password must be at least ${MIN_PASSWORD_LENGTH} characters`;
+      next.password = m.validation_password_min({ min: MIN_PASSWORD_LENGTH });
     } else {
       const failing = PASSWORD_RULES.filter((r) => !r.re.test(password));
       if (failing.length > 0) {
-        next.password = `Password must contain at least ${failing.map((r) => r.label).join(", ")}`;
+        next.password = m.validation_password_contain({ rules: failing.map((r) => r.label()).join(", ") });
       }
     }
 
     if (!confirmPassword) {
-      next.confirmPassword = "Please confirm your password";
+      next.confirmPassword = m.validation_confirm_required();
     } else if (password !== confirmPassword) {
-      next.confirmPassword = "Passwords do not match";
+      next.confirmPassword = m.validation_passwords_mismatch();
     }
 
     setErrors(next);
@@ -67,7 +68,7 @@ export default function SignUpForm({ serverError }: Props) {
 
   const passwordHint =
     !errors.password && password.length > 0 ? (
-      <p className="mt-1 text-xs text-blue-100/50">Use uppercase, lowercase, a number, and a special character</p>
+      <p className="mt-1 text-xs text-blue-100/50">{m.signup_password_hint()}</p>
     ) : undefined;
 
   return (
@@ -75,27 +76,27 @@ export default function SignUpForm({ serverError }: Props) {
       <FormField
         id="email"
         type="email"
-        label="Email"
+        label={m.field_email()}
         value={email}
         onChange={(v) => {
           setEmail(v);
           clearError("email");
         }}
-        placeholder="you@example.com"
+        placeholder={m.placeholder_email()}
         error={errors.email}
         icon={<Mail className="size-4" />}
       />
 
       <FormField
         id="password"
-        label="Password"
+        label={m.field_password()}
         type={showPassword ? "text" : "password"}
         value={password}
         onChange={(v) => {
           setPassword(v);
           clearError("password");
         }}
-        placeholder="Min. 6 characters"
+        placeholder={m.placeholder_password_min()}
         error={errors.password}
         hint={passwordHint}
         icon={<Lock className="size-4" />}
@@ -112,14 +113,14 @@ export default function SignUpForm({ serverError }: Props) {
       <FormField
         id="confirmPassword"
         name="confirmPassword"
-        label="Confirm password"
+        label={m.field_confirm_password()}
         type={showConfirmPassword ? "text" : "password"}
         value={confirmPassword}
         onChange={(v) => {
           setConfirmPassword(v);
           clearError("confirmPassword");
         }}
-        placeholder="Re-enter your password"
+        placeholder={m.placeholder_reenter_password()}
         error={errors.confirmPassword}
         icon={<Lock className="size-4" />}
         endContent={
@@ -134,8 +135,8 @@ export default function SignUpForm({ serverError }: Props) {
 
       <ServerError message={serverError} />
 
-      <SubmitButton pendingText="Creating account..." icon={<UserPlus className="size-4" />}>
-        Create account
+      <SubmitButton pendingText={m.btn_create_account_pending()} icon={<UserPlus className="size-4" />}>
+        {m.btn_create_account()}
       </SubmitButton>
     </form>
   );

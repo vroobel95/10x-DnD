@@ -3,6 +3,7 @@ import { Mail, Send } from "lucide-react";
 import { FormField } from "@/components/auth/FormField";
 import { SubmitButton } from "@/components/auth/SubmitButton";
 import { ServerError } from "@/components/auth/ServerError";
+import { m } from "@/paraglide/messages.js";
 
 interface Props {
   serverError?: string | null;
@@ -15,9 +16,9 @@ export default function ForgotPasswordForm({ serverError }: Props) {
   function validate() {
     const next: typeof errors = {};
     if (!email.trim()) {
-      next.email = "Email is required";
+      next.email = m.validation_email_required();
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      next.email = "Enter a valid email address";
+      next.email = m.validation_email_invalid();
     }
     setErrors(next);
     return Object.keys(next).length === 0;
@@ -34,21 +35,21 @@ export default function ForgotPasswordForm({ serverError }: Props) {
       <FormField
         id="email"
         type="email"
-        label="Email"
+        label={m.field_email()}
         value={email}
         onChange={(v) => {
           setEmail(v);
           if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
         }}
-        placeholder="you@example.com"
+        placeholder={m.placeholder_email()}
         error={errors.email}
         icon={<Mail className="size-4" />}
       />
 
       <ServerError message={serverError} />
 
-      <SubmitButton pendingText="Sending..." icon={<Send className="size-4" />}>
-        Send reset link
+      <SubmitButton pendingText={m.btn_send_reset_pending()} icon={<Send className="size-4" />}>
+        {m.btn_send_reset()}
       </SubmitButton>
     </form>
   );

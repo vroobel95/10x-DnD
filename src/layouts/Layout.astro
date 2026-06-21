@@ -3,6 +3,7 @@ import "../styles/global.css";
 import Banner from "@/components/Banner.astro";
 import Topbar from "@/components/Topbar.astro";
 import { missingConfigs } from "@/lib/config-status";
+import { m } from "@/paraglide/messages.js";
 import { getLocale } from "@/paraglide/runtime.js";
 
 interface Props {
@@ -25,12 +26,12 @@ const { title = "DnD 5enemy" } = Astro.props;
     {
       missingConfigs.map((cfg) => (
         <Banner variant="error">
-          <strong>Uwaga:</strong> {cfg.message}
+          <strong>{m.banner_notice()}</strong> {cfg.message()}
           {cfg.docsUrl && (
             <>
               {" "}
               <a href={cfg.docsUrl} target="_blank" rel="noopener noreferrer">
-                {cfg.docsLabel ?? "Dokumentacja"}
+                {cfg.docsLabel?.() ?? m.banner_docs()}
               </a>
               .
             </>

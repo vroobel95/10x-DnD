@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { createClient } from "@/lib/supabase";
+import { m } from "@/paraglide/messages.js";
 
 export const GET: APIRoute = async (context) => {
   const code = context.url.searchParams.get("code");
@@ -15,5 +16,5 @@ export const GET: APIRoute = async (context) => {
     }
   }
 
-  return context.redirect(`/auth/signin?error=${encodeURIComponent("Email confirmation failed. Please try again.")}`);
+  return context.redirect(`/auth/signin?error=${encodeURIComponent(m.api_err_email_confirm_failed())}`);
 };

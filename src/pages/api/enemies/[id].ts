@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { createClient } from "@/lib/supabase";
+import { m } from "@/paraglide/messages.js";
 import type { Enemy } from "@/types";
 import { EnemySchema } from "@/lib/schemas/enemy";
 
@@ -24,7 +25,7 @@ async function resolveUserBattleIds(
   const campaignIds = (userCampaigns as { id: string }[]).map((c) => c.id);
 
   if (campaignIds.length === 0) {
-    return { battleIds: null, errorResponse: Response.json({ error: "Enemy not found" }, { status: 404 }) };
+    return { battleIds: null, errorResponse: Response.json({ error: m.api_err_enemy_not_found() }, { status: 404 }) };
   }
 
   const { data: userBattles, error: battlesError } = await supabase
@@ -39,7 +40,7 @@ async function resolveUserBattleIds(
   const battleIds = (userBattles as { id: string }[]).map((b) => b.id);
 
   if (battleIds.length === 0) {
-    return { battleIds: null, errorResponse: Response.json({ error: "Enemy not found" }, { status: 404 }) };
+    return { battleIds: null, errorResponse: Response.json({ error: m.api_err_enemy_not_found() }, { status: 404 }) };
   }
 
   return { battleIds, errorResponse: null };
@@ -48,15 +49,15 @@ async function resolveUserBattleIds(
 export const PATCH: APIRoute = async (context) => {
   const supabase = createClient(context.request.headers, context.cookies);
   if (!supabase) {
-    return Response.json({ error: "Service unavailable" }, { status: 500 });
+    return Response.json({ error: m.api_err_service_unavailable() }, { status: 500 });
   }
 
   const user = context.locals.user;
   if (!user) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
+    return Response.json({ error: m.api_err_unauthorized() }, { status: 401 });
   }
 
-  const authResult = await resolveUserBattleIds(supabase, user.id, "Could not update enemy. Please try again.");
+  const authResult = await resolveUserBattleIds(supabase, user.id, m.api_err_update_enemy());
   if (authResult.errorResponse) return authResult.errorResponse;
   const { battleIds } = authResult;
 
@@ -67,13 +68,13 @@ export const PATCH: APIRoute = async (context) => {
     try {
       body = await context.request.json();
     } catch {
-      return Response.json({ error: "Invalid request body" }, { status: 400 });
+      return Response.json({ error: m.api_err_invalid_body() }, { status: 400 });
     }
 
     if (typeof body === "object" && body !== null && "stats" in body) {
       const parsed = EnemySchema.safeParse(body.stats);
       if (!parsed.success) {
-        const message = parsed.error.issues[0]?.message ?? "Invalid stats";
+        const message = parsed.error.issues[0]?.message ?? m.api_err_invalid_stats();
         return Response.json({ error: message }, { status: 422 });
       }
 
@@ -90,10 +91,10 @@ export const PATCH: APIRoute = async (context) => {
         .single();
 
       if (result.error) {
-        return Response.json({ error: "Could not update enemy. Please try again." }, { status: 500 });
+        return Response.json({ error: m.api_err_update_enemy() }, { status: 500 });
       }
       if (!result.data) {
-        return Response.json({ error: "Enemy not found" }, { status: 404 });
+        return Response.json({ error: m.api_err_enemy_not_found() }, { status: 404 });
       }
 
       return Response.json({ enemy: result.data as Enemy });
@@ -110,10 +111,10 @@ export const PATCH: APIRoute = async (context) => {
     .single();
 
   if (result.error) {
-    return Response.json({ error: "Could not update enemy. Please try again." }, { status: 500 });
+    return Response.json({ error: m.api_err_update_enemy() }, { status: 500 });
   }
   if (!result.data) {
-    return Response.json({ error: "Enemy not found" }, { status: 404 });
+    return Response.json({ error: m.api_err_enemy_not_found() }, { status: 404 });
   }
 
   return Response.json({ enemy: result.data as Enemy });
@@ -122,15 +123,15 @@ export const PATCH: APIRoute = async (context) => {
 export const DELETE: APIRoute = async (context) => {
   const supabase = createClient(context.request.headers, context.cookies);
   if (!supabase) {
-    return Response.json({ error: "Service unavailable" }, { status: 500 });
+    return Response.json({ error: m.api_err_service_unavailable() }, { status: 500 });
   }
 
   const user = context.locals.user;
   if (!user) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
+    return Response.json({ error: m.api_err_unauthorized() }, { status: 401 });
   }
 
-  const authResult = await resolveUserBattleIds(supabase, user.id, "Could not delete enemy. Please try again.");
+  const authResult = await resolveUserBattleIds(supabase, user.id, m.api_err_delete_enemy());
   if (authResult.errorResponse) return authResult.errorResponse;
   const { battleIds } = authResult;
 
@@ -153,11 +154,11 @@ export const DELETE: APIRoute = async (context) => {
     .select("id");
 
   if (deleteResult.error) {
-    return Response.json({ error: "Could not delete enemy. Please try again." }, { status: 500 });
+    return Response.json({ error: m.api_err_delete_enemy() }, { status: 500 });
   }
 
   if (deleteResult.data.length === 0) {
-    return Response.json({ error: "Enemy not found" }, { status: 404 });
+    return Response.json({ error: m.api_err_enemy_not_found() }, { status: 404 });
   }
 
   return Response.json({ success: true, main_enemy_cleared: mainEnemyCleared });

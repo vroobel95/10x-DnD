@@ -4,6 +4,8 @@ import { createClient } from "@/lib/supabase";
 import BattleHeader from "@/components/battles/BattleHeader";
 import EnemiesSection from "@/components/battles/EnemiesSection";
 import EnvironmentSection from "@/components/battles/EnvironmentSection";
+import { m } from "@/paraglide/messages.js";
+import { getLocale } from "@/paraglide/runtime.js";
 import type { Battle, Enemy } from "@/types";
 
 const { id } = Astro.params;
@@ -43,7 +45,7 @@ const enemies = (allEnemies ?? []) as Enemy[];
 const initialPending = enemies.filter((e) => e.status === "pending");
 const initialConfirmed = enemies.filter((e) => e.status === "confirmed");
 
-const createdDate = new Date(b.created_at).toLocaleDateString("en-US", {
+const createdDate = new Date(b.created_at).toLocaleDateString(getLocale(), {
   year: "numeric",
   month: "long",
   day: "numeric",
@@ -57,7 +59,7 @@ const createdDate = new Date(b.created_at).toLocaleDateString("en-US", {
         href={`/campaigns/${b.campaign_id}`}
         class="mb-6 inline-flex items-center gap-2 text-sm text-blue-100/60 hover:text-white"
       >
-        ← Back to campaign
+        {m.battle_back_to_campaign_arrow()}
       </a>
 
       <BattleHeader

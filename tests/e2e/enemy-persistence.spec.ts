@@ -21,12 +21,17 @@ test.describe("confirmed enemy persists after page reload [Risk #4]", () => {
     const ctx = await browser.newContext({ storageState: AUTH_STATE });
     const page = await ctx.newPage();
 
-    // Create campaign via JSON API — ctx.request shares the storageState cookies.
-    const campaignRes = await ctx.request.post("/api/campaigns", {
-      data: { name: `E2E Campaign ${RUN_ID}` },
-    });
-    expect(campaignRes.ok()).toBeTruthy();
-    campaignId = ((await campaignRes.json()) as { campaign: { id: string } }).campaign.id;
+    // Campaign creation must go through the browser: the /api/campaigns POST reads
+    // formData and responds with context.redirect(), which Playwright's APIRequestContext
+    // neither encodes (it sends JSON) nor follows. Use the dedicated /campaigns/new form.
+    await page.goto("/campaigns/new");
+    await page.waitForLoadState("networkidle"); // React hydration — CreateCampaignForm uses client:load
+    await page.getByLabel("Campaign Name").fill(`E2E Campaign ${RUN_ID}`);
+    await Promise.all([
+      page.waitForURL((url) => /^\/campaigns\/[0-9a-f-]{36}$/i.test(new URL(url).pathname)),
+      page.getByRole("button", { name: "Create Campaign" }).click(),
+    ]);
+    campaignId = new URL(page.url()).pathname.split("/").at(-1) ?? "";
 
     // Battle creation must go through the browser: Astro's context.redirect() from a
     // form POST is not followed by Playwright's APIRequestContext in this stack.
@@ -59,7 +64,8 @@ test.describe("confirmed enemy persists after page reload [Risk #4]", () => {
     // enemy-prompt field in EnemiesSection (EnemyCard edit inputs appear only when editing).
     await page.getByRole("textbox").fill("1 goblin");
 
-    const generateBtn = page.getByRole("button", { name: "Generate" });
+    // exact: true so this matches the enemies "Generate" button, not "Generate Environment".
+    const generateBtn = page.getByRole("button", { name: "Generate", exact: true });
     await expect(generateBtn).toBeEnabled(); // state signal — button is disabled until prompt is non-empty
 
     // Exclude r.ok() from the predicate so a non-200 surfaces rather than timing out.

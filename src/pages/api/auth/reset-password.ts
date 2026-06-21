@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { createClient } from "@/lib/supabase";
+import { m } from "@/paraglide/messages.js";
 
 export const prerender = false;
 
@@ -15,27 +16,21 @@ export const POST: APIRoute = async (context) => {
   const confirmPassword = typeof confirmPasswordValue === "string" ? confirmPasswordValue : "";
 
   if (!password || password.length < 6) {
-    return context.redirect(
-      `/auth/reset-password?error=${encodeURIComponent("Password must be at least 6 characters")}`,
-    );
+    return context.redirect(`/auth/reset-password?error=${encodeURIComponent(m.api_err_password_min())}`);
   }
 
   if (password !== confirmPassword) {
-    return context.redirect(`/auth/reset-password?error=${encodeURIComponent("Passwords do not match")}`);
+    return context.redirect(`/auth/reset-password?error=${encodeURIComponent(m.validation_passwords_mismatch())}`);
   }
 
   const supabase = createClient(context.request.headers, context.cookies);
   if (!supabase) {
-    return context.redirect(
-      `/auth/reset-password?error=${encodeURIComponent("Service unavailable. Please try again later.")}`,
-    );
+    return context.redirect(`/auth/reset-password?error=${encodeURIComponent(m.api_err_service_unavailable_retry())}`);
   }
 
   const { error } = await supabase.auth.updateUser({ password });
   if (error) {
-    return context.redirect(
-      `/auth/reset-password?error=${encodeURIComponent("Could not update password. Please try again.")}`,
-    );
+    return context.redirect(`/auth/reset-password?error=${encodeURIComponent(m.api_err_update_password())}`);
   }
 
   return context.redirect("/auth/signin?success=1");

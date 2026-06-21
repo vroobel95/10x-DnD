@@ -2,6 +2,7 @@
 import Layout from "@/layouts/Layout.astro";
 import CampaignBattleList from "@/components/campaigns/CampaignBattleList";
 import { createClient } from "@/lib/supabase";
+import { m } from "@/paraglide/messages.js";
 import type { Battle, Campaign } from "@/types";
 
 const { id } = Astro.params;
@@ -37,7 +38,7 @@ const battles = (battlesData ?? []) as Battle[];
   <div class="bg-cosmic min-h-screen p-4 sm:p-8">
     <div class="mx-auto max-w-3xl">
       <a href="/campaigns" class="mb-6 inline-flex items-center gap-2 text-sm text-blue-100/60 hover:text-white">
-        ← Back to campaigns
+        {m.campaign_back_arrow()}
       </a>
 
       <div class="mb-8 flex items-center justify-between">
@@ -51,7 +52,7 @@ const battles = (battlesData ?? []) as Battle[];
           href={`/battles/new?campaignId=${campaign.id}`}
           class="inline-flex items-center justify-center rounded-lg bg-[#701c3b] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#9f1239]"
         >
-          + New Battle
+          {m.battle_new_title_short()}
         </a>
       </div>
 

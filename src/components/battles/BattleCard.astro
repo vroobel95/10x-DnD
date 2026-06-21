@@ -1,4 +1,6 @@
 ---
+import { m } from "@/paraglide/messages.js";
+import { getLocale } from "@/paraglide/runtime.js";
 import type { Battle } from "@/types";
 
 interface Props {
@@ -7,8 +9,9 @@ interface Props {
 
 const { battle } = Astro.props;
 
-const partyLevel = battle.party_level != null ? `Level ${battle.party_level}` : "—";
-const createdDate = new Date(battle.created_at).toLocaleDateString("en-US", {
+const partyLevel =
+  battle.party_level != null ? m.battle_level({ level: battle.party_level }) : m.battle_level_unknown();
+const createdDate = new Date(battle.created_at).toLocaleDateString(getLocale(), {
   year: "numeric",
   month: "short",
   day: "numeric",
@@ -21,7 +24,7 @@ const createdDate = new Date(battle.created_at).toLocaleDateString("en-US", {
 >
   <h3 class="mb-2 text-base font-semibold text-white">{battle.name}</h3>
   <div class="flex flex-wrap gap-3 text-sm text-blue-100/60">
-    <span>Party {partyLevel}</span>
+    <span>{m.battle_party({ level: partyLevel })}</span>
     <span>·</span>
     <span>{createdDate}</span>
   </div>

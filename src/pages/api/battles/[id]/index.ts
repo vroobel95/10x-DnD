@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { createClient } from "@/lib/supabase";
+import { m } from "@/paraglide/messages.js";
 import type { Battle } from "@/types";
 
 export const prerender = false;
@@ -7,12 +8,12 @@ export const prerender = false;
 export const PATCH: APIRoute = async (context) => {
   const supabase = createClient(context.request.headers, context.cookies);
   if (!supabase) {
-    return Response.json({ error: "Service unavailable" }, { status: 500 });
+    return Response.json({ error: m.api_err_service_unavailable() }, { status: 500 });
   }
 
   const user = context.locals.user;
   if (!user) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
+    return Response.json({ error: m.api_err_unauthorized() }, { status: 401 });
   }
 
   const { id } = context.params;
@@ -21,27 +22,27 @@ export const PATCH: APIRoute = async (context) => {
   try {
     body = await context.request.json();
   } catch {
-    return Response.json({ error: "Invalid request body" }, { status: 400 });
+    return Response.json({ error: m.api_err_invalid_body() }, { status: 400 });
   }
 
   if (typeof body !== "object" || body === null) {
-    return Response.json({ error: "Invalid request body" }, { status: 400 });
+    return Response.json({ error: m.api_err_invalid_body() }, { status: 400 });
   }
 
   const { name, party_level, location } = body as Record<string, unknown>;
 
   const trimmedName = typeof name === "string" ? name.trim() : "";
   if (!trimmedName) {
-    return Response.json({ error: "Battle name is required" }, { status: 400 });
+    return Response.json({ error: m.api_err_battle_name_required() }, { status: 400 });
   }
   if (trimmedName.length > 200) {
-    return Response.json({ error: "Battle name must be 200 characters or fewer" }, { status: 422 });
+    return Response.json({ error: m.api_err_battle_name_too_long() }, { status: 422 });
   }
 
   let partyLevel: number | null = null;
   if (party_level !== null && party_level !== undefined && party_level !== "") {
     if (typeof party_level !== "number" || !Number.isInteger(party_level) || party_level < 1 || party_level > 30) {
-      return Response.json({ error: "Party level must be between 1 and 30" }, { status: 422 });
+      return Response.json({ error: m.api_err_party_level_range() }, { status: 422 });
     }
     partyLevel = party_level;
   }
@@ -49,11 +50,11 @@ export const PATCH: APIRoute = async (context) => {
   let trimmedLocation: string | null = null;
   if (location !== null && location !== undefined && location !== "") {
     if (typeof location !== "string") {
-      return Response.json({ error: "Location must be a string" }, { status: 422 });
+      return Response.json({ error: m.api_err_location_string() }, { status: 422 });
     }
     const loc = location.trim();
     if (loc.length > 200) {
-      return Response.json({ error: "Location must be 200 characters or fewer" }, { status: 422 });
+      return Response.json({ error: m.api_err_location_too_long() }, { status: 422 });
     }
     trimmedLocation = loc !== "" ? loc : null;
   }
@@ -64,13 +65,13 @@ export const PATCH: APIRoute = async (context) => {
     .eq("user_id", user.id);
 
   if (campaignsError) {
-    return Response.json({ error: "Could not update battle. Please try again." }, { status: 500 });
+    return Response.json({ error: m.api_err_update_battle() }, { status: 500 });
   }
 
   const campaignIds = userCampaigns.map((c: { id: string }) => c.id);
 
   if (campaignIds.length === 0) {
-    return Response.json({ error: "Battle not found" }, { status: 404 });
+    return Response.json({ error: m.api_err_battle_not_found() }, { status: 404 });
   }
 
   const result = await supabase
@@ -86,10 +87,10 @@ export const PATCH: APIRoute = async (context) => {
     .select();
 
   if (result.error) {
-    return Response.json({ error: "Could not update battle. Please try again." }, { status: 500 });
+    return Response.json({ error: m.api_err_update_battle() }, { status: 500 });
   }
   if (result.data.length === 0) {
-    return Response.json({ error: "Battle not found" }, { status: 404 });
+    return Response.json({ error: m.api_err_battle_not_found() }, { status: 404 });
   }
 
   return Response.json({ battle: result.data[0] as Battle });
@@ -98,12 +99,12 @@ export const PATCH: APIRoute = async (context) => {
 export const DELETE: APIRoute = async (context) => {
   const supabase = createClient(context.request.headers, context.cookies);
   if (!supabase) {
-    return Response.json({ error: "Service unavailable" }, { status: 500 });
+    return Response.json({ error: m.api_err_service_unavailable() }, { status: 500 });
   }
 
   const user = context.locals.user;
   if (!user) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
+    return Response.json({ error: m.api_err_unauthorized() }, { status: 401 });
   }
 
   const { id } = context.params;
@@ -114,13 +115,13 @@ export const DELETE: APIRoute = async (context) => {
     .eq("user_id", user.id);
 
   if (campaignsError) {
-    return Response.json({ error: "Could not load battles. Please try again." }, { status: 500 });
+    return Response.json({ error: m.api_err_load_battles() }, { status: 500 });
   }
 
   const campaignIds = userCampaigns.map((c: { id: string }) => c.id);
 
   if (campaignIds.length === 0) {
-    return Response.json({ error: "Battle not found" }, { status: 404 });
+    return Response.json({ error: m.api_err_battle_not_found() }, { status: 404 });
   }
 
   const { data, error } = await supabase
@@ -131,11 +132,11 @@ export const DELETE: APIRoute = async (context) => {
     .select("id, campaign_id");
 
   if (error) {
-    return Response.json({ error: "Could not delete battle. Please try again." }, { status: 500 });
+    return Response.json({ error: m.api_err_delete_battle() }, { status: 500 });
   }
 
   if (data.length === 0) {
-    return Response.json({ error: "Battle not found" }, { status: 404 });
+    return Response.json({ error: m.api_err_battle_not_found() }, { status: 404 });
   }
 
   return Response.json({ success: true });

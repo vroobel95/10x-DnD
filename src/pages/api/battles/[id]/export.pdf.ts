@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";
 
 import { buildBattlePdf, pdfFilename } from "@/lib/pdf/battle-pdf";
 import { createClient } from "@/lib/supabase";
+import { m } from "@/paraglide/messages.js";
 import type { Enemy } from "@/types";
 
 export const prerender = false;
@@ -9,12 +10,12 @@ export const prerender = false;
 export const GET: APIRoute = async (context) => {
   const supabase = createClient(context.request.headers, context.cookies);
   if (!supabase) {
-    return Response.json({ error: "Service unavailable" }, { status: 500 });
+    return Response.json({ error: m.api_err_service_unavailable() }, { status: 500 });
   }
 
   const user = context.locals.user;
   if (!user) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
+    return Response.json({ error: m.api_err_unauthorized() }, { status: 401 });
   }
 
   const battleId = context.params.id;
@@ -23,9 +24,9 @@ export const GET: APIRoute = async (context) => {
 
   if (battleResult.error) {
     if (battleResult.error.code === "PGRST116") {
-      return Response.json({ error: "Battle not found" }, { status: 404 });
+      return Response.json({ error: m.api_err_battle_not_found() }, { status: 404 });
     }
-    return Response.json({ error: "Could not load battle. Please try again." }, { status: 500 });
+    return Response.json({ error: m.api_err_load_battle() }, { status: 500 });
   }
 
   const battle = battleResult.data;
@@ -39,9 +40,9 @@ export const GET: APIRoute = async (context) => {
 
   if (campaignResult.error) {
     if (campaignResult.error.code === "PGRST116") {
-      return Response.json({ error: "Battle not found" }, { status: 404 });
+      return Response.json({ error: m.api_err_battle_not_found() }, { status: 404 });
     }
-    return Response.json({ error: "Could not load battle. Please try again." }, { status: 500 });
+    return Response.json({ error: m.api_err_load_battle() }, { status: 500 });
   }
 
   const enemiesResult = await supabase
@@ -52,20 +53,20 @@ export const GET: APIRoute = async (context) => {
     .order("created_at");
 
   if (enemiesResult.error) {
-    return Response.json({ error: "Could not load enemies. Please try again." }, { status: 500 });
+    return Response.json({ error: m.api_err_load_enemies() }, { status: 500 });
   }
 
   const enemies = enemiesResult.data as Enemy[];
 
   if (enemies.length === 0) {
-    return Response.json({ error: "No confirmed enemies to export" }, { status: 404 });
+    return Response.json({ error: m.api_err_no_enemies_export() }, { status: 404 });
   }
 
   let pdfBytes: Uint8Array;
   try {
     pdfBytes = await buildBattlePdf(battle, enemies);
   } catch {
-    return Response.json({ error: "Could not generate PDF. Please try again." }, { status: 500 });
+    return Response.json({ error: m.api_err_generate_pdf() }, { status: 500 });
   }
 
   // pdf-lib always returns a Uint8Array backed by a plain ArrayBuffer (never SharedArrayBuffer)

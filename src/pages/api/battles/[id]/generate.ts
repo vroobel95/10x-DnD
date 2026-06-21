@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { createClient } from "@/lib/supabase";
 import { generateEnemies } from "@/lib/ai";
+import { m } from "@/paraglide/messages.js";
 import type { BattleEnvironment, MainEnemyProfile } from "@/types";
 
 export const prerender = false;
@@ -8,12 +9,12 @@ export const prerender = false;
 export const POST: APIRoute = async (context) => {
   const supabase = createClient(context.request.headers, context.cookies);
   if (!supabase) {
-    return Response.json({ error: "Service unavailable" }, { status: 500 });
+    return Response.json({ error: m.api_err_service_unavailable() }, { status: 500 });
   }
 
   const user = context.locals.user;
   if (!user) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
+    return Response.json({ error: m.api_err_unauthorized() }, { status: 401 });
   }
 
   const battleId = context.params.id;
@@ -23,15 +24,15 @@ export const POST: APIRoute = async (context) => {
     const body = (await context.request.json()) as { prompt?: string };
     prompt = body.prompt?.trim() ?? "";
   } catch {
-    return Response.json({ error: "Invalid request body" }, { status: 400 });
+    return Response.json({ error: m.api_err_invalid_body() }, { status: 400 });
   }
 
   if (!prompt) {
-    return Response.json({ error: "Prompt is required" }, { status: 400 });
+    return Response.json({ error: m.api_err_prompt_required() }, { status: 400 });
   }
 
   if (prompt.length > 2000) {
-    return Response.json({ error: "Prompt is too long (max 2000 characters)" }, { status: 400 });
+    return Response.json({ error: m.api_err_prompt_too_long() }, { status: 400 });
   }
 
   const battleResult = await supabase
@@ -42,9 +43,9 @@ export const POST: APIRoute = async (context) => {
 
   if (battleResult.error) {
     if (battleResult.error.code === "PGRST116") {
-      return Response.json({ error: "Battle not found" }, { status: 404 });
+      return Response.json({ error: m.api_err_battle_not_found() }, { status: 404 });
     }
-    return Response.json({ error: "Could not load battle. Please try again." }, { status: 500 });
+    return Response.json({ error: m.api_err_load_battle() }, { status: 500 });
   }
 
   const battle = battleResult.data;
@@ -58,9 +59,9 @@ export const POST: APIRoute = async (context) => {
 
   if (campaignResult.error) {
     if (campaignResult.error.code === "PGRST116") {
-      return Response.json({ error: "Battle not found" }, { status: 404 });
+      return Response.json({ error: m.api_err_battle_not_found() }, { status: 404 });
     }
-    return Response.json({ error: "Could not load battle. Please try again." }, { status: 500 });
+    return Response.json({ error: m.api_err_load_battle() }, { status: 500 });
   }
 
   let enemyGroup: Awaited<ReturnType<typeof generateEnemies>>;
@@ -70,7 +71,7 @@ export const POST: APIRoute = async (context) => {
       prompt,
     );
   } catch {
-    return Response.json({ error: "Generation failed. Please try again." }, { status: 500 });
+    return Response.json({ error: m.err_generation_failed() }, { status: 500 });
   }
 
   const rows = enemyGroup.enemies.map((e) => ({
@@ -84,7 +85,7 @@ export const POST: APIRoute = async (context) => {
   const insertResult = await supabase.from("enemies").insert(rows).select();
 
   if (insertResult.error) {
-    return Response.json({ error: "Could not save enemies. Please try again." }, { status: 500 });
+    return Response.json({ error: m.api_err_save_enemies() }, { status: 500 });
   }
 
   let mainEnemyId: string | null = null;

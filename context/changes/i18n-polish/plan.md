@@ -444,34 +444,34 @@ the catalog and become locale-driven.
 
 #### Automated
 
-- [x] 1.1 Type checking passes: `npm run typecheck`
-- [x] 1.2 Linting passes: `npm run lint`
-- [x] 1.3 Build passes (compiles messages + Cloudflare build): `npm run build`
-- [x] 1.4 E2E toggle/persistence test passes: `npm run test:e2e`
+- [x] 1.1 Type checking passes: `npm run typecheck` — 98112ea
+- [x] 1.2 Linting passes: `npm run lint` — 98112ea
+- [x] 1.3 Build passes (compiles messages + Cloudflare build): `npm run build` — 98112ea
+- [x] 1.4 E2E toggle/persistence test passes: `npm run test:e2e` — 98112ea
 
 #### Manual
 
-- [x] 1.5 Toggle visible on authed pages and signin/signup pages
-- [x] 1.6 Switching to Polish changes proof strings; switching back restores English
-- [x] 1.7 Locale persists across a full page reload (cookie)
-- [x] 1.8 `<html lang>` matches the active locale
-- [x] 1.9 No auth regression: protected routes still redirect when logged out
+- [x] 1.5 Toggle visible on authed pages and signin/signup pages — 98112ea
+- [x] 1.6 Switching to Polish changes proof strings; switching back restores English — 98112ea
+- [x] 1.7 Locale persists across a full page reload (cookie) — 98112ea
+- [x] 1.8 `<html lang>` matches the active locale — 98112ea
+- [x] 1.9 No auth regression: protected routes still redirect when logged out — 98112ea
 
 ### Phase 2: Extract & Translate All UI Strings
 
 #### Automated
 
-- [ ] 2.1 Type checking passes: `npm run typecheck`
-- [ ] 2.2 Linting passes: `npm run lint`
-- [ ] 2.3 Build passes (no missing keys): `npm run build`
-- [ ] 2.4 Unit/E2E suites pass: `npm run test` and `npm run test:e2e`
+- [x] 2.1 Type checking passes: `npm run typecheck`
+- [x] 2.2 Linting passes: `npm run lint`
+- [x] 2.3 Build passes (no missing keys): `npm run build`
+- [x] 2.4 Unit/E2E suites pass: `npm run test` and `npm run test:e2e`
 
 #### Manual
 
-- [ ] 2.5 Each major area (auth, dashboard, campaigns, battles) fully Polish, no leftover English/hardcoded-Polish chrome
-- [ ] 2.6 Form placeholders and validation/error messages localized
-- [ ] 2.7 An API error shows a localized message
-- [ ] 2.8 `en.json` and `pl.json` key sets match
+- [x] 2.5 Each major area (auth, dashboard, campaigns, battles) fully Polish, no leftover English/hardcoded-Polish chrome
+- [x] 2.6 Form placeholders and validation/error messages localized
+- [x] 2.7 An API error shows a localized message
+- [x] 2.8 `en.json` and `pl.json` key sets match
 
 ### Phase 3: Localize AI-Generated Content
 

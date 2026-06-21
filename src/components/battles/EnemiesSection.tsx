@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Download, Wand2 } from "lucide-react";
 import { EnemyCard } from "@/components/battles/EnemyCard";
+import { m } from "@/paraglide/messages.js";
 import type { Enemy } from "@/types";
 import type { EnemyStats, MainEnemyProfile } from "@/lib/schemas/enemy";
 
@@ -51,7 +52,7 @@ export default function EnemiesSection({
         main_enemy_profile?: MainEnemyProfile | null;
       };
       if (!res.ok) {
-        setGenerateError(data.error ?? "Generation failed. Please try again.");
+        setGenerateError(data.error ?? m.err_generation_failed());
       } else {
         setPending((prev) => [...(data.enemies ?? []), ...prev]);
         setPrompt("");
@@ -61,7 +62,7 @@ export default function EnemiesSection({
         }
       }
     } catch {
-      setGenerateError("Generation failed. Please try again.");
+      setGenerateError(m.err_generation_failed());
     } finally {
       setIsGenerating(false);
     }
@@ -78,10 +79,10 @@ export default function EnemiesSection({
         setPending((prev) => prev.filter((e) => e.id !== enemy.id));
         setConfirmed((prev) => [...prev, data.enemy]);
       } else {
-        setActionError("Could not confirm enemy. Please try again.");
+        setActionError(m.err_confirm_enemy());
       }
     } catch {
-      setActionError("Could not confirm enemy. Please try again.");
+      setActionError(m.err_confirm_enemy());
     } finally {
       setLoadingId(null);
     }
@@ -101,10 +102,10 @@ export default function EnemiesSection({
           setMainEnemyProfile(null);
         }
       } else {
-        setActionError("Could not remove enemy. Please try again.");
+        setActionError(m.err_remove_enemy());
       }
     } catch {
-      setActionError("Could not remove enemy. Please try again.");
+      setActionError(m.err_remove_enemy());
     } finally {
       setLoadingId(null);
     }
@@ -122,7 +123,7 @@ export default function EnemiesSection({
       });
       const data = (await res.json()) as { error?: string; enemy?: Enemy };
       if (!res.ok) {
-        setActionError(data.error ?? "Could not save changes. Please try again.");
+        setActionError(data.error ?? m.err_save_changes());
       } else {
         const updatedEnemy = data.enemy;
         if (updatedEnemy) {
@@ -131,7 +132,7 @@ export default function EnemiesSection({
         }
       }
     } catch {
-      setActionError("Could not save changes. Please try again.");
+      setActionError(m.err_save_changes());
     } finally {
       setLoadingId(null);
     }
@@ -165,10 +166,10 @@ export default function EnemiesSection({
         }
       } else {
         const data = (await res.json()) as { error?: string };
-        setActionError(data.error ?? "Could not remove enemy. Please try again.");
+        setActionError(data.error ?? m.err_remove_enemy());
       }
     } catch {
-      setActionError("Could not remove enemy. Please try again.");
+      setActionError(m.err_remove_enemy());
     } finally {
       setLoadingId(null);
     }
@@ -187,7 +188,7 @@ export default function EnemiesSection({
       const res = await fetch(`/api/battles/${battleId}/export.pdf`);
       if (!res.ok) {
         const data = (await res.json()) as { error?: string };
-        setExportError(data.error ?? "Export failed. Please try again.");
+        setExportError(data.error ?? m.err_export_failed());
         return;
       }
       const blob = await res.blob();
@@ -202,7 +203,7 @@ export default function EnemiesSection({
       a.click();
       URL.revokeObjectURL(url);
     } catch {
-      setExportError("Export failed. Please try again.");
+      setExportError(m.err_export_failed());
     } finally {
       setIsExporting(false);
     }
@@ -211,14 +212,16 @@ export default function EnemiesSection({
   return (
     <div className="space-y-8">
       <section>
-        <h2 className="mb-3 text-sm font-semibold tracking-wide text-blue-100/50 uppercase">Generate Enemies</h2>
+        <h2 className="mb-3 text-sm font-semibold tracking-wide text-blue-100/50 uppercase">
+          {m.enemies_generate_title()}
+        </h2>
         <form onSubmit={handleGenerate} className="space-y-3">
           <textarea
             value={prompt}
             onChange={(e) => {
               setPrompt(e.target.value);
             }}
-            placeholder="e.g. 2 ice wolves and a frost troll"
+            placeholder={m.enemies_prompt_placeholder()}
             rows={3}
             disabled={isGenerating}
             className="w-full resize-none rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-blue-100/30 focus:border-rose-500/50 focus:ring-1 focus:ring-rose-500/50 focus:outline-none disabled:opacity-50"
@@ -236,12 +239,12 @@ export default function EnemiesSection({
             {isGenerating ? (
               <>
                 <span className="size-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                Generating...
+                {m.enemies_generate_pending()}
               </>
             ) : (
               <>
                 <Wand2 className="size-4" />
-                Generate
+                {m.enemies_generate_btn()}
               </>
             )}
           </button>
@@ -250,7 +253,9 @@ export default function EnemiesSection({
 
       {pending.length > 0 && (
         <section>
-          <h2 className="mb-3 text-sm font-semibold tracking-wide text-blue-100/50 uppercase">Pending Review</h2>
+          <h2 className="mb-3 text-sm font-semibold tracking-wide text-blue-100/50 uppercase">
+            {m.enemies_pending_title()}
+          </h2>
           {actionError && (
             <p className="mb-3 flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-900/30 px-3 py-2 text-sm text-red-300">
               {actionError}
@@ -275,7 +280,9 @@ export default function EnemiesSection({
       {confirmed.length > 0 && (
         <section>
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-sm font-semibold tracking-wide text-blue-100/50 uppercase">Confirmed Enemies</h2>
+            <h2 className="text-sm font-semibold tracking-wide text-blue-100/50 uppercase">
+              {m.enemies_confirmed_title()}
+            </h2>
             <button
               type="button"
               onClick={() => {
@@ -287,12 +294,12 @@ export default function EnemiesSection({
               {isExporting ? (
                 <>
                   <span className="size-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                  Exporting...
+                  {m.enemies_export_pending()}
                 </>
               ) : (
                 <>
                   <Download className="size-4" />
-                  Export PDF
+                  {m.enemies_export_pdf()}
                 </>
               )}
             </button>
@@ -340,9 +347,7 @@ export default function EnemiesSection({
       )}
 
       {pending.length === 0 && confirmed.length === 0 && (
-        <p className="text-center text-sm text-blue-100/30">
-          No enemies yet — type a scenario above and click Generate.
-        </p>
+        <p className="text-center text-sm text-blue-100/30">{m.enemies_empty()}</p>
       )}
     </div>
   );

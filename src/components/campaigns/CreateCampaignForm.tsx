@@ -3,6 +3,7 @@ import { BookOpen, FileText } from "lucide-react";
 import { FormField } from "@/components/auth/FormField";
 import { SubmitButton } from "@/components/auth/SubmitButton";
 import { ServerError } from "@/components/auth/ServerError";
+import { m } from "@/paraglide/messages.js";
 
 interface Props {
   serverError?: string | null;
@@ -17,7 +18,7 @@ export default function CreateCampaignForm({ serverError }: Props) {
   function validate() {
     const next: typeof errors = {};
     if (!name.trim()) {
-      next.name = "Campaign name is required";
+      next.name = m.validation_campaign_name_required();
     }
     setErrors(next);
     return Object.keys(next).length === 0;
@@ -41,28 +42,32 @@ export default function CreateCampaignForm({ serverError }: Props) {
 
       <FormField
         id="name"
-        label="Campaign Name"
+        label={m.create_campaign_name_label()}
         value={name}
         onChange={(v) => {
           setName(v);
           clearError("name");
         }}
-        placeholder="e.g. Curse of Strahd"
+        placeholder={m.create_campaign_name_placeholder()}
         icon={<BookOpen className="size-4" />}
         error={errors.name}
       />
 
       <FormField
         id="description"
-        label="Description (optional)"
+        label={m.create_campaign_desc_label()}
         value={description}
         onChange={setDescription}
-        placeholder="A brief note about this campaign"
+        placeholder={m.create_campaign_desc_placeholder()}
         icon={<FileText className="size-4" />}
       />
 
-      <SubmitButton pendingText="Creating..." icon={<BookOpen className="size-4" />} isLoading={isSubmitting}>
-        Create Campaign
+      <SubmitButton
+        pendingText={m.create_campaign_pending()}
+        icon={<BookOpen className="size-4" />}
+        isLoading={isSubmitting}
+      >
+        {m.create_campaign_submit()}
       </SubmitButton>
     </form>
   );
