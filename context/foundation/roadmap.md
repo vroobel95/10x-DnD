@@ -3,7 +3,7 @@ project: "DnD 5enemy"
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-06-23 (S-17 pdf-unicode-fonts added)
+updated: 2026-06-23 (S-17 pdf-unicode-fonts, S-18 ui-redesign added)
 prd_version: 1
 main_goal: speed
 top_blocker: external
@@ -47,6 +47,7 @@ D&D 5e Game Masters lose preparation time hunting stat blocks and manually adjus
 | S-15 | pdf-export-environment        | export a battle's enemy cards **and** its environment block together as a single printable PDF                                      | S-07, S-09 | —          | proposed         |
 | S-16 | i18n-polish                   | switch the app between English and Polish; all UI strings, error messages, and AI-generated content language follow the chosen locale | S-08 | —             | impl_reviewed    |
 | S-17 | pdf-unicode-fonts             | export PDFs whose text renders correctly in Polish (and other Latin Extended) — labels and AI content no longer fail the export | S-07, S-16 | —              | proposed         |
+| S-18 | ui-redesign                   | see the app in the "Blood & Ink" visual identity — oxblood/ink/ivory palette, medieval + serif fonts, paper-grain texture — replacing the S-08 maroon rebrand | S-08, S-16 | —    | proposed         |
 
 ## Baseline
 
@@ -294,6 +295,22 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Risk:** medium. pdf-lib's built-in StandardFonts use WinAnsi encoding and throw on any non-Latin-1 glyph, so PDF export currently fails entirely in Polish locale (and would for any non-Latin-1 AI content). Fix requires registering `@pdf-lib/fontkit` and embedding a Unicode TTF used across the whole builder — a new dependency + a font asset + re-checking the worker bundle size. Pre-existing defect in S-07, exposed by S-16 and made unconditional by S-15's always-localized labels; discovered during S-15 manual verification.
 - **Status:** proposed
 
+### S-18: "Blood & Ink" visual redesign
+
+- **Outcome:** GM sees the app in the new "Blood & Ink" visual identity — a dark oxblood-red / ink-black / parchment-ivory palette, medieval display font (MedievalSharp) with Cabin (sans) and Cormorant Garamond (serif) body type, and a subtle paper-grain texture — applied across all pages and components, replacing the S-08 maroon rebrand.
+- **Change ID:** ui-redesign
+- **PRD refs:** —
+- **Prerequisites:** S-08 (supersedes its maroon palette; UI surfaces should be stable), S-16 (changed copy must flow through Paraglide `m.*` keys, not raw strings)
+- **Parallel with:** —
+- **Blockers:** —
+- **Source:** Lovable export at `C:\Users\ledze\Downloads\Battle Buddy AI` (Vite + React + TanStack Router) — `src/styles.css` is the design system; route/component files are presence reference, not drop-in.
+- **Unknowns:**
+  - Font loading on Astro/Cloudflare — Google Fonts `<link>` (as in the export) vs self-host / `@fontsource`. — Owner: developer. Block: soft.
+  - How much page "presence" (layout/structure) to adopt from the export vs. keep the current Astro page structure. — Owner: developer/user. Resolve in `/10x-plan`.
+  - The export is always-dark; confirm no light-mode assumptions remain in current components. — Owner: developer.
+- **Risk:** medium. Blast radius is the whole UI: the global theme tokens port cleanly (the export uses the same Tailwind v4 `@theme inline` mechanism as this app), but every component hard-coding the old maroon/purple tokens must be audited, three fonts must be wired in, and the React/TanStack page layouts must be re-applied to `.astro` pages. i18n (S-16) must be respected for any changed copy. Discovered/handed off 2026-06-23 from a Lovable redesign export.
+- **Status:** proposed
+
 ## Backlog Handoff
 
 | Roadmap ID | Change ID                     | Suggested issue title                                   | Ready for `/10x-plan` | Notes                                                              |
@@ -314,6 +331,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-15       | pdf-export-environment        | Export environment block + enemy cards together as one PDF        | no              | Needs S-07 and S-09 implemented; low complexity — extends existing pdf-lib template |
 | S-16       | i18n-polish                   | Polish translation and two-language support (EN/PL)               | —              | impl_reviewed — complete (Paraglide JS v2, cookie-based EN/PL toggle) |
 | S-17       | pdf-unicode-fonts             | Make PDF export Unicode-safe (embed font for Polish / Latin Extended) | yes        | Needs S-07 + S-16; relates to S-15. Fixes export 500 in Polish locale. Plan with `/10x-plan pdf-unicode-fonts` |
+| S-18       | ui-redesign                   | Apply the "Blood & Ink" visual redesign (palette, fonts, presence)    | no         | Needs S-08 + S-16. Port from Lovable export; research the file-by-file delta first (`/10x-research ui-redesign`) before planning |
 
 ## Open Roadmap Questions
 
