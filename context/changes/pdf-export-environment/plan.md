@@ -245,14 +245,14 @@ None — no schema or data changes. Additive: one builder edit, one route edit, 
 
 #### Automated
 
-- [x] 2.1 Type checking passes: `npm run typecheck`
-- [x] 2.2 Linting passes: `npm run lint`
-- [x] 2.3 Integration test: battle with environment exports `200` + `application/pdf` + `%PDF-` body
-- [x] 2.4 Integration test: battle with `environment: null` still exports successfully
-- [x] 2.5 Existing export route tests still pass: `npm run test`
+- [x] 2.1 Type checking passes: `npm run typecheck` — 479b1e1
+- [x] 2.2 Linting passes: `npm run lint` — 479b1e1
+- [x] 2.3 Integration test: battle with environment exports `200` + `application/pdf` + `%PDF-` body — 479b1e1
+- [x] 2.4 Integration test: battle with `environment: null` still exports successfully — 479b1e1
+- [x] 2.5 Existing export route tests still pass: `npm run test` — 479b1e1
 
 #### Manual
 
-- [x] 2.6 Exporting a battle with an environment shows the localized environment page first, then enemy pages
-- [x] 2.7 Exporting a battle without an environment matches the previous output (enemy pages only)
+- [x] 2.6 Exporting a battle with an environment shows the localized environment page first, then enemy pages — 479b1e1
+- [x] 2.7 Exporting a battle without an environment matches the previous output (enemy pages only) — 479b1e1
 - [x] 2.8 Switching locale changes the environment labels in the exported PDF — descoped to `pdf-unicode-fonts` (blocked by pdf-lib WinAnsi font bug; verified in `en`)
