@@ -229,30 +229,30 @@ None — no schema or data changes. Additive: one builder edit, one route edit, 
 
 #### Automated
 
-- [x] 1.1 Type checking passes: `npm run typecheck`
-- [x] 1.2 Linting passes: `npm run lint`
-- [x] 1.3 Unit tests pass: `npm run test`
-- [x] 1.4 Unit test: environment present → page count is `enemies + 1`
-- [x] 1.5 Unit test: `environment: null` → page count is `enemies`
-- [x] 1.6 Unit test: near-max-length field values wrap and paginate without throwing
-- [x] 1.7 Existing builder tests still pass (enemy pages, invalid-stats skip, `%PDF-`)
+- [x] 1.1 Type checking passes: `npm run typecheck` — 3647822
+- [x] 1.2 Linting passes: `npm run lint` — 3647822
+- [x] 1.3 Unit tests pass: `npm run test` — 3647822
+- [x] 1.4 Unit test: environment present → page count is `enemies + 1` — 3647822
+- [x] 1.5 Unit test: `environment: null` → page count is `enemies` — 3647822
+- [x] 1.6 Unit test: near-max-length field values wrap and paginate without throwing — 3647822
+- [x] 1.7 Existing builder tests still pass (enemy pages, invalid-stats skip, `%PDF-`) — 3647822
 
 #### Manual
 
-- [x] 1.8 Environment page is readable: heading + five labelled fields in order, wrapped within margins
+- [x] 1.8 Environment page is readable: heading + five labelled fields in order, wrapped within margins — 3647822
 
 ### Phase 2: Route fetches environment + passes localized labels
 
 #### Automated
 
-- [ ] 2.1 Type checking passes: `npm run typecheck`
-- [ ] 2.2 Linting passes: `npm run lint`
-- [ ] 2.3 Integration test: battle with environment exports `200` + `application/pdf` + `%PDF-` body
-- [ ] 2.4 Integration test: battle with `environment: null` still exports successfully
-- [ ] 2.5 Existing export route tests still pass: `npm run test`
+- [x] 2.1 Type checking passes: `npm run typecheck`
+- [x] 2.2 Linting passes: `npm run lint`
+- [x] 2.3 Integration test: battle with environment exports `200` + `application/pdf` + `%PDF-` body
+- [x] 2.4 Integration test: battle with `environment: null` still exports successfully
+- [x] 2.5 Existing export route tests still pass: `npm run test`
 
 #### Manual
 
-- [ ] 2.6 Exporting a battle with an environment shows the localized environment page first, then enemy pages
-- [ ] 2.7 Exporting a battle without an environment matches the previous output (enemy pages only)
-- [ ] 2.8 Switching locale changes the environment labels in the exported PDF
+- [x] 2.6 Exporting a battle with an environment shows the localized environment page first, then enemy pages
+- [x] 2.7 Exporting a battle without an environment matches the previous output (enemy pages only)
+- [x] 2.8 Switching locale changes the environment labels in the exported PDF — descoped to `pdf-unicode-fonts` (blocked by pdf-lib WinAnsi font bug; verified in `en`)

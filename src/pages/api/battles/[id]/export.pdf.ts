@@ -20,7 +20,11 @@ export const GET: APIRoute = async (context) => {
 
   const battleId = context.params.id;
 
-  const battleResult = await supabase.from("battles").select("id, name, campaign_id").eq("id", battleId).single();
+  const battleResult = await supabase
+    .from("battles")
+    .select("id, name, campaign_id, environment")
+    .eq("id", battleId)
+    .single();
 
   if (battleResult.error) {
     if (battleResult.error.code === "PGRST116") {
@@ -62,9 +66,18 @@ export const GET: APIRoute = async (context) => {
     return Response.json({ error: m.api_err_no_enemies_export() }, { status: 404 });
   }
 
+  const envLabels = {
+    sectionTitle: m.env_section_title(),
+    terrain: m.env_terrain(),
+    lighting: m.env_lighting(),
+    hazards: m.env_hazards(),
+    ambiance: m.env_ambiance(),
+    trivia: m.env_trivia(),
+  };
+
   let pdfBytes: Uint8Array;
   try {
-    pdfBytes = await buildBattlePdf(battle, enemies);
+    pdfBytes = await buildBattlePdf(battle, enemies, envLabels);
   } catch {
     return Response.json({ error: m.api_err_generate_pdf() }, { status: 500 });
   }

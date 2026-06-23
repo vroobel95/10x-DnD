@@ -144,4 +144,43 @@ describe("GET /api/battles/[id]/export.pdf", () => {
     const bytes = new Uint8Array(await res.arrayBuffer());
     expect(new TextDecoder().decode(bytes.slice(0, 5))).toBe("%PDF-");
   });
+
+  it("exports a valid PDF when the battle has an environment", async () => {
+    const battleWithEnv = {
+      ...battleData,
+      environment: {
+        terrain: "Frozen lake",
+        lighting: "Dim blue glow",
+        hazards: "Cracking ice",
+        ambiance: "Groaning cavern",
+        trivia: "Old smuggler cache",
+      },
+    };
+    vi.mocked(createClient).mockReturnValue(
+      makeSupabaseMock({
+        battles: { data: battleWithEnv, error: null },
+        campaigns: { data: { id: "camp-1" }, error: null },
+        enemies: { data: [validEnemyRow], error: null },
+      }),
+    );
+    const res = await GET(makeContext());
+    expect(res.status).toBe(200);
+    expect(res.headers.get("Content-Type")).toBe("application/pdf");
+    const bytes = new Uint8Array(await res.arrayBuffer());
+    expect(new TextDecoder().decode(bytes.slice(0, 5))).toBe("%PDF-");
+  });
+
+  it("exports a valid PDF when the battle has no environment", async () => {
+    vi.mocked(createClient).mockReturnValue(
+      makeSupabaseMock({
+        battles: { data: { ...battleData, environment: null }, error: null },
+        campaigns: { data: { id: "camp-1" }, error: null },
+        enemies: { data: [validEnemyRow], error: null },
+      }),
+    );
+    const res = await GET(makeContext());
+    expect(res.status).toBe(200);
+    const bytes = new Uint8Array(await res.arrayBuffer());
+    expect(new TextDecoder().decode(bytes.slice(0, 5))).toBe("%PDF-");
+  });
 });
