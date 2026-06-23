@@ -111,6 +111,14 @@ describe("buildBattlePdf", () => {
     expect(doc.getPageCount()).toBe(2); // enemy pages only
   });
 
+  it("skips the environment page when the environment fails validation instead of throwing", async () => {
+    // Malformed JSONB (missing lighting/hazards/ambiance/trivia) — must not abort the document
+    const battle = { name: "Frozen Cave Ambush", environment: { terrain: "Ice" } as unknown as BattleEnvironment };
+    const bytes = await buildBattlePdf(battle, [makeEnemy("e-1")], ENV_LABELS);
+    const doc = await PDFDocument.load(bytes);
+    expect(doc.getPageCount()).toBe(1); // enemy page only, env page skipped
+  });
+
   it("wraps and paginates very long environment fields without throwing", async () => {
     const long = "Ancient frost-rimed stone. ".repeat(70).trim(); // ~1900 chars, near the 2000 max
     const battle = {

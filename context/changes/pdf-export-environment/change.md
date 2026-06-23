@@ -1,7 +1,7 @@
 ---
 change_id: pdf-export-environment
 title: Add battle environment to PDF export
-status: implemented
+status: impl_reviewed
 created: 2026-06-22
 updated: 2026-06-23
 archived_at: null

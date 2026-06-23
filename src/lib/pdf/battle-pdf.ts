@@ -1,6 +1,7 @@
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 
 import { EnemySchema } from "@/lib/schemas/enemy";
+import { BattleEnvironmentSchema } from "@/lib/schemas/environment";
 import type { Battle, Enemy } from "@/types";
 
 const PAGE_W = 595.28;
@@ -51,9 +52,12 @@ export async function buildBattlePdf(
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-  // Environment page (battle-level) leads the document when present.
-  if (battle.environment && envLabels) {
-    const env = battle.environment;
+  // Environment page (battle-level) leads the document when present and valid.
+  // Re-validate the JSONB like the enemy stats below so a malformed environment
+  // is skipped rather than aborting the whole document.
+  const envParsed = battle.environment ? BattleEnvironmentSchema.safeParse(battle.environment) : null;
+  if (envParsed?.success && envLabels) {
+    const env = envParsed.data;
     let page = pdfDoc.addPage([PAGE_W, PAGE_H]);
     let y = PAGE_H - MARGIN;
 
