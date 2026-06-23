@@ -4,6 +4,7 @@ title: Make PDF export Unicode-safe (Polish / Latin Extended) via embedded font
 status: new
 created: 2026-06-23
 updated: 2026-06-23
+roadmap_id: S-17
 archived_at: null
 ---
 
