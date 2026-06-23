@@ -1,10 +1,27 @@
 import { PDFDocument } from "pdf-lib";
 import { describe, expect, it } from "vitest";
 
-import { buildBattlePdf, pdfFilename } from "@/lib/pdf/battle-pdf";
-import type { Enemy } from "@/types";
+import { buildBattlePdf, pdfFilename, type EnvLabels } from "@/lib/pdf/battle-pdf";
+import type { BattleEnvironment, Enemy } from "@/types";
 
-const BATTLE = { name: "Frozen Cave Ambush" };
+const BATTLE = { name: "Frozen Cave Ambush", environment: null };
+
+const ENV_LABELS: EnvLabels = {
+  sectionTitle: "Environment",
+  terrain: "Terrain",
+  lighting: "Lighting",
+  hazards: "Hazards",
+  ambiance: "Ambiance",
+  trivia: "Trivia",
+};
+
+const ENVIRONMENT: BattleEnvironment = {
+  terrain: "Jagged ice shelves over a frozen underground lake.",
+  lighting: "Dim — phosphorescent lichen casts a pale blue glow.",
+  hazards: "Thin ice cracks under heavy creatures; DC 13 Dexterity save.",
+  ambiance: "A low groan of shifting ice echoes through the cavern.",
+  trivia: "Smugglers once cached goods beneath the lake here.",
+};
 
 const BASE_STATS: Record<string, unknown> = {
   name: "Goblin",
@@ -79,6 +96,37 @@ describe("buildBattlePdf", () => {
     const bytes = await buildBattlePdf(BATTLE, [valid, invalid]);
     const doc = await PDFDocument.load(bytes);
     expect(doc.getPageCount()).toBe(1);
+  });
+
+  it("adds one leading environment page when an environment is present", async () => {
+    const battle = { name: "Frozen Cave Ambush", environment: ENVIRONMENT };
+    const bytes = await buildBattlePdf(battle, [makeEnemy("e-1"), makeEnemy("e-2")], ENV_LABELS);
+    const doc = await PDFDocument.load(bytes);
+    expect(doc.getPageCount()).toBe(3); // 1 environment page + 2 enemy pages
+  });
+
+  it("renders no environment page when environment is null", async () => {
+    const bytes = await buildBattlePdf(BATTLE, [makeEnemy("e-1"), makeEnemy("e-2")], ENV_LABELS);
+    const doc = await PDFDocument.load(bytes);
+    expect(doc.getPageCount()).toBe(2); // enemy pages only
+  });
+
+  it("wraps and paginates very long environment fields without throwing", async () => {
+    const long = "Ancient frost-rimed stone. ".repeat(70).trim(); // ~1900 chars, near the 2000 max
+    const battle = {
+      name: "Frozen Cave Ambush",
+      environment: {
+        terrain: long,
+        lighting: long,
+        hazards: long,
+        ambiance: long,
+        trivia: long,
+      } satisfies BattleEnvironment,
+    };
+    const bytes = await buildBattlePdf(battle, [makeEnemy("e-1")], ENV_LABELS);
+    const doc = await PDFDocument.load(bytes);
+    // Five near-max fields overflow one page → at least 2 environment pages + 1 enemy page
+    expect(doc.getPageCount()).toBeGreaterThanOrEqual(3);
   });
 });
 

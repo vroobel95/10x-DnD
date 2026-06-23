@@ -31,10 +31,86 @@ export function pdfFilename(name: string): string {
   return `${raw.length > 0 ? raw : "battle"}.pdf`;
 }
 
-export async function buildBattlePdf(battle: Pick<Battle, "name">, enemies: Enemy[]): Promise<Uint8Array> {
+// Localized labels for the environment page, resolved by the caller (the export
+// route) so this builder stays pure and i18n-free.
+export interface EnvLabels {
+  sectionTitle: string;
+  terrain: string;
+  lighting: string;
+  hazards: string;
+  ambiance: string;
+  trivia: string;
+}
+
+export async function buildBattlePdf(
+  battle: Pick<Battle, "name"> & Partial<Pick<Battle, "environment">>,
+  enemies: Enemy[],
+  envLabels?: EnvLabels,
+): Promise<Uint8Array> {
   const pdfDoc = await PDFDocument.create();
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+  // Environment page (battle-level) leads the document when present.
+  if (battle.environment && envLabels) {
+    const env = battle.environment;
+    let page = pdfDoc.addPage([PAGE_W, PAGE_H]);
+    let y = PAGE_H - MARGIN;
+
+    // Battle name header (small, muted) — mirrors the enemy pages
+    const headerSz = 8;
+    page.drawText(battle.name, { x: MARGIN, y, size: headerSz, font, color: rgb(0.5, 0.5, 0.5) });
+    y -= headerSz + 8;
+
+    page.drawLine({
+      start: { x: MARGIN, y },
+      end: { x: PAGE_W - MARGIN, y },
+      thickness: 0.5,
+      color: rgb(0.75, 0.75, 0.75),
+    });
+    y -= 22;
+
+    // Section title
+    const titleSz = 20;
+    page.drawText(envLabels.sectionTitle, { x: MARGIN, y, size: titleSz, font: fontBold, color: rgb(0, 0, 0) });
+    y -= titleSz + 16;
+
+    const fields: [string, string][] = [
+      [envLabels.terrain, env.terrain],
+      [envLabels.lighting, env.lighting],
+      [envLabels.hazards, env.hazards],
+      [envLabels.ambiance, env.ambiance],
+      [envLabels.trivia, env.trivia],
+    ];
+
+    const labelSz = 10;
+    const bodySz = 9;
+    const lineH = bodySz + 3;
+
+    for (const [label, body] of fields) {
+      const bodyLines = Math.max(1, Math.ceil(font.widthOfTextAtSize(body, bodySz) / CONTENT_W));
+      const needed = labelSz + 3 + bodyLines * lineH + 12;
+      // Continue onto a fresh page rather than clipping when a field overflows
+      if (y - needed < MARGIN) {
+        page = pdfDoc.addPage([PAGE_W, PAGE_H]);
+        y = PAGE_H - MARGIN;
+      }
+
+      page.drawText(label, { x: MARGIN, y, size: labelSz, font: fontBold, color: rgb(0, 0, 0) });
+      y -= labelSz + 3;
+
+      page.drawText(body, {
+        x: MARGIN,
+        y,
+        size: bodySz,
+        font,
+        color: rgb(0.2, 0.2, 0.2),
+        maxWidth: CONTENT_W,
+        lineHeight: lineH,
+      });
+      y -= bodyLines * lineH + 12;
+    }
+  }
 
   for (const enemy of enemies) {
     const parsed = EnemySchema.safeParse(enemy.stats);
