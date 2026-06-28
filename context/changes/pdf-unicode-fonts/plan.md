@@ -228,25 +228,25 @@ Add two new test cases to the existing unit test file that assert `buildBattlePd
 
 #### Automated
 
-- [x] 1.1 Font assets present: `ls src/lib/pdf/assets/` shows both `.bin` files
-- [x] 1.2 Build succeeds: `npm run build` exits 0
-- [x] 1.3 Type check passes: `npx tsc --noEmit` exits 0
+- [x] 1.1 Font assets present: `ls src/lib/pdf/assets/` shows both `.bin` files — 80cf56c
+- [x] 1.2 Build succeeds: `npm run build` exits 0 — 80cf56c
+- [x] 1.3 Type check passes: `npx tsc --noEmit` exits 0 — 80cf56c
 
 #### Manual
 
-- [x] 1.4 Bundle size delta acceptable (grew by ~200–350 KB; total under 3 MB gzip)
+- [x] 1.4 Bundle size delta acceptable (grew by ~200–350 KB; total under 3 MB gzip) — 80cf56c
 
 ### Phase 2: Font Module and Builder Refactor
 
 #### Automated
 
-- [ ] 2.1 Unit tests pass: `npx vitest run tests/unit/lib/pdf/battle-pdf.test.ts` (all 12 tests)
-- [ ] 2.2 Type check passes: `npx tsc --noEmit` exits 0
-- [ ] 2.3 Build passes: `npm run build` exits 0
+- [x] 2.1 Unit tests pass: `npx vitest run tests/unit/lib/pdf/battle-pdf.test.ts` (all 12 tests)
+- [x] 2.2 Type check passes: `npx tsc --noEmit` exits 0
+- [x] 2.3 Build passes: `npm run build` exits 0
 
 #### Manual
 
-- [ ] 2.4 All existing unit tests confirmed passing with embedded fonts (no page count or PDF signature regressions)
+- [x] 2.4 All existing unit tests confirmed passing with embedded fonts (no page count or PDF signature regressions)
 
 ### Phase 3: Test Extension and Manual Verification
 

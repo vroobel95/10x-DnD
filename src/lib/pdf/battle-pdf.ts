@@ -1,5 +1,7 @@
-import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
+import { PDFDocument, rgb } from "pdf-lib";
+import fontkit from "pdf-fontkit";
 
+import { REGULAR_FONT, BOLD_FONT } from "./fonts";
 import { EnemySchema } from "@/lib/schemas/enemy";
 import { BattleEnvironmentSchema } from "@/lib/schemas/environment";
 import type { Battle, Enemy } from "@/types";
@@ -49,8 +51,9 @@ export async function buildBattlePdf(
   envLabels?: EnvLabels,
 ): Promise<Uint8Array> {
   const pdfDoc = await PDFDocument.create();
-  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-  const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+  pdfDoc.registerFontkit(fontkit);
+  const font = await pdfDoc.embedFont(REGULAR_FONT, { subset: true });
+  const fontBold = await pdfDoc.embedFont(BOLD_FONT, { subset: true });
 
   // Environment page (battle-level) leads the document when present and valid.
   // Re-validate the JSONB like the enemy stats below so a malformed environment
