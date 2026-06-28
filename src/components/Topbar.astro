@@ -5,17 +5,19 @@ import { m } from "@/paraglide/messages.js";
 const { user } = Astro.locals;
 ---
 
-<div class="px-4 pt-4 pb-2 sm:px-8">
-  <div
-    class="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/80 backdrop-blur-xl"
-  >
-    <span class="truncate text-blue-100/70">{user?.email}</span>
-    <div class="flex shrink-0 items-center gap-3">
+<header class="border-border/60 bg-ink/80 relative z-10 border-b backdrop-blur-sm">
+  <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 text-sm">
+    <span class="text-ivory-dim truncate font-medium tracking-wide">{user?.email}</span>
+    <div class="flex shrink-0 items-center gap-2">
       <LocaleSwitcher client:load />
       {
         user && (
           <>
-            <a href="/" class="text-white/60 transition-colors hover:text-white" aria-label={m.nav_home()}>
+            <a
+              href="/"
+              class="text-ivory-dim hover:bg-ink-soft hover:text-ivory rounded-md p-1.5 transition"
+              aria-label={m.nav_home()}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -32,8 +34,26 @@ const { user } = Astro.locals;
               </svg>
             </a>
             <form method="POST" action="/api/auth/signout">
-              <button type="submit" class="text-rose-300 transition-colors hover:text-rose-100">
-                {m.nav_sign_out()}
+              <button
+                type="submit"
+                class="text-blood-bright hover:bg-ink-soft flex items-center gap-1.5 rounded-md px-2 py-1.5 transition"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" x2="9" y1="12" y2="12" />
+                </svg>
+                <span>{m.nav_sign_out()}</span>
               </button>
             </form>
           </>
@@ -41,4 +61,4 @@ const { user } = Astro.locals;
       }
     </div>
   </div>
-</div>
+</header>

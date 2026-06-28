@@ -21,7 +21,7 @@ const { title = "DnD 5enemy" } = Astro.props;
     <link rel="icon" type="image/png" href="/images/dices.png" />
     <title>{title}</title>
   </head>
-  <body class="bg-cosmic flex flex-col overflow-hidden">
+  <body class="flex flex-col overflow-hidden">
     <Topbar />
     {
       missingConfigs.map((cfg) => (
@@ -39,7 +39,7 @@ const { title = "DnD 5enemy" } = Astro.props;
         </Banner>
       ))
     }
-    <main class="flex-1 overflow-y-auto">
+    <main class="relative z-10 flex-1 overflow-y-auto">
       <slot />
     </main>
   </body>
