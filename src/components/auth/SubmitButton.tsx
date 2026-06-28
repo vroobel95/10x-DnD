@@ -12,14 +12,10 @@ interface SubmitButtonProps {
 
 export function SubmitButton({ pendingText, icon, children, isLoading = false }: SubmitButtonProps) {
   return (
-    <Button
-      type="submit"
-      disabled={isLoading}
-      className="w-full rounded-lg bg-[#701c3b] px-4 py-2 font-medium text-white transition-colors hover:bg-[#9f1239]"
-    >
+    <Button type="submit" disabled={isLoading} className="w-full px-4 py-2">
       {isLoading ? (
         <span className="flex items-center gap-2">
-          <span className="size-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+          <span className="border-ivory/30 border-t-ivory size-4 animate-spin rounded-full border-2" />
           {pendingText}
         </span>
       ) : (

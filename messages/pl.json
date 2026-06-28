@@ -114,6 +114,8 @@
   "btn_update_password_pending": "Aktualizowanie...",
 
   "campaigns_title": "Moje kampanie",
+  "campaigns_section_label": "Twój tom",
+  "campaign_new_section_label": "Rozpocznij nową sagę",
   "campaigns_new": "+ Nowa kampania",
   "campaigns_load_error": "Nie udało się załadować kampanii. Spróbuj odświeżyć stronę.",
   "campaigns_empty_title": "Brak kampanii",

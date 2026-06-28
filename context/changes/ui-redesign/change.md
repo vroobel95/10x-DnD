@@ -3,7 +3,7 @@ change_id: ui-redesign
 title: "Blood & Ink" visual redesign (palette, fonts, presence) from Lovable export
 status: implementing
 created: 2026-06-23
-updated: 2026-06-28
+updated: 2026-06-29
 roadmap_id: S-18
 archived_at: null
 ---

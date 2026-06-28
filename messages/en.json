@@ -114,6 +114,8 @@
   "btn_update_password_pending": "Updating...",
 
   "campaigns_title": "My Campaigns",
+  "campaigns_section_label": "Your Tome",
+  "campaign_new_section_label": "Begin a New Saga",
   "campaigns_new": "+ New Campaign",
   "campaigns_load_error": "Could not load campaigns. Please try refreshing the page.",
   "campaigns_empty_title": "No campaigns yet",

@@ -614,26 +614,26 @@ backdrop blur; only old-palette usages are removed.)
 
 #### Automated
 
-- [x] 2.1 Type checking passes: `npm run typecheck`
-- [x] 2.2 Linting passes: `npm run lint`
-- [x] 2.3 Build succeeds: `npm run build`
-- [x] 2.4 New copy appears only in `messages/`, not in `Welcome.astro`
+- [x] 2.1 Type checking passes: `npm run typecheck` — 0b92f48
+- [x] 2.2 Linting passes: `npm run lint` — 0b92f48
+- [x] 2.3 Build succeeds: `npm run build` — 0b92f48
+- [x] 2.4 New copy appears only in `messages/`, not in `Welcome.astro` — 0b92f48
 
 #### Manual
 
-- [x] 2.5 Guest landing matches the export (chip, blood-bright "5", tagline, Ornament, monster-card trio)
-- [x] 2.6 Authed landing shows ink-card recent campaigns with chips
-- [x] 2.7 Switching to PL translates all landing copy including new keys
-- [x] 2.8 No orbs/starfield/old tokens remain on the landing
+- [x] 2.5 Guest landing matches the export (chip, blood-bright "5", tagline, Ornament, monster-card trio) — 0b92f48
+- [x] 2.6 Authed landing shows ink-card recent campaigns with chips — 0b92f48
+- [x] 2.7 Switching to PL translates all landing copy including new keys — 0b92f48
+- [x] 2.8 No orbs/starfield/old tokens remain on the landing — 0b92f48
 
 ### Phase 3: Campaigns
 
 #### Automated
 
-- [ ] 3.1 Type checking passes: `npm run typecheck`
-- [ ] 3.2 Linting passes: `npm run lint`
-- [ ] 3.3 Build succeeds: `npm run build`
-- [ ] 3.4 Unit tests pass: `npm run test`
+- [x] 3.1 Type checking passes: `npm run typecheck`
+- [x] 3.2 Linting passes: `npm run lint`
+- [x] 3.3 Build succeeds: `npm run build`
+- [x] 3.4 Unit tests pass: `npm run test`
 
 #### Manual
 

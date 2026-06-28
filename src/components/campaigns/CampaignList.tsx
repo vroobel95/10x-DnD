@@ -1,9 +1,18 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { Skull, Crown, Flame, Eye, Moon, Swords, Calendar } from "lucide-react";
 import { m } from "@/paraglide/messages.js";
 import { getLocale } from "@/paraglide/runtime.js";
 import type { Campaign } from "@/types";
 
 export type CampaignWithCount = Campaign & { battleCount: number };
+
+// Decorative sigil derived from the campaign id (stable, not persisted).
+const SIGILS = [Skull, Crown, Flame, Eye, Moon] as const;
+function sigilFor(id: string): (typeof SIGILS)[number] {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
+  return SIGILS[h % SIGILS.length];
+}
 
 // Select the correct plural form for the active locale (Polish needs one/few/many/other).
 function battleCountLabel(count: number): string {
@@ -97,9 +106,10 @@ export default function CampaignList({ campaigns: initial }: Props) {
 
   if (campaigns.length === 0) {
     return (
-      <div className="rounded-xl border border-white/10 bg-white/5 p-10 text-center backdrop-blur-xl">
-        <p className="mb-2 text-lg font-semibold text-white">{m.campaigns_empty_title()}</p>
-        <a href="/campaigns/new" className="text-sm text-rose-300 hover:underline">
+      <div className="ink-card p-10 text-center">
+        <Swords className="text-blood-bright mx-auto h-8 w-8" strokeWidth={1.5} />
+        <p className="text-ivory font-display mt-4 text-2xl">{m.campaigns_empty_title()}</p>
+        <a href="/campaigns/new" className="text-blood-bright mt-3 inline-block text-sm hover:underline">
           {m.campaigns_create_first()}
         </a>
       </div>
@@ -107,9 +117,9 @@ export default function CampaignList({ campaigns: initial }: Props) {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-3">
       {actionError && (
-        <div className="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+        <div className="border-destructive/40 bg-destructive/10 text-destructive rounded-md border px-4 py-3 text-sm">
           {actionError}
         </div>
       )}
@@ -117,6 +127,7 @@ export default function CampaignList({ campaigns: initial }: Props) {
         const isEditing = editingId === campaign.id;
         const isDeleting = deletingId === campaign.id;
         const isLoading = loadingId === campaign.id;
+        const Sigil = sigilFor(campaign.id);
         const createdDate = new Date(campaign.created_at).toLocaleDateString(getLocale(), {
           year: "numeric",
           month: "short",
@@ -124,58 +135,70 @@ export default function CampaignList({ campaigns: initial }: Props) {
         });
 
         return (
-          <div key={campaign.id} className="rounded-xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
-            {isEditing ? (
-              <div className="mb-3 flex gap-2">
-                <input
-                  className="flex-1 rounded-lg border border-white/20 bg-white/10 px-3 py-1.5 text-sm text-white placeholder-blue-100/40 focus:border-rose-400/60 focus:outline-none"
-                  value={renamingDraft}
-                  onChange={(e) => {
-                    setRenamingDraft(e.target.value);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") void handleRenameSave(campaign.id);
-                    if (e.key === "Escape") handleRenameCancel();
-                  }}
-                  autoFocus
-                  maxLength={200}
-                />
-                <button
-                  onClick={() => handleRenameSave(campaign.id)}
-                  disabled={isLoading}
-                  className="rounded-lg bg-[#701c3b] px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-[#9f1239] disabled:opacity-50"
-                >
-                  {m.common_save()}
-                </button>
-                <button
-                  onClick={handleRenameCancel}
-                  className="rounded-lg border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-white/20"
-                >
-                  {m.common_cancel()}
-                </button>
+          <div key={campaign.id} className="ink-card group p-5">
+            <div className="flex items-center gap-4">
+              <div className="border-blood/40 bg-blood/10 flex h-12 w-12 shrink-0 items-center justify-center rounded border">
+                <Sigil className="text-blood-bright h-5 w-5" strokeWidth={1.5} />
               </div>
-            ) : (
-              <a
-                href={`/campaigns/${campaign.id}`}
-                className="mb-2 block text-base font-semibold text-white hover:text-rose-300"
-              >
-                {campaign.name}
-              </a>
-            )}
 
-            {campaign.description && !isEditing && (
-              <p className="mb-2 text-sm text-blue-100/60">{campaign.description}</p>
-            )}
+              <div className="min-w-0 flex-1">
+                {isEditing ? (
+                  <div className="flex gap-2">
+                    <input
+                      className="bg-ink-deep/60 border-border text-ivory placeholder-ivory-dim/50 focus:border-blood flex-1 rounded-md border px-3 py-1.5 text-sm focus:outline-none"
+                      value={renamingDraft}
+                      onChange={(e) => {
+                        setRenamingDraft(e.target.value);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") void handleRenameSave(campaign.id);
+                        if (e.key === "Escape") handleRenameCancel();
+                      }}
+                      autoFocus
+                      maxLength={200}
+                    />
+                    <button
+                      onClick={() => handleRenameSave(campaign.id)}
+                      disabled={isLoading}
+                      className="blood-button rounded-md px-3 py-1.5 text-xs font-semibold disabled:opacity-50"
+                    >
+                      {m.common_save()}
+                    </button>
+                    <button
+                      onClick={handleRenameCancel}
+                      className="border-border bg-ink-soft/60 text-ivory hover:border-blood/60 rounded-md border px-3 py-1.5 text-xs font-medium"
+                    >
+                      {m.common_cancel()}
+                    </button>
+                  </div>
+                ) : (
+                  <a
+                    href={`/campaigns/${campaign.id}`}
+                    className="text-ivory font-display group-hover:text-blood-bright block text-2xl transition"
+                  >
+                    {campaign.name}
+                  </a>
+                )}
 
-            <div className="mb-4 flex flex-wrap gap-3 text-sm text-blue-100/60">
-              <span>{battleCountLabel(campaign.battleCount)}</span>
-              <span>·</span>
-              <span>{createdDate}</span>
+                {campaign.description && !isEditing && (
+                  <p className="text-ivory-dim mt-0.5 line-clamp-1 text-sm">{campaign.description}</p>
+                )}
+
+                <div className="text-ivory-dim mt-2 flex flex-wrap items-center gap-3 text-xs">
+                  <span className="inline-flex items-center gap-1.5">
+                    <Swords className="text-blood-bright h-3.5 w-3.5" /> {battleCountLabel(campaign.battleCount)}
+                  </span>
+                  <span className="text-border">·</span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <Calendar className="h-3.5 w-3.5" /> {createdDate}
+                  </span>
+                </div>
+              </div>
             </div>
 
             {isDeleting ? (
-              <div className="flex flex-wrap items-center gap-3">
-                <span className="text-sm text-red-300">
+              <div className="mt-4 flex flex-wrap items-center gap-3">
+                <span className="text-destructive text-sm">
                   {m.campaigns_delete_confirm({
                     name: campaign.name,
                     battles: battleCountLabel(campaign.battleCount),
@@ -184,36 +207,38 @@ export default function CampaignList({ campaigns: initial }: Props) {
                 <button
                   onClick={() => handleDeleteConfirm(campaign.id)}
                   disabled={isLoading}
-                  className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-red-500 disabled:opacity-50"
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-md px-3 py-1.5 text-xs font-semibold disabled:opacity-50"
                 >
                   {isLoading ? m.common_deleting() : m.common_yes_delete()}
                 </button>
                 <button
                   onClick={handleDeleteCancel}
-                  className="rounded-lg border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-white/20"
+                  className="border-border bg-ink-soft/60 text-ivory hover:border-blood/60 rounded-md border px-3 py-1.5 text-xs font-medium"
                 >
                   {m.common_cancel()}
                 </button>
               </div>
             ) : (
-              <div className="flex gap-2">
-                <button
-                  onClick={() => {
-                    handleRenameStart(campaign.id, campaign.name);
-                  }}
-                  className="rounded-lg border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-white/20"
-                >
-                  {m.common_rename()}
-                </button>
-                <button
-                  onClick={() => {
-                    handleDeleteStart(campaign.id);
-                  }}
-                  className="rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-1.5 text-xs font-medium text-red-300 transition-colors hover:bg-red-500/20"
-                >
-                  {m.common_delete()}
-                </button>
-              </div>
+              !isEditing && (
+                <div className="mt-4 flex gap-2">
+                  <button
+                    onClick={() => {
+                      handleRenameStart(campaign.id, campaign.name);
+                    }}
+                    className="border-border bg-ink-soft/60 text-ivory hover:border-blood/60 rounded-md border px-3 py-1.5 text-xs font-medium"
+                  >
+                    {m.common_rename()}
+                  </button>
+                  <button
+                    onClick={() => {
+                      handleDeleteStart(campaign.id);
+                    }}
+                    className="border-destructive/40 bg-destructive/10 text-destructive hover:bg-destructive/20 rounded-md border px-3 py-1.5 text-xs font-medium"
+                  >
+                    {m.common_delete()}
+                  </button>
+                </div>
+              )
             )}
           </div>
         );
