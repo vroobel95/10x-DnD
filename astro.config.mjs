@@ -25,6 +25,7 @@ export default defineConfig({
       exclude: ["lucide-react"],
     },
     ssr: {
+      noExternal: ["pdf-fontkit"],
       optimizeDeps: {
         esbuildOptions: {
           define: {

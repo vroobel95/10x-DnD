@@ -1,9 +1,9 @@
 ---
 change_id: pdf-unicode-fonts
 title: Make PDF export Unicode-safe (Polish / Latin Extended) via embedded font
-status: new
+status: implementing
 created: 2026-06-23
-updated: 2026-06-23
+updated: 2026-06-28
 roadmap_id: S-17
 archived_at: null
 ---
