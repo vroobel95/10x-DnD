@@ -3,7 +3,7 @@ project: "DnD 5enemy"
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-06-23 (S-17 pdf-unicode-fonts, S-18 ui-redesign added)
+updated: 2026-06-28 (S-17 pdf-unicode-fonts → impl_reviewed)
 prd_version: 1
 main_goal: speed
 top_blocker: external
@@ -44,9 +44,9 @@ D&D 5e Game Masters lose preparation time hunting stat blocks and manually adjus
 | S-12 | edit-battle                   | edit a battle's name and description after it has been created                                                              | S-01 | —               | impl_reviewed    |
 | S-13 | campaign-new-page             | create a new campaign via a dedicated `/campaigns/new` page (matching the `/battles/new` pattern) instead of an inline form | S-05 | —               | impl_reviewed    |
 | S-14 | readme-update                 | README accurately reflects current tech stack, local setup, Supabase config, Cloudflare deployment, and env vars                   | —    | —               | proposed         |
-| S-15 | pdf-export-environment        | export a battle's enemy cards **and** its environment block together as a single printable PDF                                      | S-07, S-09 | —          | proposed         |
+| S-15 | pdf-export-environment        | export a battle's enemy cards **and** its environment block together as a single printable PDF                                      | S-07, S-09 | —          | impl_reviewed    |
 | S-16 | i18n-polish                   | switch the app between English and Polish; all UI strings, error messages, and AI-generated content language follow the chosen locale | S-08 | —             | impl_reviewed    |
-| S-17 | pdf-unicode-fonts             | export PDFs whose text renders correctly in Polish (and other Latin Extended) — labels and AI content no longer fail the export | S-07, S-16 | —              | proposed         |
+| S-17 | pdf-unicode-fonts             | export PDFs whose text renders correctly in Polish (and other Latin Extended) — labels and AI content no longer fail the export | S-07, S-16 | —              | impl_reviewed    |
 | S-18 | ui-redesign                   | see the app in the "Blood & Ink" visual identity — oxblood/ink/ivory palette, medieval + serif fonts, paper-grain texture — replacing the S-08 maroon rebrand | S-08, S-16 | —    | proposed         |
 
 ## Baseline
@@ -251,7 +251,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
   - Layout of the combined PDF: does the environment section appear on its own first page, as a header section on the first enemy page, or as a sidebar? Decide in `/10x-plan` — this shapes the `pdf-lib` template structure.
   - Does the environment block need a styled divider / section header to be legible when printed in black-and-white? — Owner: developer.
 - **Risk:** low–medium. The PDF generation infrastructure already exists from S-07; this slice extends the template, not the plumbing. Main risk is layout: fitting environment prose + multiple enemy stat blocks into a coherent print layout without orphaned sections requires careful page-break handling in `pdf-lib`. Sequenced after both S-07 and S-09 so neither the PDF approach nor the environment data model can change under this slice.
-- **Status:** proposed
+- **Status:** impl_reviewed
 
 ### S-16: Polish translation and two-language support
 
@@ -293,7 +293,8 @@ Foundations below assume these are present and do NOT re-scaffold them.
   - Which Unicode font to embed, and whether to pre-subset it to Latin + Latin Extended-A to stay within the Cloudflare Workers bundle budget (~278 KB gzip headroom under the 1 MB free limit, measured during S-15). — Owner: developer. Block: soft.
   - How to bundle the font bytes for the workerd runtime (no filesystem) — import as a module/`Uint8Array` vs. an asset binding. — Owner: developer. Block: soft.
 - **Risk:** medium. pdf-lib's built-in StandardFonts use WinAnsi encoding and throw on any non-Latin-1 glyph, so PDF export currently fails entirely in Polish locale (and would for any non-Latin-1 AI content). Fix requires registering `@pdf-lib/fontkit` and embedding a Unicode TTF used across the whole builder — a new dependency + a font asset + re-checking the worker bundle size. Pre-existing defect in S-07, exposed by S-16 and made unconditional by S-15's always-localized labels; discovered during S-15 manual verification.
-- **Status:** proposed
+- **Implementation note:** shipped via `pdf-fontkit` + embedded Noto Sans (Regular/Bold) with `{ subset: true }`. Phase-3 manual testing surfaced three adjacent defects fixed in the same change (see plan.md Scope Addendum): Polish env labels rendered in English (locale now read from the `PARAGLIDE_LOCALE` cookie), the main-villain profile was absent from the PDF (now selected, validated, and rendered with overflow pagination), and AI dialogue lacked its closing quote (`normalizeDialogueLine` + prompt fix). impl-reviewed 2026-06-28 (F1–F3 resolved).
+- **Status:** impl_reviewed
 
 ### S-18: "Blood & Ink" visual redesign
 
@@ -328,9 +329,9 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-12       | edit-battle                   | Edit a battle's name and description                    | yes                   | Needs S-01 implemented; low complexity — PATCH endpoint + form    |
 | S-13       | campaign-new-page             | Dedicated /campaigns/new creation page                  | —                     | impl_reviewed — complete                                          |
 | S-14       | readme-update                 | Update README with current stack, setup, env vars, and deployment | yes             | No deps; purely documentation; parallel with any slice            |
-| S-15       | pdf-export-environment        | Export environment block + enemy cards together as one PDF        | no              | Needs S-07 and S-09 implemented; low complexity — extends existing pdf-lib template |
+| S-15       | pdf-export-environment        | Export environment block + enemy cards together as one PDF        | —               | impl_reviewed — complete                                                             |
 | S-16       | i18n-polish                   | Polish translation and two-language support (EN/PL)               | —              | impl_reviewed — complete (Paraglide JS v2, cookie-based EN/PL toggle) |
-| S-17       | pdf-unicode-fonts             | Make PDF export Unicode-safe (embed font for Polish / Latin Extended) | yes        | Needs S-07 + S-16; relates to S-15. Fixes export 500 in Polish locale. Plan with `/10x-plan pdf-unicode-fonts` |
+| S-17       | pdf-unicode-fonts             | Make PDF export Unicode-safe (embed font for Polish / Latin Extended) | —          | impl_reviewed — complete (Noto Sans via pdf-fontkit; +locale labels, villain profile, dialogue-quote fixes) |
 | S-18       | ui-redesign                   | Apply the "Blood & Ink" visual redesign (palette, fonts, presence)    | no         | Needs S-08 + S-16. Port from Lovable export; research the file-by-file delta first (`/10x-research ui-redesign`) before planning |
 
 ## Open Roadmap Questions
