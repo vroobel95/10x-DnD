@@ -596,35 +596,35 @@ backdrop blur; only old-palette usages are removed.)
 
 #### Automated
 
-- [x] 1.1 Dependencies install: `npm install`
-- [x] 1.2 Type checking passes: `npm run typecheck`
-- [x] 1.3 Linting passes: `npm run lint`
-- [x] 1.4 Production build succeeds: `npm run build`
-- [x] 1.5 Existing unit tests pass: `npm run test`
+- [x] 1.1 Dependencies install: `npm install` — 006d9cf
+- [x] 1.2 Type checking passes: `npm run typecheck` — 006d9cf
+- [x] 1.3 Linting passes: `npm run lint` — 006d9cf
+- [x] 1.4 Production build succeeds: `npm run build` — 006d9cf
+- [x] 1.5 Existing unit tests pass: `npm run test` — 006d9cf
 
 #### Manual
 
-- [x] 1.6 App background is ink-black with a subtle paper grain on every route
-- [x] 1.7 Headings render in MedievalSharp; body in Cabin; no FOUT/missing-font fallback
-- [x] 1.8 Top bar matches the export; LocaleSwitcher still toggles EN/PL
-- [x] 1.9 Existing `<Button>` instances render in the new oxblood/ink styling
-- [x] 1.10 No `bg-cosmic` or navy gradient visible anywhere
+- [x] 1.6 App background is ink-black with a subtle paper grain on every route — 006d9cf
+- [x] 1.7 Headings render in MedievalSharp; body in Cabin; no FOUT/missing-font fallback — 006d9cf
+- [x] 1.8 Top bar matches the export; LocaleSwitcher still toggles EN/PL — 006d9cf
+- [x] 1.9 Existing `<Button>` instances render in the new oxblood/ink styling — 006d9cf
+- [x] 1.10 No `bg-cosmic` or navy gradient visible anywhere — 006d9cf
 
 ### Phase 2: Landing
 
 #### Automated
 
-- [ ] 2.1 Type checking passes: `npm run typecheck`
-- [ ] 2.2 Linting passes: `npm run lint`
-- [ ] 2.3 Build succeeds: `npm run build`
-- [ ] 2.4 New copy appears only in `messages/`, not in `Welcome.astro`
+- [x] 2.1 Type checking passes: `npm run typecheck`
+- [x] 2.2 Linting passes: `npm run lint`
+- [x] 2.3 Build succeeds: `npm run build`
+- [x] 2.4 New copy appears only in `messages/`, not in `Welcome.astro`
 
 #### Manual
 
-- [ ] 2.5 Guest landing matches the export (chip, blood-bright "5", tagline, Ornament, monster-card trio)
-- [ ] 2.6 Authed landing shows ink-card recent campaigns with chips
-- [ ] 2.7 Switching to PL translates all landing copy including new keys
-- [ ] 2.8 No orbs/starfield/old tokens remain on the landing
+- [x] 2.5 Guest landing matches the export (chip, blood-bright "5", tagline, Ornament, monster-card trio)
+- [x] 2.6 Authed landing shows ink-card recent campaigns with chips
+- [x] 2.7 Switching to PL translates all landing copy including new keys
+- [x] 2.8 No orbs/starfield/old tokens remain on the landing
 
 ### Phase 3: Campaigns
 
