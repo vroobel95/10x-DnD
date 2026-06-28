@@ -33,6 +33,31 @@ Register `pdf-fontkit` and embed Noto Sans Regular + Bold TTF fonts into the `bu
 - Modifying any API route, schema, component, or Supabase query
 - Adding Bold Italic or Italic variants — only Regular and Bold are needed
 
+> **Scope Addendum (2026-06-28, post-implementation).** Phase 3 manual testing
+> surfaced three pre-existing bugs that the Unicode fix exposed for the first time
+> (Polish PDFs were previously failing outright, so this output had never been seen).
+> Fixing them required crossing the "Modifying any API route, schema, component, or
+> Supabase query" guardrail above. The boundary held for the *font work itself*; these
+> are adjacent defects the change made visible:
+>
+> 1. **Polish env labels rendered in English** — `m.*()` relied on AsyncLocalStorage,
+>    unreliable in API routes. Fix: read `PARAGLIDE_LOCALE` cookie explicitly and pass
+>    `{ locale }` to each message. (`src/pages/api/battles/[id]/export.pdf.ts`)
+> 2. **Main-villain profile absent from the PDF** — `main_enemy_profile` lives on the
+>    `battles` row, not `enemies`, and was never selected or rendered. Fix: expand the
+>    SELECT, validate the JSONB with `MainEnemyProfileSchema`, pass a `villain` arg to
+>    `buildBattlePdf`, and add a profile-rendering section.
+>    (`export.pdf.ts`, `src/lib/pdf/battle-pdf.ts`)
+> 3. **Dialogue missing its closing quote** — the AI emits an opening `„`/`"` but not
+>    always a closing `"`. Fix: `normalizeDialogueLine` (in `src/lib/schemas/enemy.ts`,
+>    applied in both the PDF builder and `EnemyCard.tsx`) plus a prompt instruction in
+>    `src/lib/ai.ts`. Also replaced pdf-lib's `maxWidth` word-wrap with manual
+>    `wrapText` per-line rendering to avoid a last-glyph drop.
+>
+> All landed in commit `9915c6b` (p3) with the test suite green. The guardrail remains
+> the correct *forward* intent for the font work; this note records the justified
+> deviation so the section isn't read as contradicting the shipped change.
+
 ## Implementation Approach
 
 Three sequential phases: install the npm dependency and prepare binary font assets (Phase 1), create a shared font module and refactor the builder (Phase 2), then add Polish test cases and verify manually (Phase 3). Phase 2 depends on the assets from Phase 1; Phase 3 validates the completed implementation.

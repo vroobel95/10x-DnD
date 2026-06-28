@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { EnemySchema, EnemyGroupSchema } from "@/lib/schemas/enemy";
+import { EnemySchema, EnemyGroupSchema, normalizeDialogueLine } from "@/lib/schemas/enemy";
 
 const baseline = {
   name: "Goblin",
@@ -103,5 +103,28 @@ describe("EnemyGroupSchema", () => {
 
   it("accepts a group with one valid enemy", () => {
     expect(EnemyGroupSchema.safeParse({ enemies: [baseline] }).success).toBe(true);
+  });
+});
+
+describe("normalizeDialogueLine", () => {
+  it("appends a closing quote when a Polish „ opener is unclosed", () => {
+    expect(normalizeDialogueLine("„Ciepło... czuję wasze ciepło")).toBe("„Ciepło... czuję wasze ciepło”");
+  });
+
+  it("appends a closing quote when an English “ opener is unclosed", () => {
+    expect(normalizeDialogueLine("“You should not have come here")).toBe("“You should not have come here”");
+  });
+
+  it("leaves an already-closed line unchanged", () => {
+    expect(normalizeDialogueLine("„Witaj, śmiałku.”")).toBe("„Witaj, śmiałku.”");
+  });
+
+  it("trims trailing whitespace before deciding on the closing quote", () => {
+    expect(normalizeDialogueLine("„Zginiesz tutaj.   ")).toBe("„Zginiesz tutaj.”");
+  });
+
+  it("passes through a line with no typographic opener (straight quotes / none)", () => {
+    expect(normalizeDialogueLine('"Plain ascii quotes"')).toBe('"Plain ascii quotes"');
+    expect(normalizeDialogueLine("No quotes at all")).toBe("No quotes at all");
   });
 });

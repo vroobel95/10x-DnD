@@ -149,7 +149,7 @@ export async function buildBattlePdf(
     if (!parsed.success) continue;
 
     const s = parsed.data;
-    const page = pdfDoc.addPage([PAGE_W, PAGE_H]);
+    let page = pdfDoc.addPage([PAGE_W, PAGE_H]);
     let y = PAGE_H - MARGIN;
 
     // Battle name header (small, muted)
@@ -363,45 +363,56 @@ export async function buildBattlePdf(
       const profileSz = 9;
       const profileLineH = profileSz + 3;
 
-      if (y >= MARGIN) {
-        y -= 8;
-        page.drawLine({
-          start: { x: MARGIN, y },
-          end: { x: PAGE_W - MARGIN, y },
-          thickness: 0.5,
-          color: rgb(0.8, 0.8, 0.8),
-        });
-        y -= 12;
+      // Pre-wrap every block so we can reserve its full height and keep the profile
+      // together: if it doesn't fit below the abilities, start a fresh page rather
+      // than silently clipping (mirrors the environment page's overflow handling).
+      const descLines = wrapText(vp.description, font, profileSz, CONTENT_W);
+      const tacticLines = wrapText(vp.tactics, font, profileSz, CONTENT_W);
+      const dialogueBlocks = vp.dialogue.map((line) =>
+        wrapText(normalizeDialogueLine(line), font, profileSz, CONTENT_W),
+      );
+      const dialogueLineCount = dialogueBlocks.reduce((sum, block) => sum + block.length, 0);
+      const needed =
+        20 + // separator (8 + 12)
+        15 + // title (9 + 6)
+        descLines.length * profileLineH +
+        6 +
+        tacticLines.length * profileLineH +
+        6 +
+        dialogueLineCount * profileLineH +
+        dialogueBlocks.length * 4;
+      if (y - needed < MARGIN) {
+        page = pdfDoc.addPage([PAGE_W, PAGE_H]);
+        y = PAGE_H - MARGIN;
       }
 
-      if (y >= MARGIN) {
-        const titleText = (envLabels?.villainTitle ?? "Main Villain").toUpperCase();
-        page.drawText(titleText, { x: MARGIN, y, size: 9, font: fontBold, color: rgb(0.55, 0.38, 0.0) });
-        y -= 9 + 6;
-      }
+      y -= 8;
+      page.drawLine({
+        start: { x: MARGIN, y },
+        end: { x: PAGE_W - MARGIN, y },
+        thickness: 0.5,
+        color: rgb(0.8, 0.8, 0.8),
+      });
+      y -= 12;
 
-      if (y >= MARGIN) {
-        for (const descLine of wrapText(vp.description, font, profileSz, CONTENT_W)) {
-          if (y < MARGIN) break;
-          page.drawText(descLine, { x: MARGIN, y, size: profileSz, font, color: rgb(0.15, 0.15, 0.15) });
-          y -= profileLineH;
-        }
-        y -= 6;
-      }
+      const titleText = (envLabels?.villainTitle ?? "Main Villain").toUpperCase();
+      page.drawText(titleText, { x: MARGIN, y, size: 9, font: fontBold, color: rgb(0.55, 0.38, 0.0) });
+      y -= 9 + 6;
 
-      if (y >= MARGIN) {
-        for (const tacLine of wrapText(vp.tactics, font, profileSz, CONTENT_W)) {
-          if (y < MARGIN) break;
-          page.drawText(tacLine, { x: MARGIN, y, size: profileSz, font, color: rgb(0.35, 0.35, 0.35) });
-          y -= profileLineH;
-        }
-        y -= 6;
+      for (const descLine of descLines) {
+        page.drawText(descLine, { x: MARGIN, y, size: profileSz, font, color: rgb(0.15, 0.15, 0.15) });
+        y -= profileLineH;
       }
+      y -= 6;
 
-      for (const rawLine of vp.dialogue) {
-        if (y < MARGIN) break;
-        for (const dialogueLine of wrapText(normalizeDialogueLine(rawLine), font, profileSz, CONTENT_W)) {
-          if (y < MARGIN) break;
+      for (const tacLine of tacticLines) {
+        page.drawText(tacLine, { x: MARGIN, y, size: profileSz, font, color: rgb(0.35, 0.35, 0.35) });
+        y -= profileLineH;
+      }
+      y -= 6;
+
+      for (const dialogueBlock of dialogueBlocks) {
+        for (const dialogueLine of dialogueBlock) {
           page.drawText(dialogueLine, { x: MARGIN, y, size: profileSz, font, color: rgb(0.25, 0.25, 0.25) });
           y -= profileLineH;
         }

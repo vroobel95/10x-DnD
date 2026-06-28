@@ -158,6 +158,49 @@ describe("buildBattlePdf", () => {
     expect(doc.getPageCount()).toBeGreaterThanOrEqual(2);
   });
 
+  it("renders the main villain profile for the matching enemy, including unclosed-quote dialogue", async () => {
+    const villain = {
+      id: "e-boss",
+      profile: {
+        description: "A gaunt frost-wight wreathed in rime, last warden of the drowned vault.",
+        tactics: "Opens with a wail that freezes the boldest, then retreats behind cracking ice.",
+        // Deliberately unclosed „ opener — exercises normalizeDialogueLine inside the builder.
+        dialogue: ["„Ciepło... czuję wasze ciepło", "„Zostańcie. Na zawsze.", "„Lód pamięta wszystko"],
+      },
+    };
+    const bytes = await buildBattlePdf(BATTLE, [makeEnemy("e-boss")], undefined, villain);
+    const doc = await PDFDocument.load(bytes);
+    expect(new TextDecoder().decode(bytes.slice(0, 5))).toBe("%PDF-");
+    expect(doc.getPageCount()).toBe(1);
+  });
+
+  it("pushes the villain profile to a new page when it can't fit below the stat block", async () => {
+    // A profile too tall to fit under the stat table must move to its own page
+    // rather than being silently clipped.
+    const long = "Ancient frost-rimed prose describing the villain in exhaustive detail. ".repeat(40).trim();
+    const villain = {
+      id: "e-boss",
+      profile: {
+        description: long,
+        tactics: long,
+        dialogue: ["„Ciepło... czuję wasze ciepło", "„Zostańcie. Na zawsze.", "„Lód pamięta wszystko"],
+      },
+    };
+    const bytes = await buildBattlePdf(BATTLE, [makeEnemy("e-boss")], undefined, villain);
+    const doc = await PDFDocument.load(bytes);
+    // One stat-block page + one villain-profile continuation page.
+    expect(doc.getPageCount()).toBe(2);
+  });
+
+  it("ignores a villain profile whose id matches no rendered enemy", async () => {
+    const villain = {
+      id: "e-absent",
+      profile: { description: "Unseen.", tactics: "Unseen.", dialogue: ["„a", "„b", "„c"] },
+    };
+    const bytes = await buildBattlePdf(BATTLE, [makeEnemy("e-1")], undefined, villain);
+    expect(new TextDecoder().decode(bytes.slice(0, 5))).toBe("%PDF-");
+  });
+
   it("wraps and paginates very long environment fields without throwing", async () => {
     const long = "Ancient frost-rimed stone. ".repeat(70).trim(); // ~1900 chars, near the 2000 max
     const battle = {
