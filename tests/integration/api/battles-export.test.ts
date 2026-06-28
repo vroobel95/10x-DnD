@@ -33,11 +33,15 @@ const validEnemyRow = {
   updated_at: "2024-01-01T00:00:00Z",
 };
 
-function makeContext(options: { user?: { id: string } | null } = {}) {
+function makeContext(options: { user?: { id: string } | null; locale?: string } = {}) {
   const user = "user" in options ? options.user : { id: "user-1" };
+  const locale = options.locale;
   return {
     request: new Request("http://localhost/api/battles/b-1/export.pdf"),
-    cookies: { set: vi.fn() },
+    cookies: {
+      set: vi.fn(),
+      get: vi.fn((name: string) => (name === "PARAGLIDE_LOCALE" && locale ? { value: locale } : undefined)),
+    },
     locals: { user },
     url: new URL("http://localhost/api/battles/b-1/export.pdf"),
     params: { id: "b-1" },

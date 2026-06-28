@@ -240,21 +240,21 @@ Add two new test cases to the existing unit test file that assert `buildBattlePd
 
 #### Automated
 
-- [x] 2.1 Unit tests pass: `npx vitest run tests/unit/lib/pdf/battle-pdf.test.ts` (all 12 tests)
-- [x] 2.2 Type check passes: `npx tsc --noEmit` exits 0
-- [x] 2.3 Build passes: `npm run build` exits 0
+- [x] 2.1 Unit tests pass: `npx vitest run tests/unit/lib/pdf/battle-pdf.test.ts` (all 12 tests) — 9553988
+- [x] 2.2 Type check passes: `npx tsc --noEmit` exits 0 — 9553988
+- [x] 2.3 Build passes: `npm run build` exits 0 — 9553988
 
 #### Manual
 
-- [x] 2.4 All existing unit tests confirmed passing with embedded fonts (no page count or PDF signature regressions)
+- [x] 2.4 All existing unit tests confirmed passing with embedded fonts (no page count or PDF signature regressions) — 9553988
 
 ### Phase 3: Test Extension and Manual Verification
 
 #### Automated
 
-- [ ] 3.1 New Polish tests pass: `npx vitest run tests/unit/lib/pdf/battle-pdf.test.ts` — 10 of 10 `buildBattlePdf` tests pass
-- [ ] 3.2 Full suite passes: `npm test` exits 0
+- [x] 3.1 New Polish tests pass: `npx vitest run tests/unit/lib/pdf/battle-pdf.test.ts` — 10 of 10 `buildBattlePdf` tests pass
+- [x] 3.2 Full suite passes: `npm test` exits 0
 
 #### Manual
 
-- [ ] 3.3 Polish locale PDF export completes without error and diacritics render correctly in the downloaded PDF
+- [x] 3.3 Polish locale PDF export completes without error and diacritics render correctly in the downloaded PDF

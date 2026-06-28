@@ -15,7 +15,7 @@ Main villain rules:
 - Only populate main_enemy when the prompt contains a distinctly named or uniquely typed creature that clearly stands apart as a boss or leader (e.g. "a vampire lord and 2 guards", "a bandit captain and bandits", "the necromancer"). The villain must be a different creature type or explicitly named — do NOT pick a "leader" from a group of identical creatures.
 - description: 2–3 sentences on the villain's appearance and a backstory hook.
 - tactics: 1–2 sentences on unique combat behavior and signature moves (flavor, not mechanics).
-- dialogue: exactly 3 short, evocative in-character lines for GM use at the table.
+- dialogue: exactly 3 short, evocative in-character lines for GM use at the table. Each line must be enclosed in matching quotation marks — opening and closing (e.g. "Line here." or „Line here.").
 - Set main_enemy to null when all creatures are of the same type or there is no clearly distinct boss (e.g. "3 goblins", "4 wolves", "2 bandits and 1 bandit"). Same creature type = no main villain, regardless of quantity.
 Output JSON only.`;
 

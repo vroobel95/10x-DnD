@@ -1,8 +1,10 @@
 import type { APIRoute } from "astro";
 
 import { buildBattlePdf, pdfFilename } from "@/lib/pdf/battle-pdf";
+import { MainEnemyProfileSchema } from "@/lib/schemas/enemy";
 import { createClient } from "@/lib/supabase";
 import { m } from "@/paraglide/messages.js";
+import { cookieName, isLocale } from "@/paraglide/runtime.js";
 import type { Enemy } from "@/types";
 
 export const prerender = false;
@@ -22,7 +24,7 @@ export const GET: APIRoute = async (context) => {
 
   const battleResult = await supabase
     .from("battles")
-    .select("id, name, campaign_id, environment")
+    .select("id, name, campaign_id, environment, main_enemy_id, main_enemy_profile")
     .eq("id", battleId)
     .single();
 
@@ -66,18 +68,32 @@ export const GET: APIRoute = async (context) => {
     return Response.json({ error: m.api_err_no_enemies_export() }, { status: 404 });
   }
 
+  // AsyncLocalStorage propagation is unreliable for API routes in some Vite/Cloudflare
+  // configurations, so we read the locale cookie explicitly as the source of truth.
+  const rawLocale = context.cookies.get(cookieName)?.value;
+  const locale = rawLocale && isLocale(rawLocale) ? rawLocale : undefined;
+
   const envLabels = {
-    sectionTitle: m.env_section_title(),
-    terrain: m.env_terrain(),
-    lighting: m.env_lighting(),
-    hazards: m.env_hazards(),
-    ambiance: m.env_ambiance(),
-    trivia: m.env_trivia(),
+    sectionTitle: m.env_section_title({}, { locale }),
+    terrain: m.env_terrain({}, { locale }),
+    lighting: m.env_lighting({}, { locale }),
+    hazards: m.env_hazards({}, { locale }),
+    ambiance: m.env_ambiance({}, { locale }),
+    trivia: m.env_trivia({}, { locale }),
+    villainTitle: m.enemy_main_villain({}, { locale }),
   };
+
+  const villainProfileParsed =
+    battle.main_enemy_id && battle.main_enemy_profile
+      ? MainEnemyProfileSchema.safeParse(battle.main_enemy_profile)
+      : null;
+  const villain = villainProfileParsed?.success
+    ? { id: battle.main_enemy_id as string, profile: villainProfileParsed.data }
+    : null;
 
   let pdfBytes: Uint8Array;
   try {
-    pdfBytes = await buildBattlePdf(battle, enemies, envLabels);
+    pdfBytes = await buildBattlePdf(battle, enemies, envLabels, villain);
   } catch {
     return Response.json({ error: m.api_err_generate_pdf() }, { status: 500 });
   }

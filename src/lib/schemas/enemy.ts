@@ -48,3 +48,13 @@ export const GenerateResultSchema = z.object({
 
 export type MainEnemyProfile = z.infer<typeof MainEnemyProfileSchema>;
 export type GenerateResult = z.infer<typeof GenerateResultSchema>;
+
+// Adds a closing typographic quote when the AI omits it.
+// Handles Polish/German „…" (U+201E → U+201D) and English "…" (U+201C → U+201D).
+export function normalizeDialogueLine(line: string): string {
+  const t = line.trimEnd();
+  if ((t.startsWith("„") || t.startsWith("“")) && !t.endsWith("”")) {
+    return t + "”";
+  }
+  return t;
+}

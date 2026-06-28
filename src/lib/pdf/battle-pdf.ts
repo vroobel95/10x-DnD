@@ -1,8 +1,9 @@
-import { PDFDocument, rgb } from "pdf-lib";
+import { PDFDocument, PDFFont, rgb } from "pdf-lib";
 import fontkit from "pdf-fontkit";
 
 import { REGULAR_FONT, BOLD_FONT } from "./fonts";
-import { EnemySchema } from "@/lib/schemas/enemy";
+import { EnemySchema, normalizeDialogueLine } from "@/lib/schemas/enemy";
+import type { MainEnemyProfile } from "@/lib/schemas/enemy";
 import { BattleEnvironmentSchema } from "@/lib/schemas/environment";
 import type { Battle, Enemy } from "@/types";
 
@@ -26,6 +27,33 @@ function abilityMod(score: number): string {
   return m >= 0 ? `+${m}` : `${m}`;
 }
 
+// Split text into lines that fit within maxWidth, replicating pdf-lib's word-break
+// algorithm. Rendering each line individually (without maxWidth) avoids a pdf-lib
+// edge-case where the last glyph of a wrapped text block can be silently dropped.
+function wrapText(text: string, pdfFont: PDFFont, size: number, maxWidth: number): string[] {
+  const spaceW = pdfFont.widthOfTextAtSize(" ", size);
+  const lines: string[] = [];
+  let current = "";
+  let currentW = 0;
+  for (const word of text.split(" ")) {
+    if (!word) continue;
+    const wordW = pdfFont.widthOfTextAtSize(word, size);
+    if (currentW === 0) {
+      current = word;
+      currentW = wordW;
+    } else if (currentW + spaceW + wordW > maxWidth) {
+      lines.push(current);
+      current = word;
+      currentW = wordW;
+    } else {
+      current += " " + word;
+      currentW += spaceW + wordW;
+    }
+  }
+  if (current) lines.push(current);
+  return lines.length > 0 ? lines : [""];
+}
+
 export function pdfFilename(name: string): string {
   const raw = name
     .toLowerCase()
@@ -43,12 +71,14 @@ export interface EnvLabels {
   hazards: string;
   ambiance: string;
   trivia: string;
+  villainTitle?: string;
 }
 
 export async function buildBattlePdf(
   battle: Pick<Battle, "name"> & Partial<Pick<Battle, "environment">>,
   enemies: Enemy[],
   envLabels?: EnvLabels,
+  villain?: { id: string; profile: MainEnemyProfile } | null,
 ): Promise<Uint8Array> {
   const pdfDoc = await PDFDocument.create();
   pdfDoc.registerFontkit(fontkit);
@@ -95,8 +125,8 @@ export async function buildBattlePdf(
     const lineH = bodySz + 3;
 
     for (const [label, body] of fields) {
-      const bodyLines = Math.max(1, Math.ceil(font.widthOfTextAtSize(body, bodySz) / CONTENT_W));
-      const needed = labelSz + 3 + bodyLines * lineH + 12;
+      const bodyWrapped = wrapText(body, font, bodySz, CONTENT_W);
+      const needed = labelSz + 3 + bodyWrapped.length * lineH + 12;
       // Continue onto a fresh page rather than clipping when a field overflows
       if (y - needed < MARGIN) {
         page = pdfDoc.addPage([PAGE_W, PAGE_H]);
@@ -106,16 +136,11 @@ export async function buildBattlePdf(
       page.drawText(label, { x: MARGIN, y, size: labelSz, font: fontBold, color: rgb(0, 0, 0) });
       y -= labelSz + 3;
 
-      page.drawText(body, {
-        x: MARGIN,
-        y,
-        size: bodySz,
-        font,
-        color: rgb(0.2, 0.2, 0.2),
-        maxWidth: CONTENT_W,
-        lineHeight: lineH,
-      });
-      y -= bodyLines * lineH + 12;
+      for (const bodyLine of bodyWrapped) {
+        page.drawText(bodyLine, { x: MARGIN, y, size: bodySz, font, color: rgb(0.2, 0.2, 0.2) });
+        y -= lineH;
+      }
+      y -= 12;
     }
   }
 
@@ -282,16 +307,11 @@ export async function buildBattlePdf(
         Object.entries(s.saving_throws)
           .map(([k, v]) => `${k} ${v >= 0 ? "+" : ""}${v}`)
           .join(", ");
-      page.drawText(savesStr, {
-        x: MARGIN,
-        y,
-        size: 9,
-        font,
-        color: rgb(0.2, 0.2, 0.2),
-        maxWidth: CONTENT_W,
-      });
-      const savesW = font.widthOfTextAtSize(savesStr, 9);
-      y -= Math.max(1, Math.ceil(savesW / CONTENT_W)) * 12 + 4;
+      for (const saveLine of wrapText(savesStr, font, 9, CONTENT_W)) {
+        page.drawText(saveLine, { x: MARGIN, y, size: 9, font, color: rgb(0.2, 0.2, 0.2) });
+        y -= 12;
+      }
+      y -= 4;
     }
 
     // Skill modifiers
@@ -301,16 +321,11 @@ export async function buildBattlePdf(
         Object.entries(s.skill_modifiers)
           .map(([k, v]) => `${k} ${v >= 0 ? "+" : ""}${v}`)
           .join(", ");
-      page.drawText(skillsStr, {
-        x: MARGIN,
-        y,
-        size: 9,
-        font,
-        color: rgb(0.2, 0.2, 0.2),
-        maxWidth: CONTENT_W,
-      });
-      const skillsW = font.widthOfTextAtSize(skillsStr, 9);
-      y -= Math.max(1, Math.ceil(skillsW / CONTENT_W)) * 12 + 4;
+      for (const skillLine of wrapText(skillsStr, font, 9, CONTENT_W)) {
+        page.drawText(skillLine, { x: MARGIN, y, size: 9, font, color: rgb(0.2, 0.2, 0.2) });
+        y -= 12;
+      }
+      y -= 4;
     }
 
     // Abilities
@@ -334,19 +349,63 @@ export async function buildBattlePdf(
         });
         y -= abilityNameSz + 3;
 
-        page.drawText(ability.description, {
-          x: MARGIN,
-          y,
-          size: descSz,
-          font,
-          color: rgb(0.2, 0.2, 0.2),
-          maxWidth: CONTENT_W,
-          lineHeight: lineH,
-        });
+        for (const descLine of wrapText(ability.description, font, descSz, CONTENT_W)) {
+          page.drawText(descLine, { x: MARGIN, y, size: descSz, font, color: rgb(0.2, 0.2, 0.2) });
+          y -= lineH;
+        }
+        y -= 6;
+      }
+    }
 
-        const descW = font.widthOfTextAtSize(ability.description, descSz);
-        const descLines = Math.max(1, Math.ceil(descW / CONTENT_W));
-        y -= descLines * lineH + 6;
+    // Main villain profile section — rendered after abilities when this enemy is the main villain.
+    if (enemy.id === villain?.id) {
+      const vp = villain.profile;
+      const profileSz = 9;
+      const profileLineH = profileSz + 3;
+
+      if (y >= MARGIN) {
+        y -= 8;
+        page.drawLine({
+          start: { x: MARGIN, y },
+          end: { x: PAGE_W - MARGIN, y },
+          thickness: 0.5,
+          color: rgb(0.8, 0.8, 0.8),
+        });
+        y -= 12;
+      }
+
+      if (y >= MARGIN) {
+        const titleText = (envLabels?.villainTitle ?? "Main Villain").toUpperCase();
+        page.drawText(titleText, { x: MARGIN, y, size: 9, font: fontBold, color: rgb(0.55, 0.38, 0.0) });
+        y -= 9 + 6;
+      }
+
+      if (y >= MARGIN) {
+        for (const descLine of wrapText(vp.description, font, profileSz, CONTENT_W)) {
+          if (y < MARGIN) break;
+          page.drawText(descLine, { x: MARGIN, y, size: profileSz, font, color: rgb(0.15, 0.15, 0.15) });
+          y -= profileLineH;
+        }
+        y -= 6;
+      }
+
+      if (y >= MARGIN) {
+        for (const tacLine of wrapText(vp.tactics, font, profileSz, CONTENT_W)) {
+          if (y < MARGIN) break;
+          page.drawText(tacLine, { x: MARGIN, y, size: profileSz, font, color: rgb(0.35, 0.35, 0.35) });
+          y -= profileLineH;
+        }
+        y -= 6;
+      }
+
+      for (const rawLine of vp.dialogue) {
+        if (y < MARGIN) break;
+        for (const dialogueLine of wrapText(normalizeDialogueLine(rawLine), font, profileSz, CONTENT_W)) {
+          if (y < MARGIN) break;
+          page.drawText(dialogueLine, { x: MARGIN, y, size: profileSz, font, color: rgb(0.25, 0.25, 0.25) });
+          y -= profileLineH;
+        }
+        y -= 4;
       }
     }
   }

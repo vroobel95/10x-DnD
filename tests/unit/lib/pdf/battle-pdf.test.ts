@@ -119,6 +119,45 @@ describe("buildBattlePdf", () => {
     expect(doc.getPageCount()).toBe(1); // enemy page only, env page skipped
   });
 
+  it("resolves for Polish enemy text (Latin Extended-A characters)", async () => {
+    const battle = { name: "Lodowe Jaskinie", environment: null };
+    const bytes = await buildBattlePdf(battle, [
+      makeEnemy("e-pl", {
+        ...BASE_STATS,
+        name: "Strażnik Śniegu",
+        abilities: [
+          {
+            name: "Śnieżna Aura",
+            description: "Zadaje obrażenia wszystkim wrogom w promieniu 5 stóp od strażnika.",
+          },
+        ],
+      }),
+    ]);
+    expect(new TextDecoder().decode(bytes.slice(0, 5))).toBe("%PDF-");
+  });
+
+  it("resolves with Polish environment labels and content", async () => {
+    const battle = {
+      name: "Zamarznięte Jaskinie",
+      environment: {
+        ...ENVIRONMENT,
+        terrain: "Pokryta lodem skała z ostrymi krawędziami.",
+      } satisfies BattleEnvironment,
+    };
+    const polishLabels: EnvLabels = {
+      sectionTitle: "Środowisko",
+      terrain: "Teren",
+      lighting: "Oświetlenie",
+      hazards: "Zagrożenia",
+      ambiance: "Klimat",
+      trivia: "Ciekawostki",
+    };
+    const bytes = await buildBattlePdf(battle, [makeEnemy("e-1")], polishLabels);
+    const doc = await PDFDocument.load(bytes);
+    expect(new TextDecoder().decode(bytes.slice(0, 5))).toBe("%PDF-");
+    expect(doc.getPageCount()).toBeGreaterThanOrEqual(2);
+  });
+
   it("wraps and paginates very long environment fields without throwing", async () => {
     const long = "Ancient frost-rimed stone. ".repeat(70).trim(); // ~1900 chars, near the 2000 max
     const battle = {

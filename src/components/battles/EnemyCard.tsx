@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { EnemySchema, type EnemyStats, type MainEnemyProfile } from "@/lib/schemas/enemy";
+import { EnemySchema, normalizeDialogueLine, type EnemyStats, type MainEnemyProfile } from "@/lib/schemas/enemy";
 import { m } from "@/paraglide/messages.js";
 import type { Enemy } from "@/types";
 
@@ -339,7 +339,7 @@ export function EnemyCard({
           <div className="space-y-1">
             {mainEnemyProfile.dialogue.map((line, i) => (
               <p key={i} className="text-sm text-blue-100/70">
-                {line}
+                {normalizeDialogueLine(line)}
               </p>
             ))}
           </div>
