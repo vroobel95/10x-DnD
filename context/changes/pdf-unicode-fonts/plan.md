@@ -252,9 +252,9 @@ Add two new test cases to the existing unit test file that assert `buildBattlePd
 
 #### Automated
 
-- [x] 3.1 New Polish tests pass: `npx vitest run tests/unit/lib/pdf/battle-pdf.test.ts` — 10 of 10 `buildBattlePdf` tests pass
-- [x] 3.2 Full suite passes: `npm test` exits 0
+- [x] 3.1 New Polish tests pass: `npx vitest run tests/unit/lib/pdf/battle-pdf.test.ts` — 10 of 10 `buildBattlePdf` tests pass — 9915c6b
+- [x] 3.2 Full suite passes: `npm test` exits 0 — 9915c6b
 
 #### Manual
 
-- [x] 3.3 Polish locale PDF export completes without error and diacritics render correctly in the downloaded PDF
+- [x] 3.3 Polish locale PDF export completes without error and diacritics render correctly in the downloaded PDF — 9915c6b
