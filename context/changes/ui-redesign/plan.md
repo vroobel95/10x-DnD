@@ -647,10 +647,10 @@ backdrop blur; only old-palette usages are removed.)
 
 #### Automated
 
-- [x] 4.1 Type checking passes: `npm run typecheck`
-- [x] 4.2 Linting passes: `npm run lint`
-- [x] 4.3 Build succeeds: `npm run build`
-- [x] 4.4 Unit tests pass: `npm run test`
+- [x] 4.1 Type checking passes: `npm run typecheck` — 4ff606d
+- [x] 4.2 Linting passes: `npm run lint` — 4ff606d
+- [x] 4.3 Build succeeds: `npm run build` — 4ff606d
+- [x] 4.4 Unit tests pass: `npm run test` — 4ff606d
 
 #### Manual
 
@@ -681,11 +681,11 @@ backdrop blur; only old-palette usages are removed.)
 
 #### Automated
 
-- [ ] 6.1 Old-token grep returns zero matches over `src/`
-- [ ] 6.2 Type checking passes: `npm run typecheck`
-- [ ] 6.3 Linting passes: `npm run lint`
-- [ ] 6.4 Build succeeds: `npm run build`
-- [ ] 6.5 Unit tests pass: `npm run test`
+- [x] 6.1 Old-token grep returns zero matches over `src/`
+- [x] 6.2 Type checking passes: `npm run typecheck`
+- [x] 6.3 Linting passes: `npm run lint`
+- [x] 6.4 Build succeeds: `npm run build`
+- [x] 6.5 Unit tests pass: `npm run test`
 - [ ] 6.6 E2E tests pass: `npm run test:e2e`
 
 #### Manual
