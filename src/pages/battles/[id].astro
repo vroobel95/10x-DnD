@@ -53,34 +53,32 @@ const createdDate = new Date(b.created_at).toLocaleDateString(getLocale(), {
 ---
 
 <Layout title={b.name}>
-  <div class="bg-cosmic min-h-screen p-4 sm:p-8">
-    <div class="mx-auto max-w-3xl">
-      <a
-        href={`/campaigns/${b.campaign_id}`}
-        class="mb-6 inline-flex items-center gap-2 text-sm text-blue-100/60 hover:text-white"
-      >
-        {m.battle_back_to_campaign_arrow()}
-      </a>
+  <main class="mx-auto max-w-4xl px-4 pt-8 pb-20">
+    <a
+      href={`/campaigns/${b.campaign_id}`}
+      class="text-blood-bright mb-6 inline-flex items-center gap-1.5 text-sm hover:underline"
+    >
+      {m.battle_back_to_campaign_arrow()}
+    </a>
 
-      <BattleHeader
-        battleId={b.id}
-        initialName={b.name}
-        initialPartyLevel={b.party_level}
-        initialLocation={b.location}
-        createdDate={createdDate}
-        client:load
-      />
+    <BattleHeader
+      battleId={b.id}
+      initialName={b.name}
+      initialPartyLevel={b.party_level}
+      initialLocation={b.location}
+      createdDate={createdDate}
+      client:load
+    />
 
-      <EnvironmentSection battleId={b.id} location={b.location} initialEnvironment={b.environment} client:load />
+    <EnvironmentSection battleId={b.id} location={b.location} initialEnvironment={b.environment} client:load />
 
-      <EnemiesSection
-        battleId={b.id}
-        initialPending={initialPending}
-        initialConfirmed={initialConfirmed}
-        initialMainEnemyId={b.main_enemy_id}
-        initialMainEnemyProfile={b.main_enemy_profile}
-        client:load
-      />
-    </div>
-  </div>
+    <EnemiesSection
+      battleId={b.id}
+      initialPending={initialPending}
+      initialConfirmed={initialConfirmed}
+      initialMainEnemyId={b.main_enemy_id}
+      initialMainEnemyProfile={b.main_enemy_profile}
+      client:load
+    />
+  </main>
 </Layout>

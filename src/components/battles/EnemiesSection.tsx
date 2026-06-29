@@ -212,9 +212,7 @@ export default function EnemiesSection({
   return (
     <div className="space-y-8">
       <section>
-        <h2 className="mb-3 text-sm font-semibold tracking-wide text-blue-100/50 uppercase">
-          {m.enemies_generate_title()}
-        </h2>
+        <h2 className="section-label mb-3">{m.enemies_generate_title()}</h2>
         <form onSubmit={handleGenerate} className="space-y-3">
           <textarea
             value={prompt}
@@ -224,21 +222,21 @@ export default function EnemiesSection({
             placeholder={m.enemies_prompt_placeholder()}
             rows={3}
             disabled={isGenerating}
-            className="w-full resize-none rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-blue-100/30 focus:border-rose-500/50 focus:ring-1 focus:ring-rose-500/50 focus:outline-none disabled:opacity-50"
+            className="bg-ink-deep/60 border-border text-ivory placeholder-ivory-dim/50 focus:border-blood w-full resize-none rounded-md border px-4 py-3 text-sm focus:outline-none disabled:opacity-50"
           />
           {generateError && (
-            <p className="flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-900/30 px-3 py-2 text-sm text-red-300">
+            <p className="border-destructive/40 bg-destructive/10 text-destructive flex items-center gap-2 rounded-md border px-3 py-2 text-sm">
               {generateError}
             </p>
           )}
           <button
             type="submit"
             disabled={isGenerating || !prompt.trim()}
-            className="flex items-center gap-2 rounded-lg bg-[#701c3b] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#9f1239] disabled:opacity-50"
+            className="blood-button inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-sm font-semibold disabled:opacity-40"
           >
             {isGenerating ? (
               <>
-                <span className="size-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                <span className="border-ivory/30 border-t-ivory size-4 animate-spin rounded-full border-2" />
                 {m.enemies_generate_pending()}
               </>
             ) : (
@@ -253,11 +251,9 @@ export default function EnemiesSection({
 
       {pending.length > 0 && (
         <section>
-          <h2 className="mb-3 text-sm font-semibold tracking-wide text-blue-100/50 uppercase">
-            {m.enemies_pending_title()}
-          </h2>
+          <h2 className="section-label mb-3">{m.enemies_pending_title()}</h2>
           {actionError && (
-            <p className="mb-3 flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-900/30 px-3 py-2 text-sm text-red-300">
+            <p className="border-destructive/40 bg-destructive/10 text-destructive mb-3 flex items-center gap-2 rounded-md border px-3 py-2 text-sm">
               {actionError}
             </p>
           )}
@@ -280,20 +276,18 @@ export default function EnemiesSection({
       {confirmed.length > 0 && (
         <section>
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-sm font-semibold tracking-wide text-blue-100/50 uppercase">
-              {m.enemies_confirmed_title()}
-            </h2>
+            <h2 className="section-label">{m.enemies_confirmed_title()}</h2>
             <button
               type="button"
               onClick={() => {
                 void handleExport();
               }}
               disabled={isExporting}
-              className="flex items-center gap-2 rounded-lg bg-[#701c3b] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-[#9f1239] disabled:opacity-50"
+              className="blood-button inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold disabled:opacity-40"
             >
               {isExporting ? (
                 <>
-                  <span className="size-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                  <span className="border-ivory/30 border-t-ivory size-4 animate-spin rounded-full border-2" />
                   {m.enemies_export_pending()}
                 </>
               ) : (
@@ -305,12 +299,12 @@ export default function EnemiesSection({
             </button>
           </div>
           {exportError && (
-            <p className="mb-3 flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-900/30 px-3 py-2 text-sm text-red-300">
+            <p className="border-destructive/40 bg-destructive/10 text-destructive mb-3 flex items-center gap-2 rounded-md border px-3 py-2 text-sm">
               {exportError}
             </p>
           )}
           {actionError && (
-            <p className="mb-3 flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-900/30 px-3 py-2 text-sm text-red-300">
+            <p className="border-destructive/40 bg-destructive/10 text-destructive mb-3 flex items-center gap-2 rounded-md border px-3 py-2 text-sm">
               {actionError}
             </p>
           )}
@@ -347,7 +341,7 @@ export default function EnemiesSection({
       )}
 
       {pending.length === 0 && confirmed.length === 0 && (
-        <p className="text-center text-sm text-blue-100/30">{m.enemies_empty()}</p>
+        <p className="text-ivory-dim text-center font-serif text-sm italic">{m.enemies_empty()}</p>
       )}
     </div>
   );

@@ -28,7 +28,7 @@ interface EditFormProps {
 }
 
 const inputCls =
-  "rounded border border-white/10 bg-white/5 px-2 py-1 text-sm text-white focus:border-rose-500/50 focus:outline-none";
+  "rounded border border-border bg-ink-deep/60 px-2 py-1 text-sm text-ivory focus:border-blood focus:outline-none";
 
 function modifier(score: number): string {
   const mod = Math.floor((score - 10) / 2);
@@ -37,10 +37,10 @@ function modifier(score: number): string {
 
 function StatBox({ label, value }: { label: string; value: number }) {
   return (
-    <div className="flex flex-col items-center rounded-lg border border-white/10 bg-white/5 px-2 py-2">
-      <span className="text-xs font-semibold tracking-wide text-blue-100/50 uppercase">{label}</span>
-      <span className="text-base font-bold text-white">{value}</span>
-      <span className="text-xs text-blue-100/60">{modifier(value)}</span>
+    <div className="stat-cell">
+      <div className="section-label text-[0.6rem]!">{label}</div>
+      <div className="text-ivory font-display text-2xl leading-none">{value}</div>
+      <div className="text-ivory-dim text-xs">{modifier(value)}</div>
     </div>
   );
 }
@@ -53,7 +53,7 @@ function EnemyEditForm({ initialStats, onSave, onCancel, isLoading }: EditFormPr
   const [draft, setDraft] = useState<EnemyStats>(initialStats);
 
   return (
-    <div className="rounded-xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
+    <div className="ink-card p-5">
       <div className="mb-3 flex items-start gap-2">
         <input
           type="text"
@@ -61,10 +61,10 @@ function EnemyEditForm({ initialStats, onSave, onCancel, isLoading }: EditFormPr
           onChange={(e) => {
             setDraft((prev) => ({ ...prev, name: e.target.value }));
           }}
-          className="flex-1 rounded border border-white/10 bg-white/5 px-3 py-1.5 text-lg font-bold text-white focus:border-rose-500/50 focus:outline-none"
+          className="bg-ink-deep/60 border-border text-ivory focus:border-blood font-display flex-1 rounded border px-3 py-1.5 text-lg focus:outline-none"
         />
         <div className="flex shrink-0 items-center gap-1">
-          <span className="text-xs text-blue-100/50">CR</span>
+          <span className="text-ivory-dim text-xs">CR</span>
           <input
             type="text"
             value={draft.cr}
@@ -76,8 +76,8 @@ function EnemyEditForm({ initialStats, onSave, onCancel, isLoading }: EditFormPr
         </div>
       </div>
 
-      <div className="mb-4 flex flex-wrap gap-3 text-sm">
-        <label className="flex items-center gap-1 text-blue-100/70">
+      <div className="text-ivory-dim mb-4 flex flex-wrap gap-3 text-sm">
+        <label className="flex items-center gap-1">
           HP
           <input
             type="number"
@@ -89,7 +89,7 @@ function EnemyEditForm({ initialStats, onSave, onCancel, isLoading }: EditFormPr
             className={`w-16 ${inputCls}`}
           />
         </label>
-        <label className="flex items-center gap-1 text-blue-100/70">
+        <label className="flex items-center gap-1">
           AC
           <input
             type="number"
@@ -102,7 +102,7 @@ function EnemyEditForm({ initialStats, onSave, onCancel, isLoading }: EditFormPr
             className={`w-16 ${inputCls}`}
           />
         </label>
-        <label className="flex items-center gap-1 text-blue-100/70">
+        <label className="flex items-center gap-1">
           Speed
           <input
             type="text"
@@ -117,11 +117,8 @@ function EnemyEditForm({ initialStats, onSave, onCancel, isLoading }: EditFormPr
 
       <div className="mb-4 grid grid-cols-6 gap-1">
         {(["str", "dex", "con", "int", "wis", "cha"] as const).map((attr) => (
-          <div
-            key={attr}
-            className="flex flex-col items-center gap-1 rounded-lg border border-white/10 bg-white/5 px-2 py-2"
-          >
-            <span className="text-xs font-semibold tracking-wide text-blue-100/50 uppercase">{attr}</span>
+          <div key={attr} className="stat-cell flex flex-col items-center gap-1">
+            <span className="section-label text-[0.6rem]!">{attr}</span>
             <input
               type="number"
               min={1}
@@ -130,7 +127,7 @@ function EnemyEditForm({ initialStats, onSave, onCancel, isLoading }: EditFormPr
               onChange={(e) => {
                 setDraft((prev) => ({ ...prev, [attr]: e.target.valueAsNumber }));
               }}
-              className="w-full rounded border border-white/10 bg-white/5 px-1 py-0.5 text-center text-sm text-white focus:border-rose-500/50 focus:outline-none"
+              className="bg-ink-deep/60 border-border text-ivory focus:border-blood w-full rounded border px-1 py-0.5 text-center text-sm focus:outline-none"
             />
           </div>
         ))}
@@ -138,10 +135,10 @@ function EnemyEditForm({ initialStats, onSave, onCancel, isLoading }: EditFormPr
 
       {draft.saving_throws && Object.keys(draft.saving_throws).length > 0 && (
         <div className="mb-3">
-          <span className="text-xs font-semibold text-blue-100/80">Saves: </span>
+          <span className="text-ivory text-xs font-semibold">Saves: </span>
           <div className="mt-1 flex flex-wrap gap-2">
             {Object.entries(draft.saving_throws).map(([k, v]) => (
-              <label key={k} className="flex items-center gap-1 text-xs text-blue-100/60">
+              <label key={k} className="text-ivory-dim flex items-center gap-1 text-xs">
                 {k}
                 <input
                   type="number"
@@ -152,7 +149,7 @@ function EnemyEditForm({ initialStats, onSave, onCancel, isLoading }: EditFormPr
                       saving_throws: { ...prev.saving_throws, [k]: e.target.valueAsNumber },
                     }));
                   }}
-                  className="w-12 rounded border border-white/10 bg-white/5 px-1 py-0.5 text-center text-xs text-white focus:border-rose-500/50 focus:outline-none"
+                  className="bg-ink-deep/60 border-border text-ivory focus:border-blood w-12 rounded border px-1 py-0.5 text-center text-xs focus:outline-none"
                 />
               </label>
             ))}
@@ -162,10 +159,10 @@ function EnemyEditForm({ initialStats, onSave, onCancel, isLoading }: EditFormPr
 
       {draft.skill_modifiers && Object.keys(draft.skill_modifiers).length > 0 && (
         <div className="mb-3">
-          <span className="text-xs font-semibold text-blue-100/80">Skills: </span>
+          <span className="text-ivory text-xs font-semibold">Skills: </span>
           <div className="mt-1 flex flex-wrap gap-2">
             {Object.entries(draft.skill_modifiers).map(([k, v]) => (
-              <label key={k} className="flex items-center gap-1 text-xs text-blue-100/60">
+              <label key={k} className="text-ivory-dim flex items-center gap-1 text-xs">
                 {k}
                 <input
                   type="number"
@@ -176,7 +173,7 @@ function EnemyEditForm({ initialStats, onSave, onCancel, isLoading }: EditFormPr
                       skill_modifiers: { ...prev.skill_modifiers, [k]: e.target.valueAsNumber },
                     }));
                   }}
-                  className="w-12 rounded border border-white/10 bg-white/5 px-1 py-0.5 text-center text-xs text-white focus:border-rose-500/50 focus:outline-none"
+                  className="bg-ink-deep/60 border-border text-ivory focus:border-blood w-12 rounded border px-1 py-0.5 text-center text-xs focus:outline-none"
                 />
               </label>
             ))}
@@ -185,7 +182,7 @@ function EnemyEditForm({ initialStats, onSave, onCancel, isLoading }: EditFormPr
       )}
 
       {draft.abilities.length > 0 && (
-        <ul className="mb-4 space-y-2 border-t border-white/10 pt-3">
+        <ul className="border-border mb-4 space-y-2 border-t pt-3">
           {draft.abilities.map((ab, i) => (
             <li key={i} className="space-y-1">
               <input
@@ -208,21 +205,21 @@ function EnemyEditForm({ initialStats, onSave, onCancel, isLoading }: EditFormPr
                     abilities: prev.abilities.map((a, idx) => (idx === i ? { ...a, description: e.target.value } : a)),
                   }));
                 }}
-                className={`w-full text-blue-100/70 ${inputCls}`}
+                className={`text-ivory-dim w-full ${inputCls}`}
               />
             </li>
           ))}
         </ul>
       )}
 
-      <div className="flex gap-2 border-t border-white/10 pt-3">
+      <div className="border-border flex gap-2 border-t pt-3">
         <button
           type="button"
           onClick={() => {
             onSave(draft);
           }}
           disabled={isLoading}
-          className="flex-1 rounded-lg bg-[#701c3b] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-[#9f1239] disabled:opacity-50"
+          className="blood-button flex-1 rounded-md px-3 py-1.5 text-sm font-semibold disabled:opacity-50"
         >
           {isLoading ? m.common_loading_short() : m.common_save()}
         </button>
@@ -230,7 +227,7 @@ function EnemyEditForm({ initialStats, onSave, onCancel, isLoading }: EditFormPr
           type="button"
           onClick={onCancel}
           disabled={isLoading}
-          className="flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium text-blue-100/70 transition-colors hover:bg-white/10 disabled:opacity-50"
+          className="border-border bg-ink-soft/60 text-ivory hover:border-blood/60 flex-1 rounded-md border px-3 py-1.5 text-sm font-medium transition-colors disabled:opacity-50"
         >
           {m.common_cancel()}
         </button>
@@ -259,7 +256,7 @@ export function EnemyCard({
 
   if (!parseResult.success) {
     return (
-      <div className="rounded-xl border border-red-500/30 bg-red-900/10 p-4 text-sm text-red-300">
+      <div className="border-destructive/40 bg-destructive/10 text-destructive rounded-md border p-4 text-sm">
         {m.enemy_parse_error({ name: enemy.name })}
       </div>
     );
@@ -274,37 +271,31 @@ export function EnemyCard({
   }
 
   return (
-    <div
-      className={`rounded-xl border bg-white/5 p-5 backdrop-blur-xl ${isMain ? "border-l-2 border-white/10 border-l-amber-400/60" : "border-white/10"}`}
-    >
-      <div className="mb-3 flex items-start justify-between gap-2">
-        <h3 className="text-lg font-bold text-white">{stats.name}</h3>
-        <div className="flex shrink-0 gap-2 text-xs text-blue-100/60">
-          <span className="rounded border border-white/10 bg-white/5 px-2 py-0.5">CR {stats.cr}</span>
-        </div>
-      </div>
-
-      <div className="mb-4 flex flex-wrap gap-3 text-sm text-blue-100/70">
-        <span>
-          HP <strong className="text-white">{stats.hp}</strong>
-        </span>
-        <span>
-          AC <strong className="text-white">{stats.ac}</strong>
-        </span>
-        <span>
-          Speed <strong className="text-white">{stats.speed}</strong>
+    <div className={isConfirmed ? "monster-card px-6 pt-8 pb-6" : "ink-card p-6"}>
+      <div className="flex items-start justify-between gap-4">
+        <h3 className="text-ivory font-display text-3xl leading-tight">{stats.name}</h3>
+        <span className="border-blood/50 bg-blood/15 text-ivory font-display shrink-0 rounded border px-2.5 py-1 text-sm">
+          CR {stats.cr}
         </span>
       </div>
 
-      <div className="mb-4 grid grid-cols-6 gap-1">
+      <div className="text-ivory-dim mt-1 text-sm">
+        <span className="font-semibold">HP</span> <b className="text-ivory">{stats.hp}</b>
+        {"   "}
+        <span className="font-semibold">AC</span> <b className="text-ivory">{stats.ac}</b>
+        {"   "}
+        <span className="font-semibold">Speed</span> <b className="text-ivory">{stats.speed}</b>
+      </div>
+
+      <div className="mt-4 grid grid-cols-6 gap-2">
         {(["str", "dex", "con", "int", "wis", "cha"] as const).map((attr) => (
           <StatBox key={attr} label={attr.toUpperCase()} value={stats[attr]} />
         ))}
       </div>
 
       {stats.saving_throws && Object.keys(stats.saving_throws).length > 0 && (
-        <div className="mb-3 text-xs text-blue-100/60">
-          <span className="font-semibold text-blue-100/80">Saves: </span>
+        <div className="text-ivory-dim mt-3 text-xs">
+          <span className="text-ivory font-semibold">Saves: </span>
           {Object.entries(stats.saving_throws)
             .map(([k, v]) => `${k} ${v >= 0 ? "+" : ""}${v}`)
             .join(", ")}
@@ -312,8 +303,8 @@ export function EnemyCard({
       )}
 
       {stats.skill_modifiers && Object.keys(stats.skill_modifiers).length > 0 && (
-        <div className="mb-3 text-xs text-blue-100/60">
-          <span className="font-semibold text-blue-100/80">Skills: </span>
+        <div className="text-ivory-dim mt-2 text-xs">
+          <span className="text-ivory font-semibold">Skills: </span>
           {Object.entries(stats.skill_modifiers)
             .map(([k, v]) => `${k} ${v >= 0 ? "+" : ""}${v}`)
             .join(", ")}
@@ -321,24 +312,24 @@ export function EnemyCard({
       )}
 
       {stats.abilities.length > 0 && (
-        <ul className="mb-4 space-y-1.5 border-t border-white/10 pt-3">
+        <ul className="border-border mt-5 space-y-2 border-t pt-4 text-sm leading-relaxed">
           {stats.abilities.map((ab) => (
-            <li key={ab.name} className="text-sm">
-              <span className="font-semibold text-blue-100">{ab.name}.</span>{" "}
-              <span className="text-blue-100/70">{ab.description}</span>
+            <li key={ab.name}>
+              <span className="text-ivory font-bold">{ab.name}.</span>{" "}
+              <span className="text-ivory-dim">{ab.description}</span>
             </li>
           ))}
         </ul>
       )}
 
       {isMain && mainEnemyProfile && (
-        <div className="mt-3 border-t border-amber-400/30 pt-3">
-          <p className="mb-2 text-xs font-semibold tracking-wide text-amber-400 uppercase">{m.enemy_main_villain()}</p>
-          <p className="mb-2 text-sm text-blue-100/80">{mainEnemyProfile.description}</p>
-          <p className="mb-2 text-sm text-blue-100/60 italic">{mainEnemyProfile.tactics}</p>
-          <div className="space-y-1">
+        <div className="border-blood/40 mt-6 border-t pt-4">
+          <p className="text-gold font-display text-base tracking-widest">{m.enemy_main_villain()}</p>
+          <p className="text-ivory mt-2 text-sm leading-relaxed">{mainEnemyProfile.description}</p>
+          <p className="text-ivory-dim mt-3 font-serif text-sm leading-relaxed italic">{mainEnemyProfile.tactics}</p>
+          <div className="mt-3 space-y-1">
             {mainEnemyProfile.dialogue.map((line, i) => (
-              <p key={i} className="text-sm text-blue-100/70">
+              <p key={i} className="text-ivory text-sm leading-relaxed">
                 {normalizeDialogueLine(line)}
               </p>
             ))}
@@ -347,12 +338,12 @@ export function EnemyCard({
       )}
 
       {isPending && (
-        <div className="flex gap-2 border-t border-white/10 pt-3">
+        <div className="mt-5 grid gap-3 sm:grid-cols-2">
           <button
             type="button"
             onClick={onConfirm}
             disabled={isLoading}
-            className="flex-1 rounded-lg bg-[#701c3b] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-[#9f1239] disabled:opacity-50"
+            className="blood-button inline-flex items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-semibold disabled:opacity-50"
           >
             {isLoading ? m.common_loading_short() : m.btn_confirm()}
           </button>
@@ -360,7 +351,7 @@ export function EnemyCard({
             type="button"
             onClick={onDeny}
             disabled={isLoading}
-            className="flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium text-blue-100/70 transition-colors hover:bg-white/10 disabled:opacity-50"
+            className="border-border bg-ink-soft/60 text-ivory hover:border-destructive/60 hover:text-destructive inline-flex items-center justify-center gap-2 rounded-md border px-4 py-2.5 text-sm font-semibold transition-colors disabled:opacity-50"
           >
             {isLoading ? m.common_loading_short() : m.btn_deny()}
           </button>
@@ -368,15 +359,15 @@ export function EnemyCard({
       )}
 
       {isConfirmed && (
-        <div className="flex items-center gap-2 border-t border-white/10 pt-3">
+        <div className="mt-5 flex items-center gap-3">
           {isRemoving ? (
             <>
-              <span className="flex-1 text-sm text-blue-100/70">{m.enemy_remove_confirm()}</span>
+              <span className="text-ivory-dim flex-1 text-sm">{m.enemy_remove_confirm()}</span>
               <button
                 type="button"
                 onClick={onRemoveConfirm}
                 disabled={isLoading}
-                className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-red-500 disabled:opacity-50"
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-md px-3 py-1.5 text-sm font-semibold transition-colors disabled:opacity-50"
               >
                 {isLoading ? m.common_loading_short() : m.btn_yes()}
               </button>
@@ -384,7 +375,7 @@ export function EnemyCard({
                 type="button"
                 onClick={onRemoveCancel}
                 disabled={isLoading}
-                className="rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium text-blue-100/70 transition-colors hover:bg-white/10 disabled:opacity-50"
+                className="border-border bg-ink-soft/60 text-ivory hover:border-blood/60 rounded-md border px-3 py-1.5 text-sm font-medium transition-colors disabled:opacity-50"
               >
                 {m.common_cancel()}
               </button>
@@ -395,7 +386,7 @@ export function EnemyCard({
                 type="button"
                 onClick={onEditStart}
                 disabled={isLoading}
-                className="flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium text-blue-100/70 transition-colors hover:bg-white/10 disabled:opacity-50"
+                className="border-border bg-ink-soft/60 text-ivory hover:border-blood/60 inline-flex flex-1 items-center justify-center gap-2 rounded-md border px-4 py-2.5 text-sm font-semibold transition-colors disabled:opacity-50"
               >
                 {m.common_edit()}
               </button>
@@ -403,7 +394,7 @@ export function EnemyCard({
                 type="button"
                 onClick={onRemoveStart}
                 disabled={isLoading}
-                className="flex-1 rounded-lg border border-red-500/30 bg-red-900/10 px-3 py-1.5 text-sm font-medium text-red-400 transition-colors hover:bg-red-900/20 disabled:opacity-50"
+                className="border-destructive/40 bg-destructive/10 text-destructive hover:bg-destructive/20 inline-flex flex-1 items-center justify-center gap-2 rounded-md border px-4 py-2.5 text-sm font-semibold transition-colors disabled:opacity-50"
               >
                 {m.common_remove()}
               </button>

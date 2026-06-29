@@ -120,14 +120,10 @@ export default function BattleHeader({
             icon={<MapPin className="size-4" />}
           />
           <div className="flex gap-3">
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="rounded-lg bg-[#701c3b] px-4 py-2 font-medium text-white transition-colors hover:bg-[#9f1239]"
-            >
+            <Button type="submit" disabled={isLoading} className="px-4 py-2">
               {isLoading ? (
                 <>
-                  <span className="size-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                  <span className="border-ivory/30 border-t-ivory size-4 animate-spin rounded-full border-2" />
                   {m.btn_save_changes_pending()}
                 </>
               ) : (
@@ -137,12 +133,7 @@ export default function BattleHeader({
                 </>
               )}
             </Button>
-            <Button
-              type="button"
-              onClick={handleCancel}
-              disabled={isLoading}
-              className="rounded-lg border border-white/20 bg-transparent px-4 py-2 font-medium text-blue-100/80 transition-colors hover:bg-white/10"
-            >
+            <Button type="button" variant="outline" onClick={handleCancel} disabled={isLoading} className="px-4 py-2">
               {m.common_cancel()}
             </Button>
           </div>
@@ -153,33 +144,23 @@ export default function BattleHeader({
 
   return (
     <>
-      <div className="group relative mb-6 flex items-start gap-3">
-        <h1 className="bg-linear-to-r from-blue-200 to-rose-200 bg-clip-text text-3xl font-bold text-transparent">
-          {committed.name}
-        </h1>
+      <div className="group relative mb-4 flex items-start gap-3">
+        <h1 className="text-ivory font-display text-5xl leading-none md:text-6xl">{committed.name}</h1>
         <button
           type="button"
           onClick={handleEdit}
-          className="mt-1 rounded-md p-1.5 text-white/40 opacity-0 transition-all group-hover:opacity-100 hover:bg-white/10 hover:text-white/80 focus-visible:opacity-100"
+          className="text-ivory-dim hover:bg-ink-soft hover:text-ivory mt-2 rounded-md p-1.5 opacity-0 transition-all group-hover:opacity-100 focus-visible:opacity-100"
           aria-label={m.battle_edit_aria()}
         >
           <Pencil className="size-4" />
         </button>
       </div>
-      <div className="mb-8 flex flex-wrap gap-3">
+      <div className="mb-8 flex flex-wrap gap-2">
         {committed.partyLevelNum != null && (
-          <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-sm text-blue-100/80">
-            {m.battle_party_level_badge({ level: committed.partyLevelNum })}
-          </span>
+          <span className="chip">{m.battle_party_level_badge({ level: committed.partyLevelNum })}</span>
         )}
-        {committed.location && (
-          <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-sm text-blue-100/80">
-            {committed.location}
-          </span>
-        )}
-        <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-sm text-blue-100/80">
-          {m.battle_created({ date: createdDate })}
-        </span>
+        {committed.location && <span className="chip">{committed.location}</span>}
+        <span className="chip">{m.battle_created({ date: createdDate })}</span>
       </div>
     </>
   );

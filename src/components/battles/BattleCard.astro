@@ -18,14 +18,11 @@ const createdDate = new Date(battle.created_at).toLocaleDateString(getLocale(), 
 });
 ---
 
-<a
-  href={`/battles/${battle.id}`}
-  class="block rounded-xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl transition-colors hover:border-rose-400/30 hover:bg-white/10"
->
-  <h3 class="mb-2 text-base font-semibold text-white">{battle.name}</h3>
-  <div class="flex flex-wrap gap-3 text-sm text-blue-100/60">
+<a href={`/battles/${battle.id}`} class="ink-card group block p-5">
+  <h3 class="text-ivory font-display group-hover:text-blood-bright mb-1 text-xl transition">{battle.name}</h3>
+  <div class="text-ivory-dim flex flex-wrap gap-3 text-sm">
     <span>{m.battle_party({ level: partyLevel })}</span>
-    <span>·</span>
+    <span class="text-border">·</span>
     <span>{createdDate}</span>
   </div>
 </a>

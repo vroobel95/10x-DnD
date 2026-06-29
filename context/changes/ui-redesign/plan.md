@@ -647,10 +647,10 @@ backdrop blur; only old-palette usages are removed.)
 
 #### Automated
 
-- [ ] 4.1 Type checking passes: `npm run typecheck`
-- [ ] 4.2 Linting passes: `npm run lint`
-- [ ] 4.3 Build succeeds: `npm run build`
-- [ ] 4.4 Unit tests pass: `npm run test`
+- [x] 4.1 Type checking passes: `npm run typecheck`
+- [x] 4.2 Linting passes: `npm run lint`
+- [x] 4.3 Build succeeds: `npm run build`
+- [x] 4.4 Unit tests pass: `npm run test`
 
 #### Manual
 
@@ -665,10 +665,10 @@ backdrop blur; only old-palette usages are removed.)
 
 #### Automated
 
-- [x] 5.1 Type checking passes: `npm run typecheck`
-- [x] 5.2 Linting passes: `npm run lint`
-- [x] 5.3 Build succeeds: `npm run build`
-- [x] 5.4 Unit tests pass: `npm run test`
+- [x] 5.1 Type checking passes: `npm run typecheck` — 3a26c20
+- [x] 5.2 Linting passes: `npm run lint` — 3a26c20
+- [x] 5.3 Build succeeds: `npm run build` — 3a26c20
+- [x] 5.4 Unit tests pass: `npm run test` — 3a26c20
 
 #### Manual
 
