@@ -102,6 +102,15 @@
     @apply border-border outline-ring/50;
   }
 
+  /* Tailwind v4 Preflight drops the default pointer cursor on <button>; restore it
+   * for interactive elements (disabled ones keep the default / not-allowed cursor). */
+  button:not(:disabled),
+  [role="button"]:not(:disabled),
+  label[for],
+  summary {
+    cursor: pointer;
+  }
+
   html,
   body {
     background-color: var(--color-background);
