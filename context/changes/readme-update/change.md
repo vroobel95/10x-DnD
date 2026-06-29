@@ -1,7 +1,7 @@
 ---
 change_id: readme-update
 title: Readme update
-status: new
+status: planned
 created: 2026-06-29
 updated: 2026-06-29
 archived_at: null
