@@ -637,11 +637,11 @@ backdrop blur; only old-palette usages are removed.)
 
 #### Manual
 
-- [ ] 3.5 Campaigns list shows sigil-iconed ink-card rows; rename/delete still work
-- [ ] 3.6 New-campaign form matches the export and creates a campaign
-- [ ] 3.7 Campaign detail header + battle ink-cards render; empty state shows flavor copy
-- [ ] 3.8 PL locale translates all new campaign copy
-- [ ] 3.9 No old tokens remain on any campaign surface
+- [x] 3.5 Campaigns list shows sigil-iconed ink-card rows; rename/delete still work — 64b1d31
+- [x] 3.6 New-campaign form matches the export and creates a campaign — 64b1d31
+- [x] 3.7 Campaign detail header + battle ink-cards render; empty state shows flavor copy — 64b1d31
+- [x] 3.8 PL locale translates all new campaign copy — 64b1d31
+- [x] 3.9 No old tokens remain on any campaign surface — 64b1d31
 
 ### Phase 4: Battles
 
@@ -654,12 +654,12 @@ backdrop blur; only old-palette usages are removed.)
 
 #### Manual
 
-- [ ] 4.5 Battle header shows chips; tabs switch with the ornate active style
-- [ ] 4.6 Environment renders the ink-card grid; regenerate still works
-- [ ] 4.7 Generate flow works; pending enemies show stat-cell ability grids
-- [ ] 4.8 Confirmed enemies render as monster-cards with the villain block; Export PDF works
-- [ ] 4.9 Fetch failures still surface to the user (no silent swallow)
-- [ ] 4.10 PL locale translates all new battle copy
+- [x] 4.5 Battle header shows chips (stacked sections instead of tabs — see Phase 4 note) — 4ff606d
+- [x] 4.6 Environment renders the ink-card grid; regenerate still works — 4ff606d
+- [x] 4.7 Generate flow works; pending enemies show stat-cell ability grids — 4ff606d
+- [x] 4.8 Confirmed enemies render as monster-cards with the villain block; Export PDF works — 4ff606d
+- [x] 4.9 Fetch failures still surface to the user (no silent swallow) — 4ff606d
+- [x] 4.10 PL locale translates all new battle UI copy (generated-content language tracked separately) — 4ff606d
 
 ### Phase 5: Auth & Error Pages
 
@@ -672,10 +672,10 @@ backdrop blur; only old-palette usages are removed.)
 
 #### Manual
 
-- [ ] 5.5 All five auth pages render in the new theme; auth flows still work
-- [ ] 5.6 Server errors and field validation display correctly in the new styling
-- [ ] 5.7 404 / error page matches the theme
-- [ ] 5.8 PL locale translates auth + error copy
+- [x] 5.5 All five auth pages render in the new theme; auth flows still work — 3a26c20
+- [x] 5.6 Server errors and field validation display correctly in the new styling — 3a26c20
+- [x] 5.7 404 / error page matches the theme — 3a26c20
+- [x] 5.8 PL locale translates auth + error copy — 3a26c20
 
 ### Phase 6: Token-Audit Sweep, PL i18n & Verification
 
@@ -686,10 +686,10 @@ backdrop blur; only old-palette usages are removed.)
 - [x] 6.3 Linting passes: `npm run lint` — dd0f603
 - [x] 6.4 Build succeeds: `npm run build` — dd0f603
 - [x] 6.5 Unit tests pass: `npm run test` — dd0f603
-- [x] 6.6 E2E tests pass: `npm run test:e2e`
+- [x] 6.6 E2E tests pass: `npm run test:e2e` — e2b8e54
 
 #### Manual
 
-- [ ] 6.7 Per-page review confirms parity with the export
-- [ ] 6.8 EN↔PL on every page shows no English-fallback strings
-- [ ] 6.9 No visual regressions in interactive flows
+- [x] 6.7 Per-page review confirms parity with the export — e4e0bff
+- [x] 6.8 EN↔PL on every page shows no English-fallback strings — e4e0bff
+- [x] 6.9 No visual regressions in interactive flows — e4e0bff
