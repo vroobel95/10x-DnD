@@ -118,6 +118,31 @@
     font-family: var(--font-sans);
   }
 
+  /* Dark, theme-matched scrollbars (and native form controls) */
+  html {
+    color-scheme: dark;
+    scrollbar-color: var(--ink-soft) var(--ink-deep); /* Firefox: thumb track */
+  }
+
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--ink-deep);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--ink-soft);
+    border: 3px solid var(--ink-deep);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--blood);
+  }
+  ::-webkit-scrollbar-corner {
+    background: var(--ink-deep);
+  }
+
   h1,
   h2,
   h3,
