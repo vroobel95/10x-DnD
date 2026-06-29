@@ -3,7 +3,7 @@ project: "DnD 5enemy"
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-06-28 (S-17 pdf-unicode-fonts → impl_reviewed)
+updated: 2026-06-29 (S-18 ui-redesign → impl_reviewed)
 prd_version: 1
 main_goal: speed
 top_blocker: external
@@ -47,7 +47,7 @@ D&D 5e Game Masters lose preparation time hunting stat blocks and manually adjus
 | S-15 | pdf-export-environment        | export a battle's enemy cards **and** its environment block together as a single printable PDF                                      | S-07, S-09 | —          | impl_reviewed    |
 | S-16 | i18n-polish                   | switch the app between English and Polish; all UI strings, error messages, and AI-generated content language follow the chosen locale | S-08 | —             | impl_reviewed    |
 | S-17 | pdf-unicode-fonts             | export PDFs whose text renders correctly in Polish (and other Latin Extended) — labels and AI content no longer fail the export | S-07, S-16 | —              | impl_reviewed    |
-| S-18 | ui-redesign                   | see the app in the "Blood & Ink" visual identity — oxblood/ink/ivory palette, medieval + serif fonts, paper-grain texture — replacing the S-08 maroon rebrand | S-08, S-16 | —    | proposed         |
+| S-18 | ui-redesign                   | see the app in the "Blood & Ink" visual identity — oxblood/ink/ivory palette, medieval + serif fonts, paper-grain texture — replacing the S-08 maroon rebrand | S-08, S-16 | —    | impl_reviewed    |
 
 ## Baseline
 
@@ -310,7 +310,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
   - How much page "presence" (layout/structure) to adopt from the export vs. keep the current Astro page structure. — Owner: developer/user. Resolve in `/10x-plan`.
   - The export is always-dark; confirm no light-mode assumptions remain in current components. — Owner: developer.
 - **Risk:** medium. Blast radius is the whole UI: the global theme tokens port cleanly (the export uses the same Tailwind v4 `@theme inline` mechanism as this app), but every component hard-coding the old maroon/purple tokens must be audited, three fonts must be wired in, and the React/TanStack page layouts must be re-applied to `.astro` pages. i18n (S-16) must be respected for any changed copy. Discovered/handed off 2026-06-23 from a Lovable redesign export.
-- **Status:** proposed
+- **Status:** impl_reviewed
 
 ## Backlog Handoff
 
@@ -332,7 +332,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-15       | pdf-export-environment        | Export environment block + enemy cards together as one PDF        | —               | impl_reviewed — complete                                                             |
 | S-16       | i18n-polish                   | Polish translation and two-language support (EN/PL)               | —              | impl_reviewed — complete (Paraglide JS v2, cookie-based EN/PL toggle) |
 | S-17       | pdf-unicode-fonts             | Make PDF export Unicode-safe (embed font for Polish / Latin Extended) | —          | impl_reviewed — complete (Noto Sans via pdf-fontkit; +locale labels, villain profile, dialogue-quote fixes) |
-| S-18       | ui-redesign                   | Apply the "Blood & Ink" visual redesign (palette, fonts, presence)    | no         | Needs S-08 + S-16. Port from Lovable export; research the file-by-file delta first (`/10x-research ui-redesign`) before planning |
+| S-18       | ui-redesign                   | Apply the "Blood & Ink" visual redesign (palette, fonts, presence)    | —          | impl_reviewed — complete (Blood & Ink palette/fonts/texture ported from Lovable export) |
 
 ## Open Roadmap Questions
 

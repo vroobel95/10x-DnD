@@ -42,3 +42,10 @@ So the theme tokens transfer cleanly into the app's global CSS.
 
 **Next:** `/10x-research ui-redesign` to map the file-by-file delta, then `/10x-plan ui-redesign`.
 Roadmap slice: S-18.
+
+## Post-review tweaks
+
+- **2026-06-29 — Topbar full-bleed:** `Topbar.astro`'s inner row was capped at `mx-auto max-w-6xl`,
+  centering nav items and leaving large left/right margins on wide screens. Dropped the width cap so
+  the flex row spans the full window (`px-6` padding); email hugs the left edge, actions hug the right.
+  Page content intentionally stays centered at `max-w-5xl`.
