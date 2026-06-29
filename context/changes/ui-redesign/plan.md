@@ -681,12 +681,12 @@ backdrop blur; only old-palette usages are removed.)
 
 #### Automated
 
-- [x] 6.1 Old-token grep returns zero matches over `src/`
-- [x] 6.2 Type checking passes: `npm run typecheck`
-- [x] 6.3 Linting passes: `npm run lint`
-- [x] 6.4 Build succeeds: `npm run build`
-- [x] 6.5 Unit tests pass: `npm run test`
-- [ ] 6.6 E2E tests pass: `npm run test:e2e`
+- [x] 6.1 Old-token grep returns zero matches over `src/` — dd0f603
+- [x] 6.2 Type checking passes: `npm run typecheck` — dd0f603
+- [x] 6.3 Linting passes: `npm run lint` — dd0f603
+- [x] 6.4 Build succeeds: `npm run build` — dd0f603
+- [x] 6.5 Unit tests pass: `npm run test` — dd0f603
+- [x] 6.6 E2E tests pass: `npm run test:e2e`
 
 #### Manual
 

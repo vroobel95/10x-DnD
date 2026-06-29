@@ -26,8 +26,10 @@ test("created campaign appears in list after navigation [Risk #3 smoke]", async 
   // Action: navigate away and back — exercises the server-side DB read, not just React state
   await page.goto("/campaigns");
 
-  // [4] RISK-TIED ASSERTION — if the POST silently wrote nothing (Risk #3), this fails
-  await expect(page.getByText(name)).toBeVisible(); // toBeVisible() retries until visible
+  // [4] RISK-TIED ASSERTION — if the POST silently wrote nothing (Risk #3), this fails.
+  // Assert the campaign renders as a list link (role-based, unambiguous) rather than
+  // getByText, which can also match incidental text nodes elsewhere on the page.
+  await expect(page.getByRole("link", { name })).toBeVisible(); // toBeVisible() retries until visible
 
   // Cleanup: delete via the API (page.request shares the storageState auth cookies)
   await page.request.delete(`/api/campaigns/${id}`);
