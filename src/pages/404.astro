@@ -1,0 +1,15 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Ornament from "@/components/Ornament.astro";
+import { m } from "@/paraglide/messages.js";
+---
+
+<Layout title="404">
+  <main class="mx-auto flex min-h-full max-w-2xl flex-col items-center justify-center px-4 py-20 text-center">
+    <p class="text-blood-bright font-display text-7xl leading-none">404</p>
+    <h1 class="text-ivory font-display mt-2 text-3xl">{m.error_404_heading()}</h1>
+    <Ornament class="my-6" />
+    <p class="text-ivory-dim font-serif text-lg italic">{m.error_404_body()}</p>
+    <a href="/" class="text-blood-bright mt-6 inline-block text-sm hover:underline">{m.error_404_home()}</a>
+  </main>
+</Layout>

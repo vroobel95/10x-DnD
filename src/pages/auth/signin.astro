@@ -1,6 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import SignInForm from "@/components/auth/SignInForm";
+import Ornament from "@/components/Ornament.astro";
 import { m } from "@/paraglide/messages.js";
 
 const error = Astro.url.searchParams.get("error");
@@ -8,28 +9,25 @@ const success = Astro.url.searchParams.get("success");
 ---
 
 <Layout title={m.auth_signin_title()}>
-  <div class="bg-cosmic flex h-full items-center justify-center p-4">
-    <div class="w-full max-w-sm rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
-      <h1
-        class="mb-6 bg-linear-to-r from-blue-200 to-rose-200 bg-clip-text text-center text-2xl font-bold text-transparent"
-      >
-        {m.auth_signin_title()}
-      </h1>
+  <main class="flex min-h-full items-center justify-center px-4 py-12">
+    <div class="ink-card w-full max-w-sm p-8">
+      <h1 class="text-ivory font-display text-center text-3xl">{m.auth_signin_title()}</h1>
+      <Ornament class="my-5" />
       {
         success && (
-          <div class="mb-4 rounded-lg border border-green-400/30 bg-green-500/20 px-4 py-3 text-sm text-green-200">
+          <div class="border-gold/40 bg-gold/10 text-gold mb-4 rounded-md border px-4 py-3 text-sm">
             {m.auth_signin_password_updated()}
           </div>
         )
       }
       <SignInForm serverError={error} client:load />
-      <p class="mt-4 text-center text-sm text-blue-100/60">
+      <p class="text-ivory-dim mt-4 text-center text-sm">
         {m.auth_signin_no_account()}{" "}
-        <a href="/auth/signup" class="text-rose-300 hover:underline">{m.auth_signin_signup_link()}</a>
+        <a href="/auth/signup" class="text-blood-bright hover:underline">{m.auth_signin_signup_link()}</a>
       </p>
-      <p class="mt-2 text-center text-sm text-blue-100/60">
-        <a href="/auth/forgot-password" class="text-rose-300 hover:underline">{m.auth_signin_forgot()}</a>
+      <p class="text-ivory-dim mt-2 text-center text-sm">
+        <a href="/auth/forgot-password" class="text-blood-bright hover:underline">{m.auth_signin_forgot()}</a>
       </p>
     </div>
-  </div>
+  </main>
 </Layout>

@@ -1,5 +1,6 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import Ornament from "@/components/Ornament.astro";
 import { m } from "@/paraglide/messages.js";
 
 const isAutoConfirmed = import.meta.env.DEV;
@@ -20,18 +21,15 @@ const content = isAutoConfirmed
 ---
 
 <Layout title={content.heading}>
-  <div class="bg-cosmic flex h-full items-center justify-center p-4">
-    <div
-      class="w-full max-w-sm rounded-2xl border border-white/10 bg-white/10 p-8 text-center text-white backdrop-blur-xl"
-    >
+  <main class="flex min-h-full items-center justify-center px-4 py-12">
+    <div class="ink-card w-full max-w-sm p-8 text-center">
       <div class="mb-4 text-5xl">{content.emoji}</div>
-      <h1 class="mb-3 bg-linear-to-r from-blue-200 to-rose-200 bg-clip-text text-2xl font-bold text-transparent">
-        {content.heading}
-      </h1>
-      <p class="mb-6 text-blue-100/80">{content.description}</p>
-      <a href="/auth/signin" class="text-sm text-rose-300 hover:underline">
+      <h1 class="text-ivory font-display text-3xl">{content.heading}</h1>
+      <Ornament class="my-5" />
+      <p class="text-ivory-dim mb-6">{content.description}</p>
+      <a href="/auth/signin" class="text-blood-bright text-sm hover:underline">
         {content.linkText}
       </a>
     </div>
-  </div>
+  </main>
 </Layout>

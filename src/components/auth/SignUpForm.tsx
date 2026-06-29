@@ -68,7 +68,7 @@ export default function SignUpForm({ serverError }: Props) {
 
   const passwordHint =
     !errors.password && password.length > 0 ? (
-      <p className="mt-1 text-xs text-blue-100/50">{m.signup_password_hint()}</p>
+      <p className="text-ivory-dim/70 mt-1 text-xs">{m.signup_password_hint()}</p>
     ) : undefined;
 
   return (
