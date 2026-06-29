@@ -3,7 +3,7 @@ project: "DnD 5enemy"
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-06-29 (S-18 ui-redesign → impl_reviewed)
+updated: 2026-06-29 (S-19 campaign-icon-picker → proposed)
 prd_version: 1
 main_goal: speed
 top_blocker: external
@@ -48,6 +48,7 @@ D&D 5e Game Masters lose preparation time hunting stat blocks and manually adjus
 | S-16 | i18n-polish                   | switch the app between English and Polish; all UI strings, error messages, and AI-generated content language follow the chosen locale | S-08 | —             | impl_reviewed    |
 | S-17 | pdf-unicode-fonts             | export PDFs whose text renders correctly in Polish (and other Latin Extended) — labels and AI content no longer fail the export | S-07, S-16 | —              | impl_reviewed    |
 | S-18 | ui-redesign                   | see the app in the "Blood & Ink" visual identity — oxblood/ink/ivory palette, medieval + serif fonts, paper-grain texture — replacing the S-08 maroon rebrand | S-08, S-16 | —    | impl_reviewed    |
+| S-19 | campaign-icon-picker          | choose an icon (sigil) for a campaign when creating or renaming it, instead of the auto-assigned hash-derived one | S-05 | —              | proposed         |
 
 ## Baseline
 
@@ -312,6 +313,20 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Risk:** medium. Blast radius is the whole UI: the global theme tokens port cleanly (the export uses the same Tailwind v4 `@theme inline` mechanism as this app), but every component hard-coding the old maroon/purple tokens must be audited, three fonts must be wired in, and the React/TanStack page layouts must be re-applied to `.astro` pages. i18n (S-16) must be respected for any changed copy. Discovered/handed off 2026-06-23 from a Lovable redesign export.
 - **Status:** impl_reviewed
 
+### S-19: Campaign icon picker
+
+- **Outcome:** when creating or renaming a campaign, the GM can pick an icon (sigil) from a small set of medieval glyphs; the chosen icon is persisted and shown on the campaign list. Campaigns without a chosen icon (existing rows + the auto-created "Default Campaign") keep their current stable hash-derived sigil as a fallback, so there is no empty state and no backfill.
+- **Change ID:** campaign-icon-picker
+- **PRD refs:** —
+- **Prerequisites:** S-05 (campaign management — the list, create form, and rename flow this slice extends all originate there)
+- **Parallel with:** any slice that does not touch the campaigns table or `CampaignList` — no expected overlap
+- **Blockers:** —
+- **Unknowns:**
+  - Icon set: reuse the existing 5-glyph `SIGILS` pool (`Skull, Crown, Flame, Eye, Moon` in `CampaignList.tsx`) or offer a wider curated set? Decide in `/10x-plan`.
+  - Storage: store the icon as a stable string key (e.g. `"skull"`) mapped to a lucide component, not the component itself. Confirm the key→component map lives in one shared module so list + picker stay in sync.
+- **Risk:** low. Touches a narrow, well-understood path: one nullable `icon TEXT` column migration on `campaigns`; `icon` accepted/validated in the create (`POST /api/campaigns`, `index.ts`) and rename (`PATCH /api/campaigns/[id]`, `[id].ts`) endpoints; a small picker added to `CreateCampaignForm.tsx` and the inline edit in `CampaignList.tsx`; render swaps `sigilFor(id)` for the stored icon with the existing sigil as fallback ([CampaignList.tsx:130](../../src/components/campaigns/CampaignList.tsx#L130)). i18n (S-16) must be respected for the picker label/aria strings (`m.*` keys, PL + EN). No data risk — the fallback means partial rollout is safe.
+- **Status:** proposed
+
 ## Backlog Handoff
 
 | Roadmap ID | Change ID                     | Suggested issue title                                   | Ready for `/10x-plan` | Notes                                                              |
@@ -333,6 +348,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-16       | i18n-polish                   | Polish translation and two-language support (EN/PL)               | —              | impl_reviewed — complete (Paraglide JS v2, cookie-based EN/PL toggle) |
 | S-17       | pdf-unicode-fonts             | Make PDF export Unicode-safe (embed font for Polish / Latin Extended) | —          | impl_reviewed — complete (Noto Sans via pdf-fontkit; +locale labels, villain profile, dialogue-quote fixes) |
 | S-18       | ui-redesign                   | Apply the "Blood & Ink" visual redesign (palette, fonts, presence)    | —          | impl_reviewed — complete (Blood & Ink palette/fonts/texture ported from Lovable export) |
+| S-19       | campaign-icon-picker          | Let GM choose a campaign icon on create/rename (sigil picker)         | yes        | Needs S-05 (already done); low complexity — nullable column + picker + render swap, sigil as fallback |
 
 ## Open Roadmap Questions
 
