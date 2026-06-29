@@ -8,7 +8,7 @@ const { class: className = "" } = Astro.props;
 
 <div class:list={["flex items-center justify-center gap-2", className]}>
   <span class="via-blood/60 to-blood h-px max-w-[120px] flex-1 bg-gradient-to-r from-transparent"></span>
-  <svg width="14" height="14" viewBox="0 0 14 14" class="text-gold">
+  <svg width="14" height="14" viewBox="0 0 14 14" class="text-gold" aria-hidden="true">
     <path d="M7 0 L14 7 L7 14 L0 7 Z" fill="currentColor" opacity="0.8"></path>
     <path d="M7 3 L11 7 L7 11 L3 7 Z" fill="var(--ink-deep)"></path>
   </svg>

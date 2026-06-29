@@ -580,6 +580,24 @@ backdrop blur; only old-palette usages are removed.)
   persisted — so no schema change and no backfill.
 - The change is visual; rollback is reverting the branch. No feature flag needed.
 
+## Post-Plan Additions
+
+Changes made during implementation that fall outside the phase plans above, recorded here so the plan
+mirrors what shipped (per impl-review F2):
+
+- **Deviation — battle sections not tabbed** (Phase 4): the export's "ornate tabs" were kept as the
+  app's existing two stacked React-island sections (Environment, Enemies), restyled with section-labels.
+  Tabbing would require merging the islands and rewiring fetch state. Progress 4.5 notes this. (impl-review F1)
+- **Unused components restyled** (Phase 6, audit-driven): `src/components/battles/BattleCard.astro` and
+  `src/components/ui/LibBadge.astro` were re-skinned to satisfy the "zero old tokens in `src/`" gate even
+  though neither is currently imported.
+- **`global.css` emergent fixes**: a `cursor: pointer` base rule for `button`/`[role=button]`/`label[for]`/
+  `summary` (Tailwind v4 Preflight drops it), and `color-scheme: dark` + themed webkit/Firefox scrollbars.
+- **Landing trims** (user-requested, post-implementation): removed the guest "Free to start · No card
+  required" note and the testimonial section, plus their now-unused i18n keys.
+- **e2e locator hardening**: `tests/e2e/seed.spec.ts` switched from `getByText` to `getByRole("link")` to
+  avoid a strict-mode collision with non-app page content (not a redesign regression).
+
 ## References
 
 - Design source: `C:\Repos\lovable-dnd-5enemy` — `src/styles.css`, `src/components/chrome.tsx`,
