@@ -43,7 +43,7 @@ A GM types a natural-language description of an encounter — e.g. _"2 ice wolve
 
 ```bash
 git clone <your-fork-url>
-cd 10x-DnD
+cd <repo-dir>
 ```
 
 2. Install dependencies:

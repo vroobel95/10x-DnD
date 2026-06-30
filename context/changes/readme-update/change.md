@@ -1,7 +1,7 @@
 ---
 change_id: readme-update
 title: Readme update
-status: implemented
+status: impl_reviewed
 created: 2026-06-29
 updated: 2026-06-30
 archived_at: null
