@@ -42,8 +42,8 @@ A GM types a natural-language description of an encounter — e.g. _"2 ice wolve
 1. Clone the repository:
 
 ```bash
-git clone <your-fork-url>
-cd <repo-dir>
+git clone https://github.com/vroobel95/10x-DnD.git
+cd 10x-DnD
 ```
 
 2. Install dependencies:
