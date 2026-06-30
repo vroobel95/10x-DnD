@@ -353,14 +353,14 @@ surfaces an inaccurate instruction, the fix is an edit to `README.md`.
 
 #### Automated
 
-- [x] 2.1 Lint passes: `npm run lint`
-- [x] 2.2 Type check passes: `npm run typecheck`
-- [x] 2.3 Unit tests pass: `npm run test`
-- [x] 2.4 Production build succeeds: `npm run build`
-- [x] 2.5 Prettier check passes: `npx prettier --check README.md`
+- [x] 2.1 Lint passes: `npm run lint` — 646947c
+- [x] 2.2 Type check passes: `npm run typecheck` — 646947c
+- [x] 2.3 Unit tests pass: `npm run test` — 646947c
+- [x] 2.4 Production build succeeds: `npm run build` — 646947c
+- [x] 2.5 Prettier check passes: `npx prettier --check README.md` — 646947c
 
 #### Manual
 
-- [x] 2.6 Documented Supabase migration command applies the 7 migrations cleanly (or confirmed correct for installed CLI)
-- [x] 2.7 A reader following only the README reaches a running dev server
-- [x] 2.8 No documented command is missing or misnamed relative to package.json
+- [x] 2.6 Documented Supabase migration command applies the 7 migrations cleanly (or confirmed correct for installed CLI) — 646947c
+- [x] 2.7 A reader following only the README reaches a running dev server — 646947c
+- [x] 2.8 No documented command is missing or misnamed relative to package.json — 646947c
