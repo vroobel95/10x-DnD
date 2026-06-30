@@ -122,11 +122,13 @@ SUPABASE_URL=http://127.0.0.1:54321
 SUPABASE_KEY=<anon key from CLI output>
 ```
 
-5. Apply the migrations to create the campaigns, battles, and enemies tables:
+5. Apply the migrations to create the campaigns, battles, and enemies tables. `supabase start` already applies all migrations on first run; to apply any migrations added later, run:
 
 ```bash
-npx supabase db push
+npx supabase migration up
 ```
+
+(To rebuild the local database from scratch against all migrations, use `npx supabase db reset`.)
 
 6. To stop the stack when done:
 
@@ -187,6 +189,7 @@ Route protection is handled in `src/middleware.ts`. Add paths to the `PROTECTED_
 - `npm run dev` — Start the development server (Cloudflare `workerd` runtime)
 - `npm run build` — Build for production
 - `npm run preview` — Preview the production build
+- `npm run astro` — Run the Astro CLI directly (e.g. `npm run astro -- add <integration>`)
 
 **Quality**
 
@@ -232,7 +235,13 @@ The app ships in **English and Polish** using [Paraglide JS](https://inlang.com/
 
 ## Git Hooks
 
-A husky pre-commit hook runs [lint-staged](https://github.com/lint-staged/lint-staged) on every commit: ESLint `--fix` on staged `*.{ts,tsx,astro}` files and Prettier on staged `*.{json,css,md}` files.
+A [lefthook](https://lefthook.dev/) pre-commit hook runs on every commit (configured in `lefthook.yml`):
+
+- **lint** — ESLint `--fix` on staged `*.{ts,tsx,js,jsx}` files
+- **typecheck** — `tsc --noEmit`
+- **test** — `vitest related` on staged `*.{ts,tsx}` files
+
+Set `LEFTHOOK=0` to skip the hook for a single commit.
 
 ## Deployment
 

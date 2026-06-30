@@ -338,29 +338,29 @@ surfaces an inaccurate instruction, the fix is an edit to `README.md`.
 
 #### Automated
 
-- [x] 1.1 Prettier accepts the file: `npx prettier --check README.md`
-- [x] 1.2 All repo paths referenced in the README resolve (migrations, .env.example, middleware, messages, wrangler)
+- [x] 1.1 Prettier accepts the file: `npx prettier --check README.md` — e46cb27
+- [x] 1.2 All repo paths referenced in the README resolve (migrations, .env.example, middleware, messages, wrangler) — e46cb27
 
 #### Manual
 
-- [x] 1.3 README opens with DnD 5enemy identity + feature list; no starter/template references remain
-- [x] 1.4 All three env vars (incl. ANTHROPIC_API_KEY) documented with source and purpose
-- [x] 1.5 False "no migrations" line gone; migration-apply step + RLS note in both Supabase paths
-- [x] 1.6 Scripts section lists every script in package.json
-- [x] 1.7 Deployment lists ANTHROPIC_API_KEY as a Wrangler secret; CI references main + deploy job
+- [x] 1.3 README opens with DnD 5enemy identity + feature list; no starter/template references remain — e46cb27
+- [x] 1.4 All three env vars (incl. ANTHROPIC_API_KEY) documented with source and purpose — e46cb27
+- [x] 1.5 False "no migrations" line gone; migration-apply step + RLS note in both Supabase paths — e46cb27
+- [x] 1.6 Scripts section lists every script in package.json — e46cb27
+- [x] 1.7 Deployment lists ANTHROPIC_API_KEY as a Wrangler secret; CI references main + deploy job — e46cb27
 
 ### Phase 2: Verify documented commands
 
 #### Automated
 
-- [ ] 2.1 Lint passes: `npm run lint`
-- [ ] 2.2 Type check passes: `npm run typecheck`
-- [ ] 2.3 Unit tests pass: `npm run test`
-- [ ] 2.4 Production build succeeds: `npm run build`
-- [ ] 2.5 Prettier check passes: `npx prettier --check README.md`
+- [x] 2.1 Lint passes: `npm run lint`
+- [x] 2.2 Type check passes: `npm run typecheck`
+- [x] 2.3 Unit tests pass: `npm run test`
+- [x] 2.4 Production build succeeds: `npm run build`
+- [x] 2.5 Prettier check passes: `npx prettier --check README.md`
 
 #### Manual
 
-- [ ] 2.6 Documented Supabase migration command applies the 7 migrations cleanly (or confirmed correct for installed CLI)
-- [ ] 2.7 A reader following only the README reaches a running dev server
-- [ ] 2.8 No documented command is missing or misnamed relative to package.json
+- [x] 2.6 Documented Supabase migration command applies the 7 migrations cleanly (or confirmed correct for installed CLI)
+- [x] 2.7 A reader following only the README reaches a running dev server
+- [x] 2.8 No documented command is missing or misnamed relative to package.json
