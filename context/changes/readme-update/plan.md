@@ -338,16 +338,16 @@ surfaces an inaccurate instruction, the fix is an edit to `README.md`.
 
 #### Automated
 
-- [ ] 1.1 Prettier accepts the file: `npx prettier --check README.md`
-- [ ] 1.2 All repo paths referenced in the README resolve (migrations, .env.example, middleware, messages, wrangler)
+- [x] 1.1 Prettier accepts the file: `npx prettier --check README.md`
+- [x] 1.2 All repo paths referenced in the README resolve (migrations, .env.example, middleware, messages, wrangler)
 
 #### Manual
 
-- [ ] 1.3 README opens with DnD 5enemy identity + feature list; no starter/template references remain
-- [ ] 1.4 All three env vars (incl. ANTHROPIC_API_KEY) documented with source and purpose
-- [ ] 1.5 False "no migrations" line gone; migration-apply step + RLS note in both Supabase paths
-- [ ] 1.6 Scripts section lists every script in package.json
-- [ ] 1.7 Deployment lists ANTHROPIC_API_KEY as a Wrangler secret; CI references main + deploy job
+- [x] 1.3 README opens with DnD 5enemy identity + feature list; no starter/template references remain
+- [x] 1.4 All three env vars (incl. ANTHROPIC_API_KEY) documented with source and purpose
+- [x] 1.5 False "no migrations" line gone; migration-apply step + RLS note in both Supabase paths
+- [x] 1.6 Scripts section lists every script in package.json
+- [x] 1.7 Deployment lists ANTHROPIC_API_KEY as a Wrangler secret; CI references main + deploy job
 
 ### Phase 2: Verify documented commands
 
