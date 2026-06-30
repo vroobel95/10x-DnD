@@ -32,9 +32,19 @@ Output JSON only.`;
 
 // Steers the language of generated prose. Core D&D 5e game terms stay in English so
 // Polish output keeps recognizable stat shorthand (AC/HP/STR…), matching the UI convention.
-function languageDirective(locale: string): string {
+// Prepended as the FIRST system-prompt line (a trailing directive was intermittently
+// ignored on the initial generation), and mirrored into the user prompt — instructions
+// co-located with the task are followed far more reliably than distant system lines.
+function languageSystemRule(locale: string): string {
   if (locale === "pl") {
-    return `\nLanguage: Write all generated prose — names, descriptions, tactics, dialogue, and environment text — in Polish. Keep core D&D 5e game terms and stat abbreviations in English: ability scores (STR, DEX, CON, INT, WIS, CHA), AC, HP, CR, condition names, and dice notation (e.g. 2d6).`;
+    return `LANGUAGE (HARD RULE): Write ALL generated prose — names, descriptions, tactics, dialogue, and environment text — in Polish. Keep core D&D 5e game terms and stat abbreviations in English: ability scores (STR, DEX, CON, INT, WIS, CHA), AC, HP, CR, condition names, and dice notation (e.g. 2d6).\n\n`;
+  }
+  return "";
+}
+
+function languagePromptReminder(locale: string): string {
+  if (locale === "pl") {
+    return ` Write the response in Polish (keep D&D 5e stat abbreviations in English).`;
   }
   return "";
 }
@@ -58,8 +68,8 @@ export async function generateEnemies(
   const { output } = await generateText({
     model: anthropic("claude-sonnet-4-6"),
     output: Output.object({ schema: GenerateResultSchema }),
-    system: ENEMY_SYSTEM_PROMPT + languageDirective(locale),
-    prompt: fullPrompt,
+    system: languageSystemRule(locale) + ENEMY_SYSTEM_PROMPT,
+    prompt: fullPrompt + languagePromptReminder(locale),
   });
 
   return output;
@@ -85,8 +95,8 @@ export async function generateEnvironment(
   const { output } = await generateText({
     model: anthropic("claude-sonnet-4-6"),
     output: Output.object({ schema: BattleEnvironmentSchema }),
-    system: ENVIRONMENT_SYSTEM_PROMPT + languageDirective(locale),
-    prompt,
+    system: languageSystemRule(locale) + ENVIRONMENT_SYSTEM_PROMPT,
+    prompt: prompt + languagePromptReminder(locale),
   });
 
   return output;
